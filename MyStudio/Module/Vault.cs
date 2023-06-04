@@ -13,17 +13,23 @@ namespace Module
 {
 	public class Vault
 	{
-		public const string VAULT_FILE = "VaultSetting.json";
+        #region Constant strings
+        public const string VAULT_FILE = "VaultSetting.json";
 		public const string PROGRAM_FOLDER = "VaultProgramData";
 		public const string NODE_FOLDER = "Nodes";
-		public string vaultDir;
+        #endregion
+
+        #region Pathes
+        public string vaultDir;
 		public string programDir;
         public string settingFilePath;
 		public string nodeDir;
-		
+        #endregion
+
+        #region Data variables
         public JObject setting;
-		
-		public Vault(string directoryPath)
+        #endregion
+        public Vault(string directoryPath)
 		{
 			vaultDir = directoryPath;
 			if (!Directory.Exists(directoryPath))
@@ -41,11 +47,18 @@ namespace Module
 				if (!File.Exists(settingFilePath))
 				{
 					setting = new JObject();
-					saveSetting();
-					setting[NODE_FOLDER] = new JObject();
-				}
-				loadSetting();
-
+                    saveSetting();   
+                }
+                loadSetting();
+                #region supply basic info
+                
+                if (!setting.ContainsKey(NODE_FOLDER))
+				{
+                    setting[NODE_FOLDER] = new JObject();
+                }
+                saveSetting();
+                #endregion
+                Node.nodeDir = nodeDir;
 			}
 		}
 		
