@@ -40,7 +40,21 @@ namespace PKG
                 throw new FileNotFoundException("JSON file not exist");
             }
         }
-
+        public static T JTokenToValue<T>(JToken token)
+        {
+            T value;
+            if (typeof(T).IsPrimitive || typeof(T) == typeof(string) || typeof(T) == typeof(DateTime))
+            {
+                value = token.Value<T>();
+                // Process the value as needed
+            }
+            else
+            {
+                value = token.ToObject<T>();
+                // Process the value as needed
+            }
+            return value;
+        }
         // 修改 JSON 对象（插入和删除操作）
         public static void demoModifyJsonObject(JObject jsonObject)
         {
