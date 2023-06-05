@@ -12,9 +12,12 @@ using PKG;
 /// <summary>
 /// Issues
 /// </summary>
+/// update issue, remember to load() again when a node is modified by other => passing node by reference
+/// is nodes with same ID in same memory? if not: be care to update node when it is modified by other nodes
 /// remove link when delete
 /// protected _info operation: remove key
-
+/// change file path and name
+/// clone by copy .json text
 
 namespace Module
 {
@@ -55,61 +58,55 @@ namespace Module
 		#endregion
 
 		#region Data variables
-		protected JObject _info;
+		private JObject _info;
 		public List<Node> _linkNodes = new List<Node>();
 		#endregion
-		
-		public Node(string nameOrPath) 
+		public Node() // create a new node
+		{
+			create();
+		}
+		public Node(string filePath) // load a existent node
 		{ 
 			_info = new JObject(); 
-			if (File.Exists(nameOrPath))
+			if (File.Exists(filePath))
 			{
-				_filePath = nameOrPath;
+				_filePath = filePath;
 				load();
 			}
 			else
 			{
-				create(nameOrPath);
+				throw new Exception("Node file path does not exist!");
 			}
 		}
-		public void create(string name)
+		public void test()
 		{
-			/*
-			foreach (string key in PROPERTYs)
-			{
-				if (_info[key] == null)
-				{
-					_info[key] = " ";
-				}
-			}
-			*/
-			_info[NAME] = name;
+			
+		}
+		public void create()
+		{
 			do
 			{
 				DateTime currentDateTime = DateTime.UtcNow;
-
-				// 获取时间戳的字符串表示形式
-				string timestampString = currentDateTime.ToString("yyyy-MM-dd HH-mm-ss");
-				_info[ID] = name + ' ' + timestampString;
-				_fileName = _info[ID] + ".json";
+				_info[ID] = currentDateTime.ToString("yyyy/MM/dd-HH:mm:ss");
+                _fileName = currentDateTime.ToString("yyyy-MM-dd--HH-mm-ss") + ".json";
 				_filePath = Path.Combine(nodeDir, _fileName);
-			} while (File.Exists(_filePath));
+			} while (File.Exists(_filePath)); // avoid overwriting a existent file
 			_info[LINK] = new JObject();
 			_info[BACK_LINK] = new JObject();
 			save();
 		}
 
         #region Linked Node operations 
-        public void addLink(string nodeName, string linkPath, string? linkType = null, string? linkName = null)
+        public void addLink(Node targetNode, string? linkType = null, string? linkName = null)
         {
-            _info[LINK][nodeName] = new JObject();
-            _info[LINK][nodeName][LINK_PATH] = linkPath;
-            _info[LINK][nodeName][LINK_TYPE] = linkType;
-            _info[LINK][nodeName][LINK_NAME] = linkName;
+			string targetID = targetNode._filePath;
+            _info[LINK][targetID] = new JObject();
+            _info[LINK][targetID][LINK_PATH] = targetNode._filePath;
+            _info[LINK][targetID][LINK_TYPE] = linkType;
+            _info[LINK][targetID][LINK_NAME] = linkName;
 			save();
 
-			Node targetNode = new Node(linkPath);
-            targetNode.setInfo<string>(_info[PATH].ToString(), BACK_LINK, NAME);
+            targetNode.setInfo<string>(_info[PATH].ToString(), BACK_LINK, _info[ID].ToString());
             //targetNode._info[BACK_LINK][_info[NAME]] = _info[PATH];
 			//targetNode.save();
 
@@ -147,9 +144,8 @@ namespace Module
         }
         public void addNode(string nodeName, string? linkType = null, string? linkName = null)
         {
-            Node newNode = new Node(nodeName);
-            string linkPath = newNode._filePath;
-			addLink(nodeName, linkPath, linkType, linkName);
+            Node newNode = new Node();
+			addLink(newNode, linkType, linkName);
 			//save();
         }
         #endregion

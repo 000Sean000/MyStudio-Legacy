@@ -49,6 +49,10 @@ namespace Module
                 setting[VAULT_ADDR] = new JObject();
                 saveSetting();
             }
+            
+        }
+        public static void test()
+        {
             createVault();
             listValidVault();
         }
