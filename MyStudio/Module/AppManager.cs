@@ -54,7 +54,7 @@ namespace Module
         public static void test()
         {
             createVault();
-            listValidVault();
+            Logger.WriteLine(String.Format("Valid vault:{0}", listValidVault()));
         }
         public static void createVault()
         {
@@ -75,16 +75,26 @@ namespace Module
             foreach (JProperty property in setting[VAULT_ADDR].Value<JObject>().Properties())
             {
                 vaultPath = property.Value.ToString();
-                Logger.WriteLine("vault: "+vaultPath);
                 if (Directory.Exists(vaultPath)) 
                 {
                     vaultList.Add(vaultPath);
-                    Logger.WriteLine("Valid:" + vaultPath);
+                    Logger.WriteLine("Valid Vault:" + vaultPath);
+                }
+                else
+                {
+                    Logger.WriteLine("Unalid Vault:" + vaultPath);
                 }
             }
+            Logger.WriteLine("Total Valid Vault:");
+            int i = 0;
             foreach (string path in vaultList)
             {
-                Logger.WriteLine("Valid Vault:"+path);
+                i ++;
+                Logger.WriteLine("\t"+i+". "+path);
+            }
+            if (i == 0)
+            {
+                Logger.WriteLine("\tNone");
             }
             return vaultList;
         }

@@ -36,7 +36,7 @@ using PKG;
 ///				4. complete description
 ///			}
 ///		Property (all optional)
-///			relation link info[...][LINK][TYPE][NAME][...][targetID] = targetPath
+///			relation link info[...][LINK][TYPE][NAME][...]
 ///				type: 
 ///				{
 ///					unclassified
@@ -49,8 +49,8 @@ using PKG;
 ///					instance
 ///					log: {cause, requirement, plan}
 ///				}
-///			back-link
-///			image
+///				
+///			graph
 ///			tag
 ///			customized...
 ///		Attribute
@@ -82,30 +82,31 @@ using PKG;
 /// clone by copy .json text
 /// backup and recover
 
-/*
-
-namespace Module_developing
+namespace Module
 {
 	public class Node
 	{
 		#region Constant strings
-
-		#region 1. Keys
-		public const string CONTENT = "content";
-		public const string PROPERTY = "property";
-			public const string LINK = "link";
-				public const string UNCLASSIFIED = "unclassified";
-					public const string UNNAMED = "unnamed";
-			public const string BACK_LINK = "back link";
+		#region 1. Program related keys
+		public const string ID = "id";
+		public const string NAME = "name";
+		public const string PATH = "path";
+		#endregion
+		#region 2. Content related keys
+		public const string TITLE = "title";
+		public const string SUMMARY = "summary";
+		public const string DESCRIPTION = "description";
+		public const string LINK = "link";
+			public const string LINK_TYPE = "relation type";
+			public const string LINK_NAME = "relation name";
+			public const string LINK_PATH = "link path";
+        public const string BACK_LINK = "back link";
         public const string IMAGE = "image";
 			public const string ICON = "icon";
 			public const string PROFILE = "profile"; // 頭像
 			public const string PORTRAIT = "portrait"; // 肖像
 			public const string ILLUSTRATION = "illustration"; // 插圖
 			public const string LOGO = "logo";
-		public const string ATTRIBUTE = "attribute";
-		public const string USAGE = "usage";
-		public const string 
 		public static List<string> PROPERTYs = new List<string>()
 		{
 			TITLE, SUMMARY, DESCRIPTION, LINK, BACK_LINK, IMAGE
@@ -273,4 +274,3 @@ namespace Module_developing
 		#endregion
 	}
 }
-*/
