@@ -6,86 +6,119 @@ using System.Diagnostics;
 
 namespace PKG
 {
-    public static class JsonPKG
-    {
-        
+	public static class JsonPKG
+	{
+		// Save json object to json file (JObject => *.json)
+		public static void SaveJsonObjectToFile(JObject jsonObject, string filePath)
+		{
+			File.WriteAllText(filePath, jsonObject.ToString());
+			Logger.WriteLine("JSON object has been save to: " + filePath);
+		}
 
-        
-
-        // 将 JSON 对象保存到 JSON 文件
-        public static void SaveJsonObjectToFile(JObject jsonObject, string filePath)
+		// Read json object from json file (*.json => JObject)
+		public static JObject ReadJsonObjectFromFile(string filePath)
+		{
+			if (File.Exists(filePath))
+			{
+				string jsonString = File.ReadAllText(filePath);
+				try
+				{
+					return JObject.Parse(jsonString);
+				}
+				catch 
+				{ 
+					throw new Exception("Parsing Error: " + filePath); 
+				}
+			}
+			else
+			{
+				throw new FileNotFoundException("JSON file not exist");
+			}
+		}
+		// JObject store a key value as a JToken,
+		// we need to turn JToken to the data type of representing variable
+		public static T JTokenToType<T>(JToken jtoken)
+		{
+			T value;
+			if (typeof(T).IsPrimitive || typeof(T) == typeof(string) || typeof(T) == typeof(DateTime))
+			{
+				value = jtoken.Value<T>();
+				// Process the value as needed
+			}
+			else
+			{
+				value = jtoken.ToObject<T>();
+				// Process the value as needed
+			}
+			return value;
+		}
+        public static T GetJObject<T>(JObject obj, params string[] keys)
         {
-            string jsonString = jsonObject.ToString();
-            File.WriteAllText(filePath, jsonString);
-            Logger.WriteLine("JSON object has been save to: " + filePath);
-        }
-
-        // 从 JSON 文件读取为 JSON 对象
-        public static JObject ReadJsonObjectFromFile(string filePath)
-        {
-            if (File.Exists(filePath))
+            int len = keys.Length;
+            for (int i = 0; i < len - 1; i++)
             {
-                string jsonString = File.ReadAllText(filePath);
-                try
-                {
-                    return JObject.Parse(jsonString);
-                }
-                catch 
-                { 
-                    throw new Exception("Parsing Error: " + filePath); 
-                }
+				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
+				{
+					throw new Exception("Get JObject value failed. (missing key)");
+				}
+				else
+				{
+					obj = obj[keys[i]].Value<JObject>();
+				}
             }
-            else
-            {
-                throw new FileNotFoundException("JSON file not exist");
-            }
-        }
-        public static T JTokenToValue<T>(JToken token)
-        {
-            T value;
-            if (typeof(T).IsPrimitive || typeof(T) == typeof(string) || typeof(T) == typeof(DateTime))
-            {
-                value = token.Value<T>();
-                // Process the value as needed
-            }
-            else
-            {
-                value = token.ToObject<T>();
-                // Process the value as needed
-            }
+            JToken jtoken = obj[keys[len - 1]];
+            T value = JTokenToType<T>(jtoken);
             return value;
         }
-        // 修改 JSON 对象（插入和删除操作）
-        public static void demoModifyJsonObject(JObject jsonObject)
+        public static void SetJObject<T>(T value, JObject obj, params string[] keys)
         {
-            // 插入新属性
-            jsonObject["email"] = "john@example.com";
-
-            // 删除属性
-            jsonObject.Remove("age");
+            int len = keys.Length;
+            for (int i = 0; i < len - 1; i++)
+            {
+                if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
+                {
+                    obj[keys[i]] = new JObject();
+                    obj = obj[keys[i]].ToObject<JObject>();
+                }
+                else
+                {
+                    obj = obj[keys[i]].ToObject<JObject>();
+                }
+            }
+            obj[keys[len - 1]] = JToken.FromObject(value);
         }
-        public static void demoJson_(string filePath = "data.json")
-        {
-            // 创建 JSON 对象
-            JObject jsonObject = new JObject();
-            jsonObject["name"] = "John";
-            jsonObject["age"] = 30;
+        // Modify JObject ( insert & remove ) 
+        public static void DemoModifyJsonObject(JObject jsonObject)
+		{
+			// insert a new key-value pair
+			jsonObject["email"] = "john@example.com";
 
-            // 保存对象到 JSON 文件
-            //string filePath = "data.json";
-            SaveJsonObjectToFile(jsonObject, filePath);
+			// remove a key-value pair
+			jsonObject.Remove("age");
+		}
+		public static void DemoJson_(string filePath = "data.json")
+		{
+			// creat a new JObject
+			JObject jsonObject = new JObject();
+			jsonObject["name"] = "John";
+			jsonObject["age"] = 30;
 
-            // 从 JSON 文件读取为 JSON 对象
-            JObject readJsonObject = ReadJsonObjectFromFile(filePath);
-            Logger.WriteLine("读取的 JSON 对象:");
-            Logger.WriteLine(readJsonObject);
+			// Save json object to json file
+			SaveJsonObjectToFile(jsonObject, filePath);
 
-            // 修改 JSON 对象（插入和删除操作）
-            demoModifyJsonObject(readJsonObject);
-            Logger.WriteLine("修改后的 JSON 对象:");
-            Logger.WriteLine(readJsonObject);
-        }
+			// Read json object from json file
+			JObject readJsonObject = ReadJsonObjectFromFile(filePath);
+			Logger.WriteLine("read JObject:");
+			Logger.WriteLine(readJsonObject);
 
-    }
+			// modify json object
+			DemoModifyJsonObject(readJsonObject);
+			Logger.WriteLine("modified JObject:");
+			Logger.WriteLine(readJsonObject);
+		}
+
+	}
+
+
 }
 

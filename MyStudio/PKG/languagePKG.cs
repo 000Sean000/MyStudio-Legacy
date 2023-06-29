@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PKG
 {
+    /// <summary>
+    /// an Object can return a string corresponding to current language setting
+    /// </summary>
     public class language
     {
         /// <summary>
@@ -19,6 +22,9 @@ namespace PKG
         {
             TW, CH, US, UN
         };
+        public enum languageModes {
+            TW, CH, US, UN
+        }
 
         public static string mode = UN;
         protected Dictionary<string, string> _textDic;
@@ -28,7 +34,7 @@ namespace PKG
             _textDic = new Dictionary<string, string>();
             _textDic[UN] = str;
         }
-        public string show()
+        public string Get()
         {
             if (_textDic.Keys.Contains(mode) && _textDic[mode] != null)
             {
@@ -39,16 +45,16 @@ namespace PKG
                 return "(UN) " + _textDic[UN];
             }
         }
-        public void write(string mode, string str) 
+        public void Set(string mode, string str) 
         {
             if (modes.Contains(mode)) { _textDic[mode] = str; }
             else { Logger.WriteLine("wrong language mode!"); }
         }
-        public void setTW(string str) 
+        public void SetTW(string str) 
         { 
             _textDic[TW] = str; 
         }
-        public void setUS(string str)
+        public void SetUS(string str)
         {
             _textDic[US] = str;
         }

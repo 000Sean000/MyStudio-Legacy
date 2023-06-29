@@ -8,37 +8,30 @@ namespace MyStudio
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
-        
 
-        enum DaysOfWeek
-        {
-            Monday,
-            Tuesday,
-            Wednesday,
-            Thursday,
-            Friday,
-            Saturday,
-            Sunday
-        }
         [STAThread]
-        static void Main()
+        static void Main1()
         {
-
+            Logger.WriteLine("pathes:");
+            Logger.WriteLine(pathPKG.GetDirWithBackstep(0));
+            Logger.WriteLine(pathPKG.GetDirWithBackstep(1));
+            
             language.mode = language.US;
             Logger.WriteLine("hello");
             string deviceName = Environment.MachineName;
             Logger.WriteLine("Device Name: " + deviceName);
-            Module.AppManager.init();
-            Module.AppManager.test();
-            Logger.WriteLine((int)DayOfWeek.Monday);
-            Logger.WriteLine(DayOfWeek.Monday.ToString());
+            //AppManager.init();
+            //AppManager.test();
+            DemoUndoRedo.Run();
+            
         }
-        static void Main2()
+        [STAThread]
+        static void Main()
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.Run(new Ui_Form());
         }
     }
 }

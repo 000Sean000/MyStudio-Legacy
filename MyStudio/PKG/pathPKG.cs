@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-/// 筛选器的格式为“显示文本|文件扩展名”，多个筛选器之间使用竖线 | 分隔。
-
+/*
+ * Filter format is "Display Text|File Extension",
+ * and multiple filters are separated by a vertical bar "|".
+ */
 /*
 GetFrame(0): 
     Retrieves the current stack frame, 
@@ -21,12 +23,17 @@ GetFrame(n):
     The index indicates how many frames back in the call stack 
     you want to retrieve.
  */
+
+
+
 namespace PKG
 {
     public static class pathPKG
     {
-        
-        public static string getDir(int backSteps)
+        /// <summary>
+        /// Get directory from current file going back some level
+        /// </summary>
+        public static string GetDirWithBackstep(int backSteps)
         {
             StackFrame frame = new StackTrace(true).GetFrame(backSteps);
             string fileName = frame.GetFileName();
@@ -36,38 +43,16 @@ namespace PKG
             Logger.WriteLine("File location: " + location);
             return location;
         }
-        public static string getCallerDir()
+        /// <summary>
+        /// Get the directory of current file
+        /// </summary>
+        public static string getCallerDir() 
         {
-            StackFrame frame = new StackTrace(true).GetFrame(1);
-            string fileName = frame.GetFileName();
-            string location = Path.GetDirectoryName(fileName);
-
-            Logger.WriteLine("File name: " + fileName);
-            Logger.WriteLine("File location: " + location);
-            return location;
-        }
-        public static void mkdir(string directoryPath)
-        {
-            if (!Directory.Exists(directoryPath))
-            {
-                try
-                {
-                    Directory.CreateDirectory(directoryPath);
-                    Logger.WriteLine("Directory created: " + directoryPath);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteLine("Failed to create directory: " + ex.Message);
-                }
-            }
-            else
-            {
-                Logger.WriteLine("Directory already exists: " + directoryPath);
-            }
+            return GetDirWithBackstep(1);
         }
         
         const string NULL_PATH = "NULL";
-        public static string? selectDir(string title = "Select a folder")
+        public static string? SelectDirectoryByDialog(string title = "Select a folder")
         {
             // 創建 FolderBrowserDialog 物件
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
@@ -91,7 +76,7 @@ namespace PKG
                 return null;
             }
         }
-        public static string? selectFile(
+        public static string? SelectFileByDialog(
             string title = "Select a text file",
             string filter = "Text file (*.txt)|*.txt|All file (*.*)|*.*",
             string initDir = @"C:\")
@@ -126,5 +111,14 @@ namespace PKG
                 return null;
             }
         }
+
+
+        public static string GetComputerName()
+        {
+            string computerName = Environment.MachineName;
+            Logger.WriteLine($"{computerName}");
+            return computerName;
+        }
     }
+
 }

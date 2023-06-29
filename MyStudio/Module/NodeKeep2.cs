@@ -8,6 +8,12 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PKG;
+
+
+
+
+
+
 /// <summary>
 /// Data structure
 /// </summary>
@@ -36,23 +42,21 @@ using PKG;
 ///				4. complete description
 ///			}
 ///		Property (all optional)
-///			relation link info[LINK][TYPE][SUB_TYPE][...] = nodeFilePath
+///			relation link info[...][LINK][TYPE][NAME][...][targetID] = targetPath
 ///				type: 
 ///				{
 ///					unclassified
 ///					components
-///					property: {definition, explaination, 
+///					property
 ///					reference
 ///					detail	(unordered/ordered set) : {futher info, tell, show}
-///					next	(e.g. use on timeline structure)
-///					design flow (connect thought of design thread)
+///					next	
+///					design flow
 ///					instance
 ///					log: {cause, requirement, plan}
-///					
-///					selecti
 ///				}
-///				
-///			graph
+///			back-link
+///			image
 ///			tag
 ///			customized...
 ///		Attribute
@@ -84,41 +88,39 @@ using PKG;
 /// clone by copy .json text
 /// backup and recover
 
-namespace Module_keep
+/*
+
+namespace Module_developing
 {
 	public class Node
 	{
 		#region Constant strings
-		#region 1. Program related keys
-		public const string ID = "id";
-		public const string NAME = "name";
-		public const string PATH = "path";
-		#endregion
-		#region 2. Content related keys
-		public const string TITLE = "title";
-		public const string SUMMARY = "summary";
-		public const string DESCRIPTION = "description";
-		public const string LINK = "link";
-			public const string LINK_TYPE = "relation type";
-			public const string LINK_NAME = "relation name";
-			public const string LINK_PATH = "link path";
-        public const string BACK_LINK = "back link";
+
+		#region 1. Keys
+		public const string CONTENT = "content";
+		public const string PROPERTY = "property";
+			public const string LINK = "link";
+				public const string UNCLASSIFIED = "unclassified";
+					public const string UNNAMED = "unnamed";
+			public const string BACK_LINK = "back link";
         public const string IMAGE = "image";
 			public const string ICON = "icon";
 			public const string PROFILE = "profile"; // 頭像
 			public const string PORTRAIT = "portrait"; // 肖像
 			public const string ILLUSTRATION = "illustration"; // 插圖
 			public const string LOGO = "logo";
+		public const string ATTRIBUTE = "attribute";
+		public const string USAGE = "usage";
+		public const string 
 		public static List<string> PROPERTYs = new List<string>()
 		{
 			TITLE, SUMMARY, DESCRIPTION, LINK, BACK_LINK, IMAGE
 		};
+		#endregion
+		#endregion
 
-        #endregion
-        #endregion
-
-        #region Pathes &　Meta data
-        protected string _id;　// timestamp
+		#region Pathes &　Meta data
+		protected string _id;　// timestamp
         protected string _fileName; // xxx.json
 		protected string _filePath; // xx/Nodes/xxx.json
 		public static string nodeDir; // directory to save nodes: xx/Nodes
@@ -235,7 +237,7 @@ namespace Module_keep
 				obj = obj[keys[i]].Value<JObject>();
 			}
 			JToken jtoken = obj[keys[len - 1]];
-			T value = PKG.JsonPKG.JTokenToType<T>(jtoken);
+			T value = PKG.JsonPKG.JTokenToValue<T>(jtoken);
 			return value;
 		}
 		public void setInfo<T>(T value, params string[] keys)
@@ -277,10 +279,4 @@ namespace Module_keep
 		#endregion
 	}
 }
-/* timestamp
-DateTime now = DateTime.Now;
-string format = "yyyy-MM-dd@HH-mm-ss-fffffff";
-string formattedDateTime = now.ToString(format);
-Console.WriteLine(formattedDateTime);
-
- */
+*/
