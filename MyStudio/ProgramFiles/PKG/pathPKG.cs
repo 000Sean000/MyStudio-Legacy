@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -33,6 +35,34 @@ namespace PKG
         /// <summary>
         /// Get directory from current file going back some level
         /// </summary>
+
+        public static string GetMainDir()
+        {
+            string mainFilePath = null;
+            StackTrace stackTrace = new StackTrace(true);
+            StackFrame[] frames = stackTrace.GetFrames();
+
+            for (int i = 0; i < frames.Length; i++)
+            {
+                Debug.WriteLine("i: " + i);
+
+                if (frames[i].GetFileName() == null)
+                {
+                    break;
+                }
+                else
+                {
+                    mainFilePath = frames[i].GetFileName();
+                    Debug.WriteLine("file name: {" + frames[i].GetFileName() + "}");
+                }
+            }
+            string directory = Path.GetDirectoryName(mainFilePath);
+            
+            Debug.WriteLine("Base path: {" + mainFilePath + "}");
+            Debug.WriteLine("Base Directory: {" + directory + "}");
+            return directory;
+        }
+
         public static string GetDirWithBackstep(int backSteps)
         {
             StackFrame frame = new StackTrace(true).GetFrame(backSteps);
