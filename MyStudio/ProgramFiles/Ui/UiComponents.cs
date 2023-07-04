@@ -7,7 +7,8 @@ using PKG;
 using Module;
 namespace Ui
 {
-	public class RecentVault
+    #region App Menu
+    public class RecentVault
 	{
 		public AppMenu appMenu;
 		private TableLayoutPanel tableLayoutPanel_vault = new TableLayoutPanel();
@@ -144,4 +145,5 @@ namespace Ui
 		}
         #endregion
     }
+    #endregion
 }

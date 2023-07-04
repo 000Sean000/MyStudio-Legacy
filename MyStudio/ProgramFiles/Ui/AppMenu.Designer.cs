@@ -39,6 +39,7 @@ namespace Ui
             button_vaultOption0 = new Button();
             label_vaultName0 = new Label();
             label_vaultPath0 = new Label();
+            button1 = new Button();
             tableLayoutPanel_appMenu.SuspendLayout();
             tableLayoutPanel_menuMain.SuspendLayout();
             tableLayoutPanel_menu_options.SuspendLayout();
@@ -85,10 +86,12 @@ namespace Ui
             tableLayoutPanel_menu_options.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel_menu_options.Controls.Add(button_createVault, 1, 0);
             tableLayoutPanel_menu_options.Controls.Add(label_createVault, 0, 0);
+            tableLayoutPanel_menu_options.Controls.Add(button1, 1, 1);
             tableLayoutPanel_menu_options.Dock = DockStyle.Fill;
             tableLayoutPanel_menu_options.Location = new Point(2, 256);
             tableLayoutPanel_menu_options.Margin = new Padding(2);
             tableLayoutPanel_menu_options.Name = "tableLayoutPanel_menu_options";
+            tableLayoutPanel_menu_options.Padding = new Padding(10);
             tableLayoutPanel_menu_options.RowCount = 3;
             tableLayoutPanel_menu_options.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel_menu_options.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
@@ -99,11 +102,10 @@ namespace Ui
             // 
             // button_createVault
             // 
-            button_createVault.Dock = DockStyle.Fill;
-            button_createVault.Location = new Point(430, 2);
-            button_createVault.Margin = new Padding(2);
+            button_createVault.Location = new Point(439, 25);
+            button_createVault.Margin = new Padding(15);
             button_createVault.Name = "button_createVault";
-            button_createVault.Size = new Size(180, 68);
+            button_createVault.Size = new Size(148, 35);
             button_createVault.TabIndex = 0;
             button_createVault.Text = "Create";
             button_createVault.UseVisualStyleBackColor = true;
@@ -113,10 +115,10 @@ namespace Ui
             // 
             label_createVault.AutoSize = true;
             label_createVault.Dock = DockStyle.Fill;
-            label_createVault.Location = new Point(2, 0);
+            label_createVault.Location = new Point(12, 10);
             label_createVault.Margin = new Padding(2, 0, 2, 0);
             label_createVault.Name = "label_createVault";
-            label_createVault.Size = new Size(424, 72);
+            label_createVault.Size = new Size(410, 65);
             label_createVault.TabIndex = 1;
             label_createVault.Text = "label_createVault";
             label_createVault.TextAlign = ContentAlignment.MiddleLeft;
@@ -196,6 +198,15 @@ namespace Ui
             label_vaultPath0.Click += label_vaultPath0_Click;
             label_vaultPath0.MouseHover += label_vaultPath0_MouseHover;
             // 
+            // button1
+            // 
+            button1.Location = new Point(427, 78);
+            button1.Name = "button1";
+            button1.Size = new Size(94, 29);
+            button1.TabIndex = 2;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            // 
             // AppMenu
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -203,6 +214,7 @@ namespace Ui
             BackColor = SystemColors.Window;
             ClientSize = new Size(953, 609);
             Controls.Add(tableLayoutPanel_appMenu);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Margin = new Padding(2);
             MaximizeBox = false;
             Name = "AppMenu";
@@ -249,5 +261,7 @@ namespace Ui
         }
 
         #endregion
+
+        private Button button1;
     }
 }
