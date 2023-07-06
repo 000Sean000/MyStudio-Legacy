@@ -158,14 +158,14 @@ namespace Module
 
 			}
 		}
-        public void ReadContent()
-        {
-            lock (_infoLock)
-            {
+		public void ReadContent()
+		{
+			lock (_infoLock)
+			{
 
-            }
-        }
-        public void AddLink()
+			}
+		}
+		public void AddLink()
 		{
 			lock (_infoLock)
 			{
@@ -193,9 +193,9 @@ namespace Module
 			clone.Set<string>(clone._id, new string[] { METADATA, ID });
 			if (cloneType == CloneType.Simple)
 			{
-                clone.Set<JObject>(new JObject(), new string[] { PROPERTY, LINK });
-                clone.Set<JObject>(new JObject(), new string[] { PROPERTY, BACK_LINK });
-            }
+				clone.Set<JObject>(new JObject(), new string[] { PROPERTY, LINK });
+				clone.Set<JObject>(new JObject(), new string[] { PROPERTY, BACK_LINK });
+			}
 			else if (cloneType == CloneType.WithLinks)
 			{
 
@@ -204,7 +204,7 @@ namespace Module
 			{
 
 			}
-            return clone;
+			return clone;
 		}
 		public void Delete()
 		{
@@ -214,11 +214,11 @@ namespace Module
 
 		#region Properties (Accessors)
 		public string id { get { return _id; } }
-        public string fileName { get { return "Node" + _id + ".json"; } }
-        public string path { get { return Path.Combine(nodesDir, fileName); } }
-        #endregion
+		public string fileName { get { return "Node" + _id + ".json"; } }
+		public string path { get { return Path.Combine(nodesDir, fileName); } }
+		#endregion
 
-        #region
-        #endregion
-    }
+		#region
+		#endregion
+	}
 }

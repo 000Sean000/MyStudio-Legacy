@@ -8,17 +8,17 @@ using System.Diagnostics;
 
 namespace PKG
 {
-    public static class Logger
-    {
-        public static void WriteLine<T>(T message)
-        {
+	public static class Logger
+	{
+		public static void WriteLine<T>(T message)
+		{
 #if DEBUG
-            Debug.WriteLine(message); // 在 Debug 模式下使用 Debug.WriteLine
+			Debug.WriteLine(message); // 在 Debug 模式下使用 Debug.WriteLine
 #else
-        Console.WriteLine(message); // 在 Release 模式下使用 Console.WriteLine
+		Console.WriteLine(message); // 在 Release 模式下使用 Console.WriteLine
 #endif
-        }
-    }
+		}
+	}
 
 }
 /* usage

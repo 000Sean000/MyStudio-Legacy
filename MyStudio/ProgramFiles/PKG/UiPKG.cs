@@ -9,237 +9,414 @@ using System.Windows.Forms;
 
 namespace PKG
 {
-    
-    public class ResizableControl
-    {
-        private Control _control;
-        private Cursor _originalCursor;
+	// BUG:　new control point update latency
+/*
+ * Remember to set property "AutoSize" of the control to False!!!!!
+ */
+	public class ResizableControl
+	{
+		#region Fields
+		public enum Edge
+		{
+			N, S, W, E, NW, NE, SW, SE, None
+		}
+		protected Control _control;
+		protected Control originalParent;
+		protected Cursor _originalCursor;
+		protected Edge _edge = Edge.None;
+		protected bool isResizing = false;
+		protected Point _cursorPoint0; 
+		protected int widthDiff;
+		protected int heightDiff;
+		public Action<Control> reAddControlAction;
 
-        private bool isResizing = false;
-        private Point resizeStartPoint;
-        private Rectangle boundary;
+		protected int margin; // Margin or sensitivity at the boundary
+		protected Rectangle boundary;
+		protected Rectangle northRegion;
+		protected Rectangle southRegion;
+		protected Rectangle westRegion;
+		protected Rectangle eastRegion;
+		protected Rectangle topLeftRegion;
+		protected Rectangle topRightRegion;
+		protected Rectangle bottomLeftRegion;
+		protected Rectangle bottomRightRegion;
+		#endregion
 
-        private int margin; // Margin or sensitivity at the boundary
-        Rectangle northRegion;
-        Rectangle southRegion;
-        Rectangle westRegion;
-        Rectangle eastRegion;
-        Rectangle topLeftRegion;
-        Rectangle topRightRegion;
-        Rectangle bottomLeftRegion;
-        Rectangle bottomRightRegion;
-        public ResizableControl(Control control, int margin_ = 10)
-        {
-            _control = control;
-            _originalCursor = new Cursor(control.Cursor.Handle);
-            margin = margin_;
+		public bool _mouseDown = false;
+		public ResizableControl(Control control, Action<Control> reAddControlAction_ = null, int margin_ = 10)
+		{
+			_control = control;
+			originalParent = control.Parent;
+			reAddControlAction = reAddControlAction_;
+			_originalCursor = new Cursor(control.Cursor.Handle);
+			margin = margin_;
 
-            boundary = _control.ClientRectangle;
-            // Define the regions for each side of the boundary
-            northRegion = new Rectangle(boundary.Left, boundary.Top, boundary.Width, margin);
-            southRegion = new Rectangle(boundary.Left, boundary.Bottom - margin, boundary.Width, margin);
-            westRegion = new Rectangle(boundary.Left, boundary.Top, margin, boundary.Height);
-            eastRegion = new Rectangle(boundary.Right - margin, boundary.Top, margin, boundary.Height);
-            topLeftRegion = new Rectangle(boundary.Left, boundary.Top, margin, margin);
-            topRightRegion = new Rectangle(boundary.Right - margin, boundary.Top, margin, margin);
-            bottomLeftRegion = new Rectangle(boundary.Left, boundary.Bottom - margin, margin, margin);
-            bottomRightRegion = new Rectangle(boundary.Right - margin, boundary.Bottom - margin, margin, margin);
+			DefineBoundary();
+			_control.MouseDown += MouseDown;
+			_control.MouseUp += MouseUp;
+			_control.MouseMove += MouseMove;
+			_control.MouseLeave += MouseLeave;
+		}
+		public void DefineBoundary()
+		{
+			boundary = _control.ClientRectangle;
+			// Define the regions for each side of the boundary
+			northRegion = new Rectangle(boundary.Left + margin, boundary.Top, boundary.Width - (2 * margin), margin);
+			southRegion = new Rectangle(boundary.Left + margin, boundary.Bottom - margin, boundary.Width - (2 * margin), margin);
+			westRegion = new Rectangle(boundary.Left, boundary.Top + margin, margin, boundary.Height - (2 * margin));
+			eastRegion = new Rectangle(boundary.Right - margin, boundary.Top + margin, margin, boundary.Height - (2 * margin));
+			topLeftRegion = new Rectangle(boundary.Left, boundary.Top, margin, margin);
+			topRightRegion = new Rectangle(boundary.Right - margin, boundary.Top, margin, margin);
+			bottomLeftRegion = new Rectangle(boundary.Left, boundary.Bottom - margin, margin, margin);
+			bottomRightRegion = new Rectangle(boundary.Right - margin, boundary.Bottom - margin, margin, margin);
+		}
+		public void RecoverCursor()
+		{
+			_control.Cursor = new Cursor(_originalCursor.Handle);
+		}
+		protected void MouseDown(object sender, MouseEventArgs e)
+		{
+			// Check if the mouse is near the boundary of the container
+			if (IsCursorNearBoundary())
+			{
+				isResizing = true;
+				_cursorPoint0 = new Point(e.X, e.Y);
+			}
+			///_control.Text = _cursorPoint0.ToString() +'\n'+ e.Location.ToString();
 
-            _control.MouseDown += MouseDown;
-            _control.MouseUp += MouseUp;
-            _control.MouseMove += MouseMove;
-            _control.MouseHover += MouseHover;
-            _control.MouseLeave += MouseLeave;
-        }
-        
+		}
+		protected void MouseMove(object sender, MouseEventArgs e)
+		{
+			if (isResizing)
+			{
+				// Calculate the size difference based on the mouse movement
+				widthDiff = e.X - _cursorPoint0.X;
+				heightDiff = e.Y - _cursorPoint0.Y;
+				
+				// Adjust the size of the resizable block control
+				if (_edge == Edge.N)
+				{
+					_control.Location = new Point(_control.Location.X, _control.Location.Y + heightDiff);
+					_control.Height -= heightDiff;
+				}
+				else if (_edge == Edge.NW)
+				{
+					_control.Location = new Point(_control.Location.X + widthDiff, _control.Location.Y + heightDiff);
+					_control.Width -= widthDiff;
+					_control.Height -= heightDiff;
+				}
+				else if (_edge == Edge.W)
+				{
+					_control.Location = new Point(_control.Location.X + widthDiff, _control.Location.Y);
+					_control.Width -= widthDiff;
+				}
+				else if (_edge == Edge.SW)
+				{
+					_control.Location = new Point(_control.Location.X + widthDiff, _control.Location.Y);
+					_control.Width -= widthDiff;
+					_control.Height += heightDiff;
+					_cursorPoint0 = new Point(_cursorPoint0.X, e.Y);
+				}
+				else if (_edge == Edge.S)
+				{
+					_control.Height += heightDiff;
+					_cursorPoint0 = new Point(_cursorPoint0.X, e.Y);
+				}
+				else if (_edge == Edge.SE)
+				{
+					_control.Width += widthDiff;
+					_control.Height += heightDiff;
+					_cursorPoint0 = new Point(e.X, e.Y);
+				}
+				else if (_edge == Edge.E)
+				{
+					_control.Width += widthDiff;
+					_cursorPoint0 = new Point(e.X, _cursorPoint0.Y);
+				}
+				else if (_edge == Edge.NE)
+				{
+					_control.Location = new Point(_control.Location.X, _control.Location.Y + heightDiff);
+					_control.Width += widthDiff;
+					_control.Height -= heightDiff;
+					_cursorPoint0 = new Point(e.X, _cursorPoint0.Y);
+				}
+				//_control.Text = "mouse:" + e.Location.ToString() + " | control:" + _control.Location.ToString();
+				_control.Text = _cursorPoint0.ToString() + '\n' + e.Location.ToString();
+				/*
+				 * adding the resized control back to the container after updating its size and position.
+				 * 
+				 */
+				if (reAddControlAction != null)
+				{
+					reAddControlAction(_control);
+				}
+			}
+			else
+			{
+				ChangeCursorAtBoundary(e.Location);
+			}
+		}
 
-        private void MouseDown(object sender, MouseEventArgs e)
-        {
-            // Check if the mouse is near the boundary of the container
-            if (IsNearBoundary(e.Location))
-            {
-                isResizing = true;
-                resizeStartPoint = e.Location;
-            }
-        }
+		protected void MouseUp(object sender, MouseEventArgs e)
+		{
+			isResizing = false;
+			RecoverCursor();
+			DefineBoundary();
+			_mouseDown = false;
+		}
 
-        private void MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isResizing)
-            {
-                // Calculate the size difference based on the mouse movement
-                int widthDiff = e.X - resizeStartPoint.X;
-                int heightDiff = e.Y - resizeStartPoint.Y;
+		protected void MouseLeave(object sender, EventArgs e)
+		{
+			RecoverCursor();
+		}
+		protected void ChangeCursorAtBoundary(Point mousePosition)
+		{
+			if (northRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the north side
+				_control.Cursor = Cursors.SizeNS;
+				_edge = Edge.N;
+			}
+			else if (southRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the south side
+				_control.Cursor = Cursors.SizeNS;
+				_edge = Edge.S;
+			}
+			else if (westRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the west side
+				_control.Cursor = Cursors.SizeWE;
+				_edge = Edge.W;
+			}
+			else if (eastRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the east side
+				_control.Cursor = Cursors.SizeWE;
+				_edge = Edge.E;
+			}
+			else if (topLeftRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the top-left corner
+				_control.Cursor = Cursors.SizeNWSE;
+				_edge = Edge.NW;
+			}
+			else if (topRightRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the top-right corner
+				_control.Cursor = Cursors.SizeNESW;
+				_edge = Edge.NE;
+			}
+			else if (bottomLeftRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the bottom-left corner
+				_control.Cursor = Cursors.SizeNESW;
+				_edge = Edge.SW;
+			}
+			else if (bottomRightRegion.Contains(mousePosition))
+			{
+				// Mouse cursor is at the bottom-right corner
+				_control.Cursor = Cursors.SizeNWSE;
+				_edge = Edge.SE;
+			}
+			else
+			{
+				_control.Cursor = Cursors.Hand;
+				_edge = Edge.None;
+			}
+		}
+		protected bool IsCursorNearBoundary()
+		{
+			if (_edge != Edge.None)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		/* keep
+		 protected void MouseDown(object sender, MouseEventArgs e)
+		{
+			// Check if the mouse is near the boundary of the container
+			if (IsCursorNearBoundary() && !isResizing)
+			//if (IsCursorNearBoundary())
+			{
+				isResizing = true;
+				//_cursorPoint0 = e.Location;
+				_cursorPoint0 = new Point(e.X, e.Y);
+				_control.Location = new Point(_control.Location.X, _control.Location.Y);
+				Width0 = _control.Width;
+				Height0 = _control.Height;
+			}
+			_mouseDown = true;
+			//_control.Text = "mouse:" + e.Location.ToString() + " | control:" + _control.Location.ToString();
+			_control.Text = _cursorPoint0.ToString() +'\n'+ e.Location.ToString();
 
-                // Adjust the size of the resizable block control
-                _control.Width += widthDiff;
-                _control.Height += heightDiff;
+		}
 
-                resizeStartPoint = e.Location;
-            }
-        }
+		protected void MouseMove(object sender, MouseEventArgs e)
+		{
+			
+			if (isResizing)
+			{
+				// Calculate the size difference based on the mouse movement
 
-        private void MouseUp(object sender, MouseEventArgs e)
-        {
-            isResizing = false;
-            //_control.Cursor = new Cursor(_originalCursor.Handle);
-        }
-        private void MouseHover(object sender, EventArgs e)
-        {
-            IsNearBoundary(Cursor.Position);
-        }
-        private void MouseLeave(object sender, EventArgs e)
-        {
-            //_control.Cursor = new Cursor(_originalCursor.Handle);
-        }
-        private bool IsNearBoundary(Point mousePosition)
-        {
-            
-            if (northRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the north side
-                _control.Cursor = Cursors.SizeNS;
-                Cursor.Current = _control.Cursor;
-                return true;
-                
-            }
-            else if (southRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the south side
-                _control.Cursor= Cursors.SizeNS;
-                Cursor.Current = _control.Cursor;
-                return true;
-            }
-            else if (westRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the west side
-                _control.Cursor = Cursors.SizeWE;
-                Cursor.Current = _control.Cursor;
-                return true;
-            }
-            else if (eastRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the east side
-                _control.Cursor = Cursors.SizeWE;
-                Cursor.Current = _control.Cursor;
-                return true;
-            }
-            else if (topLeftRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the top-left corner
-                _control.Cursor = Cursors.SizeNWSE;
-                Cursor.Current = _control.Cursor;
-                return true;
-            }
-            else if (topRightRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the top-right corner
-                _control.Cursor = Cursors.SizeNESW;
-                Cursor.Current = _control.Cursor;
-                return true;
-            }
-            else if (bottomLeftRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the bottom-left corner
-                _control.Cursor = Cursors.SizeNESW;
-                Cursor.Current = _control.Cursor;
-                return true;
-            }
-            else if (bottomRightRegion.Contains(mousePosition))
-            {
-                // Mouse cursor is at the bottom-right corner
-                _control.Cursor = Cursors.SizeNWSE;
-                Cursor.Current = _control.Cursor;
-                return true;
-            }
-            else
-            {
-                _control.Cursor = Cursors.Hand;
-                Cursor.Current = _control.Cursor;
-                return false;
-            }
-        }
+				int widthDiff = e.X - _cursorPoint0.X;
+				int heightDiff = e.Y - _cursorPoint0.Y;
+				
+				// Adjust the size of the resizable block control
+				if (_edge == Edge.N)
+				{
+					_control.Location = new Point(_control.Location.X, _control.Location.Y + heightDiff);
+					_control.Height = Height0 - heightDiff;
+				}
+				else if (_edge == Edge.NW)
+				{
+					_control.Location = new Point(_control.Location.X + widthDiff, _control.Location.Y + heightDiff);
+					_control.Width = Width0 - widthDiff;
+					_control.Height = Height0 - heightDiff;
+				}
+				else if (_edge == Edge.W)
+				{
+					_control.Location = new Point(_control.Location.X + widthDiff, _control.Location.Y);
+					_control.Width = Width0 - widthDiff;
+				}
+				else if (_edge == Edge.SW)
+				{
+					_control.Location = new Point(_control.Location.X + widthDiff, _control.Location.Y);
+					_control.Width = Width0 - widthDiff;
+					_control.Height = Height0 + heightDiff;
+				}
+				else if (_edge == Edge.S)
+				{
+					_control.Height = Height0 + heightDiff;
+				}
+				else if (_edge == Edge.SE)
+				{
+					_control.Width = Width0 + widthDiff;
+					_control.Height = Height0 + heightDiff;
+				}
+				else if (_edge == Edge.E)
+				{
+					_control.Width = Width0 + widthDiff;
+				}
+				else if (_edge == Edge.NE)
+				{
+					_control.Location = new Point(_control.Location.X, _control.Location.Y + heightDiff);
+					_control.Width = Width0 + widthDiff;
+					_control.Height = Height0 + heightDiff;
+				}
+				//_control.Text = "mouse:" + e.Location.ToString() + " | control:" + _control.Location.ToString();
+				_control.Text = _cursorPoint0.ToString() + '\n' + e.Location.ToString();
 
-    }
-    
-    public class DraggableCanvas
-    {
-        protected Point _dragStartPoint;
-        protected Point _canvasStartPoint;
-        protected bool _isDragging;
-        protected bool _readyToDraw = false;
-        protected float _sensitivity;
+			}
+			else
+			{
+				if (_mouseDown)
+				{
+					int widthDiff = e.X - _cursorPoint0.X;
+					int heightDiff = e.Y - _cursorPoint0.Y;
+					_control.Text = e.Location.ToString();
+					// Adjust the size of the resizable block control
+					_control.Location = new Point(_control.Location.X + widthDiff, _control.Location.Y + heightDiff);
 
-        public Panel _panel;
-        public Label canvasX = new Label();
-        public Label canvasY = new Label();
-        public Label canvasX0 = new Label();
-        public Label canvasY0 = new Label();
-        public Label mouseX = new Label();
-        public Label mouseY = new Label();
-        public Label mouseX0 = new Label();
-        public Label mouseY0 = new Label();
-        public DraggableCanvas(Panel panel, float sensitivity = 1)
-        {
-            _panel = panel;
-            _sensitivity = sensitivity;
-            _panel.MouseDown += MouseDown;
-            _panel.MouseUp += MouseUp;
-            _panel.MouseMove += MouseMove;
-        }
-        public void MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                _dragStartPoint = new Point(e.X, e.Y);
-                _isDragging = true;
+				}
+				// only update cursor type when the boundary is not changing
+				ChangeCursorAtBoundary(e.Location);
+			}
+		}
+
+		protected void MouseUp(object sender, MouseEventArgs e)
+		{
+			isResizing = false;
+			RecoverCursor();
+			DefineBoundary();
+			_mouseDown = false;
+		}
+
+		 */
+	}
+
+	public class DraggableCanvas
+	{
+		protected Point _dragStartPoint;
+		protected Point _canvasStartPoint;
+		protected bool _isDragging;
+		protected bool _readyToDraw = false;
+		protected float _sensitivity;
+
+		public Panel _panel;
+		public Label canvasX = new Label();
+		public Label canvasY = new Label();
+		public Label canvasX0 = new Label();
+		public Label canvasY0 = new Label();
+		public Label mouseX = new Label();
+		public Label mouseY = new Label();
+		public Label mouseX0 = new Label();
+		public Label mouseY0 = new Label();
+		public DraggableCanvas(Panel panel, float sensitivity = 1)
+		{
+			_panel = panel;
+			_sensitivity = sensitivity;
+			_panel.MouseDown += MouseDown;
+			_panel.MouseUp += MouseUp;
+			_panel.MouseMove += MouseMove;
+		}
+		public void MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right)
+			{
+				_dragStartPoint = new Point(e.X, e.Y);
+				_isDragging = true;
 
 
-                Point currentPosition = _panel.AutoScrollPosition;
-                _canvasStartPoint = new Point(currentPosition.X, currentPosition.Y);
-                canvasX0.Text = currentPosition.X.ToString();
-                canvasY0.Text = currentPosition.Y.ToString();
-                mouseX.Text = e.X.ToString();
-                mouseY.Text = e.Y.ToString();
-                mouseX0.Text = _dragStartPoint.X.ToString();
-                mouseY0.Text = _dragStartPoint.Y.ToString();
-            }
-        }
+				Point currentPosition = _panel.AutoScrollPosition;
+				_canvasStartPoint = new Point(currentPosition.X, currentPosition.Y);
+				canvasX0.Text = currentPosition.X.ToString();
+				canvasY0.Text = currentPosition.Y.ToString();
+				mouseX.Text = e.X.ToString();
+				mouseY.Text = e.Y.ToString();
+				mouseX0.Text = _dragStartPoint.X.ToString();
+				mouseY0.Text = _dragStartPoint.Y.ToString();
+			}
+		}
 
-        public void MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                _isDragging = false;
-                /*
-                Point currentPosition = _panel.AutoScrollPosition;
-                _panel.AutoScrollPosition = new Point(
-                    -_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * 1),
-                    -_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * 1));
-                currentPosition = _panel.AutoScrollPosition; // read the AutoScrollPosition again
-                canvasX.Text = currentPosition.X.ToString();
-                canvasY.Text = currentPosition.Y.ToString();
-                */
-            }
-        }
+		public void MouseUp(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right)
+			{
+				_isDragging = false;
+				/*
+				Point currentPosition = _panel.AutoScrollPosition;
+				_panel.AutoScrollPosition = new Point(
+					-_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * 1),
+					-_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * 1));
+				currentPosition = _panel.AutoScrollPosition; // read the AutoScrollPosition again
+				canvasX.Text = currentPosition.X.ToString();
+				canvasY.Text = currentPosition.Y.ToString();
+				*/
+			}
+		}
 
-        public void MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_isDragging)
-            {
+		public void MouseMove(object sender, MouseEventArgs e)
+		{
+			if (_isDragging)
+			{
 
-                _panel.AutoScrollPosition = new Point(
-                    -_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * _sensitivity),
-                    -_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * _sensitivity));
-                Point currentPosition = _panel.AutoScrollPosition;
-                canvasX.Text = currentPosition.X.ToString();
-                canvasY.Text = currentPosition.Y.ToString();
-                mouseX.Text = e.X.ToString();
-                mouseY.Text = e.Y.ToString();
+				_panel.AutoScrollPosition = new Point(
+					-_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * _sensitivity),
+					-_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * _sensitivity));
+				Point currentPosition = _panel.AutoScrollPosition;
+				canvasX.Text = currentPosition.X.ToString();
+				canvasY.Text = currentPosition.Y.ToString();
+				mouseX.Text = e.X.ToString();
+				mouseY.Text = e.Y.ToString();
 
 
-            }
-        }
-    }
+			}
+		}
+	}
 
 }

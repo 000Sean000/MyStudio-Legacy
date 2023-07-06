@@ -52,11 +52,11 @@ namespace PKG
 			}
 			return value;
 		}
-        public static T GetJObject<T>(JObject obj, params string[] keys)
-        {
-            int len = keys.Length;
-            for (int i = 0; i < len - 1; i++)
-            {
+		public static T GetJObject<T>(JObject obj, params string[] keys)
+		{
+			int len = keys.Length;
+			for (int i = 0; i < len - 1; i++)
+			{
 				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
 				{
 					throw new Exception("Get JObject value failed. (missing key)");
@@ -65,30 +65,30 @@ namespace PKG
 				{
 					obj = obj[keys[i]].Value<JObject>();
 				}
-            }
-            JToken jtoken = obj[keys[len - 1]];
-            T value = JTokenToType<T>(jtoken);
-            return value;
-        }
-        public static void SetJObject<T>(T value, JObject obj, params string[] keys)
-        {
-            int len = keys.Length;
-            for (int i = 0; i < len - 1; i++)
-            {
-                if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
-                {
-                    obj[keys[i]] = new JObject();
-                    obj = obj[keys[i]].ToObject<JObject>();
-                }
-                else
-                {
-                    obj = obj[keys[i]].ToObject<JObject>();
-                }
-            }
-            obj[keys[len - 1]] = JToken.FromObject(value);
-        }
-        // Modify JObject ( insert & remove ) 
-        public static void DemoModifyJsonObject(JObject jsonObject)
+			}
+			JToken jtoken = obj[keys[len - 1]];
+			T value = JTokenToType<T>(jtoken);
+			return value;
+		}
+		public static void SetJObject<T>(T value, JObject obj, params string[] keys)
+		{
+			int len = keys.Length;
+			for (int i = 0; i < len - 1; i++)
+			{
+				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
+				{
+					obj[keys[i]] = new JObject();
+					obj = obj[keys[i]].ToObject<JObject>();
+				}
+				else
+				{
+					obj = obj[keys[i]].ToObject<JObject>();
+				}
+			}
+			obj[keys[len - 1]] = JToken.FromObject(value);
+		}
+		// Modify JObject ( insert & remove ) 
+		public static void DemoModifyJsonObject(JObject jsonObject)
 		{
 			// insert a new key-value pair
 			jsonObject["email"] = "john@example.com";

@@ -7,8 +7,8 @@ using PKG;
 using Module;
 namespace Ui
 {
-    #region App Menu
-    public class RecentVault
+	#region App Menu
+	public class RecentVault
 	{
 		public AppMenu appMenu;
 		private TableLayoutPanel tableLayoutPanel_vault = new TableLayoutPanel();
@@ -19,13 +19,13 @@ namespace Ui
 		//public string VaultPath { get { return _vaultPath; } }
 		public RecentVault(AppMenu appMenu_, TableLayoutPanel tableLayoutPanel_vaultList, int rowIndex)
 		{
-            appMenu = appMenu_;
+			appMenu = appMenu_;
 
-            // 
-            // tableLayoutPanel_vault
-            // 
-            tableLayoutPanel_vault.AutoSize = true;
-            tableLayoutPanel_vault.ColumnCount = 2;
+			// 
+			// tableLayoutPanel_vault
+			// 
+			tableLayoutPanel_vault.AutoSize = true;
+			tableLayoutPanel_vault.ColumnCount = 2;
 			tableLayoutPanel_vault.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			tableLayoutPanel_vault.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
 			tableLayoutPanel_vault.Controls.Add(button_vaultOption, 1, 0);
@@ -84,8 +84,8 @@ namespace Ui
 		}
 		public void SetVaultInfo(string vaultName_,  string vaultPath_)
 		{
-            _vaultPath = vaultPath_;
-            label_vaultName.Text = vaultName_;
+			_vaultPath = vaultPath_;
+			label_vaultName.Text = vaultName_;
 			label_vaultPath.Text = _vaultPath.Replace(' ', '_');
 			
 			
@@ -108,23 +108,23 @@ namespace Ui
 
 
 
-        #region Event Handlers
-        private void tableLayoutPanel_vault_MouseHover(object sender, EventArgs e)
+		#region Event Handlers
+		private void tableLayoutPanel_vault_MouseHover(object sender, EventArgs e)
 		{
 
 		}
 		private void tableLayoutPanel_vault_Click(object sender, EventArgs e)
 		{
 			OpenVault();
-        }
+		}
 		private void label_vaultName_Click(object sender, EventArgs e)
 		{
-            OpenVault();
-        }
+			OpenVault();
+		}
 		private void label_vaultPath_Click(object sender, EventArgs e)
 		{
-            OpenVault();
-        }
+			OpenVault();
+		}
 		private void button_vaultOption_Click(object sender, EventArgs e)
 		{
 
@@ -143,7 +143,7 @@ namespace Ui
 		{
 
 		}
-        #endregion
-    }
-    #endregion
+		#endregion
+	}
+	#endregion
 }

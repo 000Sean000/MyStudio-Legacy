@@ -35,11 +35,13 @@ namespace Module
 		////protected JObject _cache;
 		protected List<string> _nodeIDs = new List<string>();
 		protected Dictionary<string, Node> _nodes = new Dictionary<string, Node>();
+		protected Dictionary<string, bool> _isNodeModified = new Dictionary<string, bool>();
 		#endregion
 
 		#region Resource Locks
 		public object SettingLock = new object();
 		public object NodesLock = new object();
+		public object _isNodeModifiedLock = new object();
 		#endregion
 
 		#region Json keys
@@ -48,7 +50,7 @@ namespace Module
 		public const string VOLATILE = "Volatile";
 		public const string INVOLATILE = "Involatile";
 		public const string PATH = "Node Pathes";
-		public const string MODIFIED = "Modification counter";
+		public const string FREQ = "Modification counter";
 		#endregion
 
 		public static int? cachFreqLim;
@@ -91,16 +93,16 @@ namespace Module
 			#region maintain missing keys
 			MaintainSetting();
 			SaveSetting();
-            /*
+			/*
 			MaintainCache();
 			SaveCache();
 			*/
-            #endregion
-            foreach (JProperty property in _setting[NODES].ToObject<JObject>().Properties())
-            {
-                _nodeIDs.Add(property.Name);
-            }
-            Node.nodesDir = nodesDir;
+			#endregion
+			foreach (JProperty property in _setting[NODES].ToObject<JObject>().Properties())
+			{
+				_nodeIDs.Add(property.Name);
+			}
+			Node.nodesDir = nodesDir;
 			Node.mediaDir = mediaDir;
 		}
 		public void FirstLoadNodes()
@@ -119,6 +121,7 @@ namespace Module
 				});
 				threadList.Add(thread);
 				thread.Start();
+				_isNodeModified[id] = false;
 			}
 			foreach (Thread thread in threadList)
 			{
@@ -131,33 +134,54 @@ namespace Module
 			foreach (string id in _nodeIDs)
 			{
 				Thread thread;
-				thread = new Thread(_nodes[id].Save);
-				threadList.Add(thread);
-				thread.Start();
-				thread = new Thread(() => 
+				if (_isNodeModified[id])
 				{
-					lock (SettingLock)
+					thread = new Thread(_nodes[id].Save);
+					threadList.Add(thread);
+					thread.Start();
+					_isNodeModified[id] = false;
+					thread = new Thread(() =>
 					{
-						int freq = _setting[NODES][id][MODIFIED].Value<int>();
-
-                        if (freq < 0)
+						int freq;
+						lock (SettingLock)
 						{
-							freq = 1;
+							freq = _setting[NODES][id][FREQ].Value<int>();
+							if (freq < 0)
+							{
+								freq = 1;
+							}
+							else
+							{
+								freq += 1;
+							}
+							_setting[NODES][id][FREQ] = freq.ToString();
 						}
-						else
+					});
+					threadList.Add(thread);
+					thread.Start();
+				}
+				else
+				{
+					thread = new Thread(() =>
+					{
+						int freq;
+						lock (SettingLock)
 						{
-							freq += 1;
+							freq = _setting[NODES][id][FREQ].Value<int>();
+							freq--;
+							_setting[NODES][id][FREQ] = freq.ToString();
 						}
-						_setting[NODES][id][MODIFIED] = freq.ToString();
-                    }
-				});
-				threadList.Add(thread);
-				thread.Start();
+					});
+					threadList.Add(thread);
+					thread.Start();
+				}
 			}
+			/*
 			foreach (Thread thread in threadList)
 			{
 				thread.Join();
 			}
+			*/
 		}
 		public Node FetchNode(string id)
 		{
@@ -167,28 +191,28 @@ namespace Module
 				_nodeIDs.Add(id);
 				_nodes[id] = node;
 			}
-            return _nodes[id];
-        }
+			return _nodes[id];
+		}
 		#region File Operation
 		public void MaintainSetting()
 		{
-            
-            lock (SettingLock)
+			
+			lock (SettingLock)
 			{
-                if (!_setting.ContainsKey(NODES))
+				if (!_setting.ContainsKey(NODES))
 				{
 					_setting[NODES] = new JObject();
 				}
-                JObject nodeObj = _setting[NODES].ToObject<JObject>();
-                foreach (string id in _nodeIDs)
+				JObject nodeObj = _setting[NODES].ToObject<JObject>();
+				foreach (string id in _nodeIDs)
 				{
 					JObject idObj = nodeObj[id].ToObject<JObject>();
-                    if (!idObj.ContainsKey(MODIFIED))
+					if (!idObj.ContainsKey(FREQ))
 					{
-						idObj[MODIFIED] = new JObject();
+						idObj[FREQ] = new JObject();
 					}
 				}
-            }
+			}
 		}
 		/*
 		public void MaintainCache()
@@ -209,9 +233,9 @@ namespace Module
 			{
 				_cache[INVOLATILE][PATH] = new JObject();
 			}
-			if (!_cache[INVOLATILE].ToObject<JObject>().ContainsKey(MODIFIED))
+			if (!_cache[INVOLATILE].ToObject<JObject>().ContainsKey(FREQ))
 			{
-				_cache[INVOLATILE][MODIFIED] = new JObject();
+				_cache[INVOLATILE][FREQ] = new JObject();
 			}
 		}
 		
@@ -219,14 +243,14 @@ namespace Module
 		{
 			if (_cache[VOLATILE][NODES].ToObject<JObject>().ContainsKey(id))
 			{
-				int modified_times = _cache[INVOLATILE][MODIFIED][id].Value<int>();
+				int modified_times = _cache[INVOLATILE][FREQ][id].Value<int>();
 				if (modified_times > 0)
 				{
-					_cache[INVOLATILE][MODIFIED][id] = JToken.FromObject(modified_times + 1);
+					_cache[INVOLATILE][FREQ][id] = JToken.FromObject(modified_times + 1);
 				}
 				else
 				{
-					_cache[INVOLATILE][MODIFIED][id] = JToken.FromObject(1);
+					_cache[INVOLATILE][FREQ][id] = JToken.FromObject(1);
 				}
 				return _cache[VOLATILE][NODES][id].ToObject<Node>();
 			}

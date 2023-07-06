@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Ui
 {
-    public static class Handler
-    {
+	public static class Handler
+	{
 
 
-        #region App Menu
-        public static void OpenVault()
-        {
-            //Vault vault = AppManager.OpenVault();
-        }
-        #endregion
-    }
+		#region App Menu
+		public static void OpenVault()
+		{
+			//Vault vault = AppManager.OpenVault();
+		}
+		#endregion
+	}
 }
