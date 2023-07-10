@@ -10,11 +10,17 @@ using System.Windows.Forms;
 
 namespace Ui
 {
-    public partial class AppMain : Form
-    {
-        public AppMain()
-        {
-            InitializeComponent();
-        }
-    }
+	public partial class AppMain : Form
+	{
+		public AppMain()
+		{
+			InitializeComponent();
+			MyInit();
+		}
+
+		private void pictureBox1_SizeChanged(object sender, EventArgs e)
+		{
+
+		}
+	}
 }

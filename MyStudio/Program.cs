@@ -14,8 +14,9 @@ namespace MyStudio2
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            //Application.Run(new AppMenu());
-            Application.Run(new UiDev());
-        }
+			//Application.Run(new AppMenu());
+			//Application.Run(new UiDev());
+			Application.Run(new AppMain());
+		}
     }
 }
