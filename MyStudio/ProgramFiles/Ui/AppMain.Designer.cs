@@ -266,15 +266,11 @@ namespace Ui
 
 		public void MyInit()
 		{
-			new ResizablePictureBox(pictureBox1);
-			new ResizablePictureBox(pictureBox_NodeImage);
+			new FlexiblePictureBox(pictureBox1);
+			new FlexiblePictureBox(pictureBox_NodeImage);
 			//UiPKG.SetPictureBoxFitImage(pictureBox1);
-			new FlexControl(label2);
+			new FlexibleControl(label2);
 			new DraggableCanvas(panel1);
-			UiPKG.SetControlResizable(label3);
-			UiPKG.SetControlResizable(tableLayoutPanel1);
-			//UiPKG.SetControlResizable(pictureBox1);
-			UiPKG.SetControlResizable(pictureBox_NodeImage);
 		}
 
 

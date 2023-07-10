@@ -14,7 +14,7 @@ namespace PKG
 {
 	public static class UiPKG
 	{
-		public static FlexControl SetControlResizable(Control control_, int thickness_ = 10) { return new FlexControl(control_, thickness_); }
+		public static FlexibleControl SetControlResizable(Control control_, int thickness_ = 10) { return new FlexibleControl(control_, thickness_); }
 		public static DraggableCanvas SetCanvasDaggable(Panel panel, float sensitivity = 1) { return new DraggableCanvas(panel, sensitivity); }
 		//public static SuperPictureBox SetPictureBoxFitImage(PictureBox pictureBox_) { return new SuperPictureBox(pictureBox_); }
 		
@@ -57,11 +57,11 @@ namespace PKG
 		}
 	}
 	*/
-	public class ResizablePictureBox: FlexControl
+	public class FlexiblePictureBox: FlexibleControl
 	{
 		PictureBox pictureBox;
 		float imageRatio;
-		public ResizablePictureBox(PictureBox pictureBox_): base(pictureBox_)
+		public FlexiblePictureBox(PictureBox pictureBox_): base(pictureBox_)
 		{
 			pictureBox = pictureBox_;
 			imageRatio = ((float)pictureBox.Image.Size.Height / (float)pictureBox.Image.Size.Width);
@@ -73,8 +73,6 @@ namespace PKG
 			{
 				StretchWidth();
 			}
-			
-			
 		}
 		public void StretchWidth()
 		{
@@ -94,7 +92,7 @@ namespace PKG
 			int diff = (int)(pictureBox.Size.Height / imageRatio) - pictureBox.Size.Width;
 			pictureBox.Location = new Point(pictureBox.Location.X - diff, pictureBox.Location.Y);
 		}
-		public void FitZoomedImage(object sender, MouseEventArgs e)
+		public void FitZoomedImage()
 		{
 			if (isResizing)
 			{
@@ -141,22 +139,11 @@ namespace PKG
 			
 		}
 
-		protected  void CalculateDiff2()
-		//protected override void CalculateDiff()
+		//protected  void CalculateDiff2()
+		protected override void CalculateDiff()
 		{
 			widthDiff = horizontalMove;
 			heightDiff = verticalMove;
-			// fit image ratio
-			Debug.WriteLine("imageRatio: " + imageRatio);
-			Debug.WriteLine("Ratio: " + (float)preHeight / (float)preWidth);
-			if (cursorLocation == Border.N || cursorLocation == Border.S || cursorLocation == Border.NW || cursorLocation == Border.SE)
-			{
-				widthDiff = (int)((float)(preHeight + heightDiff) / imageRatio - (float)preWidth);
-			}
-			else if (cursorLocation == Border.W || cursorLocation == Border.E || cursorLocation == Border.SW || cursorLocation == Border.NE)
-			{
-				heightDiff = (int)((float)(preWidth + widthDiff) * imageRatio - (float)preHeight);
-			}
 			/* border near N or W need opposite diff
 			 * positive diff => grow
 			 * negative diff => shrink
@@ -174,8 +161,22 @@ namespace PKG
 			{
 				widthDiff = -widthDiff;
 			}
+			// fit image ratio
+			Debug.WriteLine("imageRatio: " + imageRatio);
+			Debug.WriteLine("Ratio: " + (float)preHeight / (float)preWidth);
+			
+			if (cursorLocation == Border.N || cursorLocation == Border.S || cursorLocation == Border.NW || cursorLocation == Border.SE)
+			{
+				widthDiff = (int)((float)(preHeight + heightDiff) / imageRatio - (float)preWidth);
+			}
+			else if (cursorLocation == Border.W || cursorLocation == Border.E || cursorLocation == Border.SW || cursorLocation == Border.NE)
+			{
+				heightDiff = (int)((float)(preWidth + widthDiff) * imageRatio - (float)preHeight);
+			}
+			
+			
 			// change sizing type
-
+			
 			if (cursorLocation == Border.N)
 			{
 				cursorLocation = Border.NW;
@@ -196,9 +197,9 @@ namespace PKG
 				cursorLocation = Border.NE;
 				control.Cursor = Cursors.SizeNESW;
 			}
-
+			
 			// check basic Size
-			if (preHeight + heightDiff >= control.MinimumSize.Height)
+			if (preHeight + heightDiff <= control.MinimumSize.Height)
 			{
 				Debug.WriteLine("preHeight: " + preHeight + " heightDiff: " + heightDiff);
 				heightDiff = 0;
@@ -239,7 +240,7 @@ namespace PKG
 	 * Remember to set property "AutoSize" of the control to False!!!!!
 	 */
 
-	public class FlexControl
+	public class FlexibleControl
 	{
 		#region Fields
 		public enum Border
@@ -274,7 +275,7 @@ namespace PKG
 		#endregion
 
 		public bool isDragging = false;
-		public FlexControl(Control control_, int thickness_ = 10)
+		public FlexibleControl(Control control_, int thickness_ = 10)
 		{
 			control = control_;
 			//originalParent = control_.Parent;
@@ -318,6 +319,7 @@ namespace PKG
 		protected virtual void ResizeControl(MouseEventArgs e)
 		{
 			// Adjust the size of the resizable block control_
+			// don't update preCursorPosition when mousemove relates to N or W direction,
 			if (cursorLocation == Border.N)
 			{
 				control.Location = new Point(control.Location.X, control.Location.Y - heightDiff);
@@ -364,6 +366,7 @@ namespace PKG
 				control.Height += heightDiff;
 				preCursorPoint = new Point(e.X, preCursorPoint.Y);
 			}
+			
 			//Thread.Sleep(1000);
 			Debug.WriteLine("Resize to " + control.Size.ToString() +" at " + control.Location.ToString());
 		}
