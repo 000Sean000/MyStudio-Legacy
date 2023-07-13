@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PKG;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Module
 {
@@ -105,6 +108,7 @@ namespace Module
 			Node.nodesDir = nodesDir;
 			Node.mediaDir = mediaDir;
 		}
+		#region Node operation
 		public void FirstLoadNodes()
 		{
 			List<Thread> threadList = new List<Thread>();
@@ -193,6 +197,64 @@ namespace Module
 			}
 			return _nodes[id];
 		}
+		public void WriteNodeContent(Node node, List<string> texts, List<string> citedNodes)
+		{
+			node.Set<List<string>>(texts, Node.CONTENT, Node.TEXT);
+			node.Set<List<string>>(citedNodes, Node.CONTENT, Node.CITE);
+		}
+		public string ReadNodeContent(Node node)
+		{
+			string content = "";
+			List<string> texts = node.Get<List<string>>(Node.CONTENT, Node.TEXT);
+			List<string> citedNodeIds = node.Get<List<string>>(Node.CONTENT, Node.CITE);
+			List<Node> citedNodes = new List<Node>();
+			object citedNodesLock = new object();
+			List<string> citations = new List<string>();
+			object citationsLock = new object();
+			List<Thread> threadList = new List<Thread>();
+			int citation_index = 0;
+			foreach (string id in citedNodeIds)
+			{
+				Node citedNode;
+				string citation;
+				Thread thread;
+				thread = new Thread((arg) => {
+					int index = (int)arg;
+					citedNode = FetchNode(id);
+					lock (citedNodesLock)
+					{
+						citedNodes.Add(citedNode);
+					}
+					citation = ReadNodeContent(citedNode);
+					lock (citationsLock)
+					{
+						citations[index] = citation;
+					}
+				});
+				threadList.Add(thread);
+				thread.Start(citation_index);
+				citation_index++;
+			}
+			foreach (Thread thread in threadList)
+			{
+				thread.Join();
+			}
+			citation_index = 0;
+			foreach (string text in  texts)
+			{
+				if (text == Node.CITATION_MARK)
+				{
+					content += citations[citation_index];
+					citation_index++;
+				}
+				else
+				{
+					content = text;
+				}
+			}
+			return content;
+		}
+		#endregion
 		#region File Operation
 		public void MaintainSetting()
 		{

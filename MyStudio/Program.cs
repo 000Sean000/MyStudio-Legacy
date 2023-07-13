@@ -16,7 +16,7 @@ namespace MyStudio2
             ApplicationConfiguration.Initialize();
 			//Application.Run(new AppMenu());
 			//Application.Run(new UiDev());
-			Application.Run(new AppMain());
+			Application.Run(new UiNodeDev());
 		}
     }
 }

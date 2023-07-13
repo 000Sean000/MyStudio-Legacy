@@ -6,11 +6,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 using PKG;
+using System.Text.RegularExpressions;
 
 namespace Module
 {
-	public class Node
+	public partial class Node
 	{
+		#region static fields
+		public static Regex regexCitation = new Regex(@"\[\[([\s\S]*?)\]\]");
+		// regular expression of citations, it matches "[[citation]]", where citation can be any character or newline or no character.
+		public const string CITATION_MARK = "[[CITATION]]";
+		#endregion
+
 		#region Json keys
 		public const string METADATA = "Metadata";
 		public const string ID = "id";
@@ -95,25 +102,31 @@ namespace Module
 		}
 		public void MaintainNode()
 		{
-			lock (_infoLock)
+			/*
+			if (!_info.ContainsKey(METADATA))
 			{
-				if (!_info.ContainsKey(METADATA))
-				{
-					_info[METADATA] = new JObject();
-				}
-				if (!_info.ContainsKey(CONTENT))
-				{
-					_info[CONTENT] = new JObject();
-				}
-				if (!_info.ContainsKey(PROPERTY))
-				{
-					_info[PROPERTY] = new JObject();
-				}
-				if (!_info.ContainsKey(ATTRIBUTE))
-				{
-					_info[ATTRIBUTE] = new JObject();
-				}
-			}	
+				_info[METADATA] = new JObject();
+			}
+			if (!_info.ContainsKey(CONTENT))
+			{
+				_info[CONTENT] = new JObject();
+			}
+			if (!_info.ContainsKey(PROPERTY))
+			{
+				_info[PROPERTY] = new JObject();
+			}
+			if (!_info.ContainsKey(ATTRIBUTE))
+			{
+				_info[ATTRIBUTE] = new JObject();
+			}
+			*/
+			Maintain(new string[] { });
+			Maintain(new string[] { METADATA });
+			Maintain(new string[] { CONTENT });
+			Maintain(new string[] { PROPERTY, MEDIA });
+			Maintain(new string[] { PROPERTY, USER_DEF });
+			Maintain(new string[] { ATTRIBUTE, LOGIC });
+			Maintain(new string[] { ATTRIBUTE, VISUAL });
 		}
 		public void Save()
 		{
@@ -127,6 +140,13 @@ namespace Module
 			lock (_infoLock)
 			{
 				_info = JsonPKG.ReadJsonObjectFromFile(path);
+			}
+		}
+		public void Maintain(params string[] keys)
+		{
+			lock (_infoLock)
+			{
+				JsonPKG.MaintainJObject(_info, keys);
 			}
 		}
 		public void Set<T>(T value, params string[] keys)
@@ -151,20 +171,7 @@ namespace Module
 				}
 			}
 		}
-		public void WriteContent()
-		{
-			lock ( _infoLock)
-			{
-
-			}
-		}
-		public void ReadContent()
-		{
-			lock (_infoLock)
-			{
-
-			}
-		}
+		
 		public void AddLink()
 		{
 			lock (_infoLock)
@@ -218,7 +225,38 @@ namespace Module
 		public string path { get { return Path.Combine(nodesDir, fileName); } }
 		#endregion
 
-		#region
+		#region Ui-related operation
+		public static List<string> SeparateSubstringsAndCitations(string input)
+		{
+			List<string> substrings = new List<string>();
+			List<string> citations = new List<string>();
+
+			int currentIndex = 0;
+
+			MatchCollection matches = regexCitation.Matches(input);
+
+			foreach (Match match in matches)
+			{
+				if (match.Index > currentIndex)
+				{
+					string substring = input.Substring(currentIndex, match.Index - currentIndex);
+					substrings.Add(substring);
+				}
+
+				string citation = match.Groups[1].Value;
+				citations.Add(citation);
+				substrings.Add(CITATION_MARK);
+				currentIndex = match.Index + match.Length;
+			}
+
+			if (currentIndex < input.Length)
+			{
+				string remainingSubstring = input.Substring(currentIndex);
+				substrings.Add(remainingSubstring);
+			}
+
+			return substrings;
+		}
 		#endregion
 	}
 }

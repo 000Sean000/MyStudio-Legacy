@@ -99,7 +99,7 @@ namespace Ui
 			else
 			{
 				Vault vault = AppManager.OpenVault(_vaultPath);
-				AppMain appMain = new AppMain();
+				UiNodeDev appMain = new UiNodeDev();
 				appMain.Show();
 				appMenu.Hide();
 			}

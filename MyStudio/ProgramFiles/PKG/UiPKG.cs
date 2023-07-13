@@ -19,44 +19,77 @@ namespace PKG
 		//public static SuperPictureBox SetPictureBoxFitImage(PictureBox pictureBox_) { return new SuperPictureBox(pictureBox_); }
 		
 	}
-	/*
-	public class SuperPictureBox
+	
+
+	public class FlexibleTextBox
 	{
-		PictureBox pictureBox;
-		float imageRatio;
-		Size originalBoxSize;
 
-		public object sizeLock;
+	}
+	public class AutoSizeTextBox
+	{
+		private TextBox textBox;
+		private int basicWidth;
+		private int basicHeight;
 
-		public SuperPictureBox(PictureBox pictureBox_, object sizeLock_ = null)
+		public AutoSizeTextBox(TextBox textBox, int basicWidth=100, int basicHeight=30)
 		{
-			pictureBox = pictureBox_;
-			sizeLock = sizeLock_;
-			if (sizeLock == null) { sizeLock = new object(); }
-			imageRatio = ((float)pictureBox.Image.Size.Height / (float)pictureBox.Image.Size.Width);
-			originalBoxSize = new Size(pictureBox.Size.Width, pictureBox.Size.Height);
-			FitZoomedImage();
+			this.textBox = textBox;
+			this.basicWidth = basicWidth;
+			this.basicHeight = basicHeight;
+			textBox.Multiline = true;
+			// Subscribe to the TextChanged event of the TextBox
+			textBox.TextChanged += TextBox_TextChanged;
 
-			pictureBox.SizeChanged += SizeChanged;
+			// Call the initial resize to adjust the size based on the initial text content
+			ResizeTextBox();
 		}
-		public void FitZoomedImage()
-		{
-			Size 
 
-			lock (sizeLock)
+		private void TextBox_TextChanged(object sender, EventArgs e)
+		{
+			ResizeTextBox();
+		}
+
+		private void ResizeTextBox()
+		{
+			// Create a temporary Graphics object to measure the text size
+			using (Graphics g = textBox.CreateGraphics())
 			{
-				pictureBox.Size = new Size((int)(pictureBox.Size.Width), (int)(pictureBox.Size.Width * imageRatio));
-				Debug.WriteLine("box:" + pictureBox.Size.ToString() + "  image:" + pictureBox.Image.Size.ToString());
+				SizeF textSize = g.MeasureString(textBox.Text, textBox.Font);
+
+				int newWidth = Math.Max((int)textSize.Width + 5, basicWidth);  // Add some padding
+
+				// Calculate the new height based on the number of lines
+				int lines = textBox.GetLineFromCharIndex(textBox.TextLength) + 1;
+				int newHeight = Math.Max(lines * textBox.Font.Height + 5, basicHeight);
+
+				// Update the TextBox size if it needs to be adjusted
+				if (textBox.Width != newWidth || textBox.Height != newHeight)
+				{
+					textBox.Size = new Size(newWidth, newHeight);
+				}
 			}
 		}
-		public void SizeChanged(object sender, EventArgs e)
+	}
+
+	public class FlexiblePanel
+	{
+		protected Panel _panel;
+		protected Control _control;
+		public int padding;
+		public FlexiblePanel(Panel panel_, Control control_, int padding_ = 10)
 		{
-			pictureBox.SizeChanged -= SizeChanged;
-			FitZoomedImage();
-			pictureBox.SizeChanged += SizeChanged;
+			_panel = panel_;
+			_control = control_;
+			_control.SizeChanged += PictureBoxSizeChanged;
+			padding = padding_;
+		}
+		public void PictureBoxSizeChanged(object sender, EventArgs e)
+		{
+
+			_panel.Size = new Size(_control.Width +2*padding, _control.Height+2*padding);
+			_control.Location = new Point(padding, padding);
 		}
 	}
-	*/
 	public class FlexiblePictureBox : FlexibleControl
 	{
 		PictureBox pictureBox;
@@ -236,8 +269,9 @@ namespace PKG
 	}
 	/*
 	 * Remember to set property "AutoSize" of the control to False!!!!!
+	 * Do not put the control in "table layout panel", it will work badly
+	 * It is better to put the control in a "panel"
 	 */
-
 	public class FlexibleControl
 	{
 		#region Fields
