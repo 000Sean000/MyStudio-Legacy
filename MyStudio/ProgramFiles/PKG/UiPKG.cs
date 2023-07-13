@@ -57,22 +57,33 @@ namespace PKG
 		}
 	}
 	*/
-	public class FlexiblePictureBox: FlexibleControl
+	public class FlexiblePictureBox : FlexibleControl
 	{
 		PictureBox pictureBox;
 		float imageRatio;
-		public FlexiblePictureBox(PictureBox pictureBox_): base(pictureBox_)
+		public FlexiblePictureBox(PictureBox pictureBox_) : base(pictureBox_)
 		{
 			pictureBox = pictureBox_;
 			imageRatio = ((float)pictureBox.Image.Size.Height / (float)pictureBox.Image.Size.Width);
-			if (pictureBox.Size.Height > pictureBox.Size.Width * imageRatio)
+			FitZoomedImage(true);
+			if (imageRatio > 1)
 			{
-				StretchHeight(); 
+				int expectedBasicHeight = (int)((float)basicWidth * imageRatio);
+				if (basicHeight < expectedBasicHeight)
+				{
+					basicHeight = expectedBasicHeight;
+				}
 			}
-			else
+			else if (imageRatio <= 1)
 			{
-				StretchWidth();
+				int expectedBasicWidth = (int)((float)basicHeight / imageRatio);
+				if (basicWidth < expectedBasicWidth)
+				{
+					basicWidth = expectedBasicWidth;
+				}
 			}
+			control.MinimumSize = new Size(basicWidth, basicHeight);
+			Debug.WriteLine("minimum size: "+control.MinimumSize.ToString());
 		}
 		public void StretchWidth()
 		{
@@ -84,7 +95,7 @@ namespace PKG
 		}
 		public void MoveVertically()
 		{
-			int diff = (int)( pictureBox.Size.Width * imageRatio) - pictureBox.Size.Height;
+			int diff = (int)(pictureBox.Size.Width * imageRatio) - pictureBox.Size.Height;
 			pictureBox.Location = new Point(pictureBox.Location.X, pictureBox.Location.Y - diff);
 		}
 		public void MoveHorizontally()
@@ -92,56 +103,81 @@ namespace PKG
 			int diff = (int)(pictureBox.Size.Height / imageRatio) - pictureBox.Size.Width;
 			pictureBox.Location = new Point(pictureBox.Location.X - diff, pictureBox.Location.Y);
 		}
-		public void FitZoomedImage()
+		public void FitZoomedImage(bool byShrink = false)
 		{
-			if (isResizing)
+			if (byShrink)
 			{
-				if (cursorLocation == Border.S || cursorLocation == Border.SE)
+				// shrink pictureBox to match imageRatio(eliminate rundent space)
+				if (pictureBox.Size.Height > pictureBox.Size.Width * imageRatio) // current height > expected height
 				{
 					StretchHeight();
 				}
-				else if (cursorLocation == Border.E)
+				else
 				{
 					StretchWidth();
-				}
-				else if (cursorLocation == Border.N || cursorLocation == Border.NE)
-				{
-					MoveVertically();
-					StretchWidth();
-				}
-				else if (cursorLocation == Border.W || cursorLocation == Border.SW)
-				{
-					MoveHorizontally();
-					StretchHeight();
-				}
-				else if (cursorLocation == Border.NW)
-				{
-					if (heightDiff != 0 && widthDiff != 0)
-					{
-						MoveVertically();
-						StretchWidth();
-					}
-					else if (heightDiff != 0 && widthDiff == 0)
-					{
-						MoveVertically();
-						StretchWidth();
-					}
-					else if (heightDiff == 0 && widthDiff != 0)
-					{
-						MoveHorizontally();
-						StretchHeight();
-					}
-					else { } // no diff
 				}
 			}
-			//originalBoxSize = new(pictureBox.Size.Width, pictureBox.Size.Height);
-			Debug.WriteLine("box:" + pictureBox.Size.ToString() + "  image:" + pictureBox.Image.Size.ToString());
+			else
+			{
+				// grow pictureBox to match imageRatio
+				if (pictureBox.Size.Height < pictureBox.Size.Width * imageRatio) // current height > expected height
+				{
+					StretchHeight();
+				}
+				else
+				{
+					StretchWidth();
+				}
+			}
 			
+			
+			Debug.WriteLine("box:" + pictureBox.Size.ToString() + "  image:" + pictureBox.Image.Size.ToString());
+
 		}
 
+
+		protected override void ResizeControl(MouseEventArgs e)
+		{
+			// Adjust the size of the resizable block control_
+			// don't update preCursorPosition when mousemove relates to N or W direction,
+
+			if (cursorLocation == Border.NW || cursorLocation == Border.N)
+			{
+				control.Location = new Point(control.Location.X - widthDiff, control.Location.Y - heightDiff);
+				control.Width += widthDiff;
+				control.Height += heightDiff;
+			}
+
+			else if (cursorLocation == Border.SW || cursorLocation == Border.W)
+			{
+				control.Location = new Point(control.Location.X - widthDiff, control.Location.Y);
+				control.Width += widthDiff;
+				control.Height += heightDiff;
+				preCursorPoint = new Point(preCursorPoint.X, e.Y);
+			}
+			else if (cursorLocation == Border.SE　|| cursorLocation == Border.S)
+			{
+				control.Width += widthDiff;
+				control.Height += heightDiff;
+				preCursorPoint = new Point(e.X, e.Y);
+			}
+
+			else if (cursorLocation == Border.NE || cursorLocation == Border.E)
+			{
+				control.Location = new Point(control.Location.X, control.Location.Y - heightDiff);
+				control.Width += widthDiff;
+				control.Height += heightDiff;
+				preCursorPoint = new Point(e.X, preCursorPoint.Y);
+			}
+
+			//Thread.Sleep(1000);
+			Debug.WriteLine("Resize to " + control.Size.ToString() + " at " + control.Location.ToString());
+		}
 		//protected  void CalculateDiff2()
 		protected override void CalculateDiff()
 		{
+			//recover cursorLocation
+
 			widthDiff = horizontalMove;
 			heightDiff = verticalMove;
 			/* border near N or W need opposite diff
@@ -164,40 +200,26 @@ namespace PKG
 			// fit image ratio
 			Debug.WriteLine("imageRatio: " + imageRatio);
 			Debug.WriteLine("Ratio: " + (float)preHeight / (float)preWidth);
-			
-			if (cursorLocation == Border.N || cursorLocation == Border.S || cursorLocation == Border.NW || cursorLocation == Border.SE)
+
+			if (cursorLocation == Border.N || cursorLocation == Border.S)
 			{
 				widthDiff = (int)((float)(preHeight + heightDiff) / imageRatio - (float)preWidth);
 			}
-			else if (cursorLocation == Border.W || cursorLocation == Border.E || cursorLocation == Border.SW || cursorLocation == Border.NE)
+			else if (cursorLocation == Border.W || cursorLocation == Border.E)
 			{
 				heightDiff = (int)((float)(preWidth + widthDiff) * imageRatio - (float)preHeight);
 			}
-			
-			
-			// change sizing type
-			
-			if (cursorLocation == Border.N)
+			else if (cursorLocation == Border.NW || cursorLocation == Border.SE || cursorLocation == Border.SW || cursorLocation == Border.NE)
 			{
-				cursorLocation = Border.NW;
-				control.Cursor = Cursors.SizeNWSE;
+				if (widthDiff >= heightDiff)
+				{
+					heightDiff = (int)((float)(preWidth + widthDiff) * imageRatio - (float)preHeight);
+				}
+				else
+				{
+					widthDiff = (int)((float)(preHeight + heightDiff) / imageRatio - (float)preWidth);
+				}
 			}
-			else if (cursorLocation == Border.W)
-			{
-				cursorLocation = Border.SW;
-				control.Cursor = Cursors.SizeNESW;
-			}
-			else if (cursorLocation == Border.S)
-			{
-				cursorLocation = Border.SE;
-				control.Cursor = Cursors.SizeNWSE;
-			}
-			else if (cursorLocation == Border.E)
-			{
-				cursorLocation = Border.NE;
-				control.Cursor = Cursors.SizeNESW;
-			}
-			
 			// check basic Size
 			if (preHeight + heightDiff <= control.MinimumSize.Height)
 			{
@@ -211,30 +233,6 @@ namespace PKG
 			}
 			Debug.WriteLine("widthDiff: " + widthDiff + "  heightDiff: " + heightDiff);
 		}
-		
-		/*
-		protected override void MouseMove(object sender, MouseEventArgs e)
-		{
-			if (isResizing)
-			{
-				{
-					// Calculate the size difference based on the mouse movement
-					preWidth = control.Width;
-					preHeight = control.Height;
-					horizontalMove = e.X - preCursorPoint.X;
-					verticalMove = e.Y - preCursorPoint.Y;
-					CalculateDiff();
-					ResizeControl(e);
-					
-				}
-
-			}
-			else
-			{
-				ChangeCursorAtBoundary(e.Location);
-			}
-		}
-		*/
 	}
 	/*
 	 * Remember to set property "AutoSize" of the control to False!!!!!
@@ -281,8 +279,8 @@ namespace PKG
 			//originalParent = control_.Parent;
 			originalCursor = new Cursor(control_.Cursor.Handle);
 			thickness = thickness_;
-			basicWidth = 3 * thickness;
-			basicHeight = 3 * thickness;
+			basicWidth = 5 * thickness;
+			basicHeight = 5 * thickness;
 			if (control.MinimumSize.Width > basicWidth)
 			{
 				basicWidth = control.MinimumSize.Width;
@@ -609,183 +607,3 @@ namespace PKG
 	}
 
 }
-
-/* resizable control keep
-protected virtual void ResizeControl(object sender, MouseEventArgs e)
-		{
-
-			// Adjust the size of the resizable block control_
-			if (cursorLocation == Border.N)
-			{
-				control.Location = new Point(control.Location.X, control.Location.Y + heightDiff);
-				control.Height -= heightDiff;
-			}
-			else if (cursorLocation == Border.NW)
-			{
-				control.Location = new Point(control.Location.X + widthDiff, control.Location.Y + heightDiff);
-				control.Width -= widthDiff;
-				control.Height -= heightDiff;
-			}
-			else if (cursorLocation == Border.W)
-			{
-				control.Location = new Point(control.Location.X + widthDiff, control.Location.Y);
-				control.Width -= widthDiff;
-			}
-			else if (cursorLocation == Border.SW)
-			{
-				control.Location = new Point(control.Location.X + widthDiff, control.Location.Y);
-				control.Width -= widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(preCursorPoint.X, e.Y);
-			}
-			else if (cursorLocation == Border.S)
-			{
-				control.Height += heightDiff;
-				preCursorPoint = new Point(preCursorPoint.X, e.Y);
-			}
-			else if (cursorLocation == Border.SE)
-			{
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(e.X, e.Y);
-			}
-			else if (cursorLocation == Border.E)
-			{
-				control.Width += widthDiff;
-				preCursorPoint = new Point(e.X, preCursorPoint.Y);
-			}
-			else if (cursorLocation == Border.NE)
-			{
-				control.Location = new Point(control.Location.X, control.Location.Y + heightDiff);
-				control.Width += widthDiff;
-				control.Height -= heightDiff;
-				preCursorPoint = new Point(e.X, preCursorPoint.Y);
-			}
-			//Thread.Sleep(1000);
-			Debug.WriteLine("Resize to " + control.Size.ToString());
-
-		}
-		protected virtual void CalculateDiff()
-		{
-			widthDiff = horizontalMove;
-			heightDiff = verticalMove;
-			if (border == borderW || border == Border.N || )
-			if (preHeight + heightDiff >= basicSize)
-			{
-				// safe
-			}
-			else
-			{
-				heightDiff = basicSize - preHeight;
-			}
-			if (preWidth + widthDiff >= basicSize)
-			{
-				// safe
-			}
-			else
-			{
-				widthDiff = basicSize - preWidth;
-			}
-		}
-		protected virtual void MouseMove(object sender, MouseEventArgs e)
-		{
-			if (isResizing)
-			{
-				// Calculate the size difference based on the mouse movement
-				preWidth = control.Width;
-				preHeight = control.Height;
-				horizontalMove = e.X - preCursorPoint.X;
-				verticalMove = e.Y - preCursorPoint.Y;
-				CalculateDiff();
-				ResizeControl(sender, e);
-				//preCursorPoint = new Point(e.X, e.Y);
-			}
-			else
-			{
-				ChangeCursorAtBoundary(e.Location);
-			}
-		}
-		protected virtual void MouseUp(object sender, MouseEventArgs e)
-		{
-			isResizing = false;
-			RecoverCursor();
-			DefineBoundary();
-			isDragging = false;
-		}
-
-		protected void MouseLeave(object sender, EventArgs e)
-		{
-			RecoverCursor();
-		}
-		protected void ChangeCursorAtBoundary(Point cursorPosition)
-		{
-			if (borderN.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the north side
-				control.Cursor = Cursors.SizeNS;
-				cursorLocation = Border.N;
-			}
-			else if (borderS.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the south side
-				control.Cursor = Cursors.SizeNS;
-				cursorLocation = Border.S;
-			}
-			else if (borderW.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the west side
-				control.Cursor = Cursors.SizeWE;
-				cursorLocation = Border.W;
-			}
-			else if (borderE.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the east side
-				control.Cursor = Cursors.SizeWE;
-				cursorLocation = Border.E;
-			}
-			else if (borderNW.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the top-left corner
-				control.Cursor = Cursors.SizeNWSE;
-				cursorLocation = Border.NW;
-			}
-			else if (borderNE.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the top-right corner
-				control.Cursor = Cursors.SizeNESW;
-				cursorLocation = Border.NE;
-			}
-			else if (borderSW.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the bottom-left corner
-				control.Cursor = Cursors.SizeNESW;
-				cursorLocation = Border.SW;
-			}
-			else if (borderSE.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the bottom-right corner
-				control.Cursor = Cursors.SizeNWSE;
-				cursorLocation = Border.SE;
-			}
-			else
-			{
-				control.Cursor = Cursors.Hand;
-				cursorLocation = Border.None;
-			}
-		}
-		protected bool IsCursorNearBoundary()
-		{
-			if (cursorLocation != Border.None)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-	}
-	
-
- */

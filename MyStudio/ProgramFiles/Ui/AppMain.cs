@@ -22,5 +22,10 @@ namespace Ui
 		{
 
 		}
+
+		private void tableLayoutPanel_NodeImagePlace_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
 	}
 }
