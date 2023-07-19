@@ -3,7 +3,7 @@ using PKG;
 
 namespace Ui
 {
-	partial class AppMain
+	partial class VaultForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -32,6 +32,7 @@ namespace Ui
 		private void InitializeComponent()
 		{
 			panel_canvas = new Panel();
+			button_createNode = new Button();
 			SuspendLayout();
 			// 
 			// panel_canvas
@@ -42,13 +43,24 @@ namespace Ui
 			panel_canvas.Size = new Size(388, 225);
 			panel_canvas.TabIndex = 0;
 			// 
-			// VaultUi
+			// button_createNode
+			// 
+			button_createNode.Location = new Point(361, 369);
+			button_createNode.Name = "button_createNode";
+			button_createNode.Size = new Size(159, 29);
+			button_createNode.TabIndex = 1;
+			button_createNode.Text = "create node";
+			button_createNode.UseVisualStyleBackColor = true;
+			button_createNode.Click += button_createNode_Click;
+			// 
+			// VaultForm
 			// 
 			AutoScaleDimensions = new SizeF(9F, 19F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
+			Controls.Add(button_createNode);
 			Controls.Add(panel_canvas);
-			Name = "VaultUi";
+			Name = "VaultForm";
 			Text = "VaultUi";
 			ResumeLayout(false);
 		}
@@ -59,18 +71,18 @@ namespace Ui
 		public void MyInit()
 		{
 			//TestNodeUi();
-			//AppManager.workingVault.
+			AppManager.workingVault.canvas = panel_canvas;
+			new DraggableCanvas(panel_canvas);
 
 		}
 		public void TestNodeUi()
 		{
-			new DraggableCanvas(panel_canvas);
-			Node.canvas = panel_canvas;
-			Node.CreateNodeUi();
+			
 		}
 		#endregion
 
 
 		private Panel panel_canvas;
+		private Button button_createNode;
 	}
 }

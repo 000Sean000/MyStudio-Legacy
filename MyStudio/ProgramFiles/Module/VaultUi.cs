@@ -10,13 +10,22 @@ namespace Module
 {
 	partial class Vault
 	{
-		#region Node Ui opation
-		public void ShowNode(string id)
+		#region VaultForm Config
+		public Panel canvas;
+		#endregion
+
+		#region Node Ui Opation
+		public void UiCreateNode()
+		{
+			Node node = CreateNode();
+			UiShowNode(node.id);
+		}
+		public void UiShowNode(string id)
 		{
 			Node node = FetchNode(id);
-			node.Get<List<string>>(Node.PROPERTY, Node.TAG);
+			//node.Get<List<string>>(Node.PROPERTY, Node.TAG);
 
-			//
+			//...
 
 
 			Panel panel_Node;
@@ -83,12 +92,42 @@ namespace Module
 			flowLayoutPanel_NodeTags.Name = "flowLayoutPanel_NodeTags";
 			flowLayoutPanel_NodeTags.Size = new Size(302, 37);
 			flowLayoutPanel_NodeTags.TabIndex = 2;
-
-			new FlexiblePictureBox(pictureBox_NodeImage);
-			new AutoSizeTextBox(textBox_NodeContent);
+			FlexiblePictureBox nodeImage = new FlexiblePictureBox(pictureBox_NodeImage);
+			nodeImage.enableDrag = false;
+			AutoSizeTextBox nodeText = new AutoSizeTextBox(textBox_NodeContent);
 			ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
 			ControlAligner.AlignControlsHorizontally(panel_Node);
-			///canvas.Controls.Add(panel_Node);
+			canvas.Controls.Add(panel_Node);
+
+			pictureBox_NodeImage.SizeChanged += (object sender, EventArgs e) =>
+			{
+				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
+				ControlAligner.AlignControlsHorizontally(panel_Node);
+			};
+			textBox_NodeContent.SizeChanged += (object sender, EventArgs e) =>
+			{
+				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
+				ControlAligner.AlignControlsHorizontally(panel_Node);
+			};
+			flowLayoutPanel_NodeTags.SizeChanged += (object sender, EventArgs e) =>
+			{
+				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
+				ControlAligner.AlignControlsHorizontally(panel_Node);
+			};
+			
+			
+		}
+		private void ImageRegion_SizeChanged(object sender, EventArgs e)
+		{
+
+		}
+		private void TextRegion_SizeChanged(object sender, EventArgs e)
+		{
+
+		}
+		private void TagRegion_SizeChanged(object sender, EventArgs e)
+		{
+
 		}
 		#endregion
 

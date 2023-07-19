@@ -58,7 +58,7 @@ namespace MyStudio.ProgramFiles.Ui
 		{
 			new DraggableCanvas(panel_Canvas);
 			Node.canvas = panel_Canvas;
-			Node.CreateNodeUi();
+			//Node.CreateNodeUi();
 		}
 
 		private Panel panel_Canvas;

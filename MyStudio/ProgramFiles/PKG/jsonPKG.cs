@@ -87,9 +87,11 @@ namespace PKG
 			}
 			obj[keys[len - 1]] = JToken.FromObject(value);
 		}
+		
 		public static void MaintainJObject(JObject obj, params string[] keys)
 		{
 			int len = keys.Length;
+			if (len == 0) return;
 			for (int i = 0; i < len - 1; i++)
 			{
 				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
@@ -104,9 +106,11 @@ namespace PKG
 			}
 			obj[keys[len - 1]] = JToken.FromObject(new JObject());
 		}
+		
 		public static void MaintainJObject<T>(JObject obj, T? initValue, params string[] keys)
 		{
 			int len = keys.Length;
+			if (len == 0) return;
 			for (int i = 0; i < len - 1; i++)
 			{
 				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null) // check reference type null

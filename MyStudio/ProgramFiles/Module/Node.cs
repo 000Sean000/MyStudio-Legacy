@@ -293,8 +293,8 @@ namespace Module
 		#endregion
 
 		#region Properties (Accessors)
-		public string id { get { return _id; } }
-		public string fileName { get { return "Node" + _id + ".json"; } }
+		public string id { get { return _id; } } 
+		public string fileName { get { return $"Node{_id}.json"; } }
 		public string path { get { return Path.Combine(nodesDir, fileName); } }
 		#endregion
 

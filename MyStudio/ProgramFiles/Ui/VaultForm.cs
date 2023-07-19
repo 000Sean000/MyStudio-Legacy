@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Module;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,12 +11,19 @@ using System.Windows.Forms;
 
 namespace Ui
 {
-	public partial class AppMain : Form
+	public partial class VaultForm : Form
 	{
-		public AppMain()
+		public VaultForm()
 		{
 			InitializeComponent();
 			MyInit();
 		}
+
+		private void button_createNode_Click(object sender, EventArgs e)
+		{
+			AppManager.workingVault.UiCreateNode();
+		}
+
+		
 	}
 }

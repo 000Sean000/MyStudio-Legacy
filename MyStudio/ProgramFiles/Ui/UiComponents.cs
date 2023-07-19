@@ -101,7 +101,7 @@ namespace Ui
 			else
 			{
 				AppManager.OpenVault(_vaultPath);
-				AppMain appMain = new AppMain();
+				VaultForm appMain = new VaultForm();
 				appMain.Show();
 				appMenu.Hide();
 			}

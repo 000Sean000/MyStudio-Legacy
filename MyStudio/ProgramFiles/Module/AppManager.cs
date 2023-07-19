@@ -36,44 +36,6 @@ namespace Module
 		private static List<string> _VaultList { get { return _setting[deviceName][VAULT_ADDR].ToObject<List<string>>(); } }
 		//private static JArray _vaultJArray = new JArray(_vaultList);
 		public static Vault workingVault;
-		public static void LoadSetting()
-		{
-			_setting = PKG.JsonPKG.ReadJsonObjectFromFile(settingPath);
-		}
-		public static void SaveSetting()
-		{
-			PKG.JsonPKG.SaveJsonObjectToFile(_setting, settingPath);
-		}
-		public static void MaintainSetting()
-		{
-			if (!_setting.ContainsKey(deviceName))
-			{
-				_setting[deviceName] = new JObject();
-			}
-			if (!_setting[deviceName].ToObject<JObject>().ContainsKey(VAULT_ADDR))
-			{
-				_setting[deviceName][VAULT_ADDR] = JToken.FromObject(new List<string>());
-			}
-			else
-			{
-				List<string> _vaultList = _VaultList;
-				// remove invalid vault path
-				foreach (string vaultPath  in _vaultList)
-				{
-					if (!Directory.Exists(vaultPath))
-					{
-						_vaultList.Remove(vaultPath);
-					}
-				}
-				_setting[deviceName][VAULT_ADDR] = JToken.FromObject(_vaultList);
-			}
-			if (!_setting[deviceName].ToObject<JObject>().ContainsKey(PREFERENCE))
-			{
-				_setting[deviceName][PREFERENCE] = new JObject();
-
-			}
-			//...
-		}
 		static AppManager()
 		{
 			init();
@@ -101,6 +63,7 @@ namespace Module
 			SaveSetting();
 			#endregion
 		}
+		#region Vault Operation
 		public static Vault? CreateVault()
 		{
 			language lang_selectVault = new language("Select a folder to be your Vault.");
@@ -136,6 +99,49 @@ namespace Module
 			_setting[deviceName][VAULT_ADDR] = JToken.FromObject(_vaultList);
 			SaveSetting();
 		}
+		#endregion
+		
+		#region File Operation
+		public static void LoadSetting()
+		{
+			_setting = PKG.JsonPKG.ReadJsonObjectFromFile(settingPath);
+		}
+		public static void SaveSetting()
+		{
+			PKG.JsonPKG.SaveJsonObjectToFile(_setting, settingPath);
+		}
+		public static void MaintainSetting()
+		{
+			if (!_setting.ContainsKey(deviceName))
+			{
+				_setting[deviceName] = new JObject();
+			}
+			if (!_setting[deviceName].ToObject<JObject>().ContainsKey(VAULT_ADDR))
+			{
+				_setting[deviceName][VAULT_ADDR] = JToken.FromObject(new List<string>());
+			}
+			else
+			{
+				List<string> _vaultList = _VaultList;
+				// remove invalid vault path
+				foreach (string vaultPath in _vaultList)
+				{
+					if (!Directory.Exists(vaultPath))
+					{
+						_vaultList.Remove(vaultPath);
+					}
+				}
+				_setting[deviceName][VAULT_ADDR] = JToken.FromObject(_vaultList);
+			}
+			if (!_setting[deviceName].ToObject<JObject>().ContainsKey(PREFERENCE))
+			{
+				_setting[deviceName][PREFERENCE] = new JObject();
+
+			}
+			//...
+		}
+		#endregion
+
 
 	}
 }

@@ -416,6 +416,7 @@ namespace PKG
 			N, S, W, E, NW, NE, SW, SE, None
 		}
 		public Control control;
+		public bool enableDrag = true;
 		//protected Control originalParent;
 		protected Cursor originalCursor;
 		protected Border cursorLocation = Border.None;
@@ -589,10 +590,14 @@ namespace PKG
 			}
 			else if (isDragging)
 			{
-				horizontalMove = e.X - dragingStartPoint.X;
-				verticalMove = e.Y - dragingStartPoint.Y;
-				DragControl(horizontalMove, verticalMove);
-				//preCursorPoint = e.Location;
+				if (enableDrag)
+				{
+					horizontalMove = e.X - dragingStartPoint.X;
+					verticalMove = e.Y - dragingStartPoint.Y;
+					DragControl(horizontalMove, verticalMove);
+					//preCursorPoint = e.Location;
+				}
+
 			}
 			else
 			{
