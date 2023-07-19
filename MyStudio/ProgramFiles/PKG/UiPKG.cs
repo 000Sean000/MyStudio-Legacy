@@ -17,25 +17,146 @@ namespace PKG
 		public static FlexibleControl SetControlResizable(Control control_, int thickness_ = 10) { return new FlexibleControl(control_, thickness_); }
 		public static DraggableCanvas SetCanvasDaggable(Panel panel, float sensitivity = 1) { return new DraggableCanvas(panel, sensitivity); }
 		//public static SuperPictureBox SetPictureBoxFitImage(PictureBox pictureBox_) { return new SuperPictureBox(pictureBox_); }
-		
-	}
-	
 
-	public class FlexibleTextBox
+	}
+
+
+
+	public static class ControlAligner
 	{
+		public static int GetTotalWidth_OfControlsInContainer(Panel panel)
+		{
+			int totalWidth = 0;
+			foreach (Control control in panel.Controls)
+			{
+				totalWidth += control.Width;
+			}
+			return totalWidth;
+		}
+		public static int GetTotalHeight_OfControlsInContainer(Panel panel)
+		{
+			int totalHeight = 0;
+			foreach (Control control in panel.Controls)
+			{
+				totalHeight += control.Height;
+			}
+			return totalHeight;
+		}
+		public static int GetMaxWidth_OfControlsInContainer(Panel panel)
+		{
+			int maxWidth = 0;
+			foreach (Control control in panel.Controls)
+			{
+				if(control.Width > maxWidth)
+				{
+					maxWidth = control.Width;
+				}
+			}
+			return maxWidth;
+		}
+		public static int GetMaxHeight_OfControlsInContainer(Panel panel)
+		{
+			int maxHeight = 0;
+			foreach (Control control in panel.Controls)
+			{
+				if (control.Height > maxHeight)
+				{
+					maxHeight = control.Height;
+				}
+			}
+			return maxHeight;
+		}
+		public static void AlignControlsHorizontally(Panel panel, int spacing = 0)
+		{
+			//panel.Height = GetMaxHeightOfControlsInContainer(panel);
+			panel.Size = new Size(GetTotalWidth_OfControlsInContainer(panel), GetMaxHeight_OfControlsInContainer(panel));
+
+			int centerY = panel.Height / 2;
+			int currentX = 0;
+			Debug.WriteLine(panel.Controls);
+			foreach (Control control in panel.Controls)
+			{
+				int controlX = currentX;
+				int controlY = centerY - (control.Height / 2);
+
+				control.Location = new Point(controlX, controlY);
+				currentX += control.Width + spacing;
+				Debug.WriteLine(control);
+			}
+		}
+
+		public static void AlignControlsVertically(Panel panel, int spacing = 0)
+		{
+			//panel.Width = GetMaxWidthOfControlsInContainer(panel);
+			panel.Size = new Size(GetMaxWidth_OfControlsInContainer(panel), GetTotalHeight_OfControlsInContainer(panel));
+
+			int centerX = panel.Width / 2;
+			int currentY = 0;
+
+			foreach (Control control in panel.Controls)
+			{
+				int controlX = centerX - (control.Width / 2);
+				int controlY = currentY;
+
+				control.Location = new Point(controlX, controlY);
+				currentY += control.Height + spacing;
+			}
+		}
+		public enum Alignment
+		{
+			Horizontal,
+			Vertical,
+			Center
+		}
+
+		public static void AlignControls(Control container, Alignment alignment)
+		{
+			int maxControlWidth = 0;
+			int totalControlHeight = 0;
+
+			foreach (Control control in container.Controls)
+			{
+				maxControlWidth = Math.Max(maxControlWidth, control.Width);
+				totalControlHeight += control.Height;
+			}
+
+			int y = 0;
+
+			foreach (Control control in container.Controls)
+			{
+				switch (alignment)
+				{
+					case Alignment.Horizontal:
+						control.Location = new Point(0, y);
+						control.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+						break;
+					case Alignment.Vertical:
+						control.Location = new Point((maxControlWidth - control.Width) / 2, y);
+						control.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+						break;
+					case Alignment.Center:
+						control.Location = new Point((container.Width - control.Width) / 2, y);
+						control.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+						break;
+				}
+
+				y += control.Height;
+			}
+		}
 
 	}
+
 	public class AutoSizeTextBox
 	{
 		private TextBox textBox;
 		private int basicWidth;
 		private int basicHeight;
 
-		public AutoSizeTextBox(TextBox textBox, int basicWidth=100, int basicHeight=30)
+		public AutoSizeTextBox(TextBox textBox, int basicWidth=50, int basicHeight=0)
 		{
 			this.textBox = textBox;
 			this.basicWidth = basicWidth;
-			this.basicHeight = basicHeight;
+			this.basicHeight = Math.Max(basicHeight, textBox.Font.Height);
 			textBox.Multiline = true;
 			// Subscribe to the TextChanged event of the TextBox
 			textBox.TextChanged += TextBox_TextChanged;
@@ -99,20 +220,28 @@ namespace PKG
 			pictureBox = pictureBox_;
 			imageRatio = ((float)pictureBox.Image.Size.Height / (float)pictureBox.Image.Size.Width);
 			FitZoomedImage(true);
+			int expectedBasicHeight = (int)((float)basicWidth * imageRatio);
+			int expectedBasicWidth = (int)((float)basicHeight / imageRatio);
 			if (imageRatio > 1)
 			{
-				int expectedBasicHeight = (int)((float)basicWidth * imageRatio);
 				if (basicHeight < expectedBasicHeight)
 				{
 					basicHeight = expectedBasicHeight;
 				}
+				else
+				{
+					basicWidth = expectedBasicWidth;
+				}
 			}
 			else if (imageRatio <= 1)
 			{
-				int expectedBasicWidth = (int)((float)basicHeight / imageRatio);
 				if (basicWidth < expectedBasicWidth)
 				{
 					basicWidth = expectedBasicWidth;
+				}
+				else
+				{
+					basicHeight = expectedBasicHeight;
 				}
 			}
 			control.MinimumSize = new Size(basicWidth, basicHeight);
@@ -272,6 +401,13 @@ namespace PKG
 	 * Do not put the control in "table layout panel", it will work badly
 	 * It is better to put the control in a "panel"
 	 */
+	public class FlexbleLabel: FlexibleControl
+	{
+		public FlexbleLabel(Label control_, int thickness_ = 10):base(control_, thickness_)
+		{
+			control_.AutoSize = false;
+		}
+	}
 	public class FlexibleControl
 	{
 		#region Fields

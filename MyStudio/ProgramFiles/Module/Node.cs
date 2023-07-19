@@ -13,9 +13,14 @@ namespace Module
 	public partial class Node
 	{
 		#region static fields
-		public static Regex regexCitation = new Regex(@"\[\[([\s\S]*?)\]\]");
+		public static Vault vault; // to use node cache
+		public static Regex regexNodeId = new Regex(@"\d{20}");
+		public static Regex regexCitedNode = new Regex(@"\(Node\d{20}\)");
+		public static Regex regexCitation = new Regex(@"\[\[\(Node\d{20}\)([\s\S]*?)\]\]");
+		public static Regex regexCiteForm = new Regex(@"^\[\[\(Node\d{20}\)\]\]$");
 		// regular expression of citations, it matches "[[citation]]", where citation can be any character or newline or no character.
-		public const string CITATION_MARK = "[[CITATION]]";
+		//public const string CITATION_MARK = "[[CITATION]]";
+		public const string ID_MISSING = "ID not found";
 		#endregion
 
 		#region Json keys
@@ -122,7 +127,7 @@ namespace Module
 			*/
 			Maintain(new string[] { });
 			Maintain(new string[] { METADATA });
-			Maintain(new string[] { CONTENT });
+			Maintain<List<string>>(new List<string>(), new string[] { CONTENT, CITE });
 			Maintain(new string[] { PROPERTY, MEDIA });
 			Maintain(new string[] { PROPERTY, USER_DEF });
 			Maintain(new string[] { ATTRIBUTE, LOGIC });
@@ -147,6 +152,13 @@ namespace Module
 			lock (_infoLock)
 			{
 				JsonPKG.MaintainJObject(_info, keys);
+			}
+		}
+		public void Maintain<T>(T? initValue, params string[] keys)
+		{
+			lock (_infoLock)
+			{
+				JsonPKG.MaintainJObject<T>(_info, initValue, keys);
 			}
 		}
 		public void Set<T>(T value, params string[] keys)
@@ -217,6 +229,67 @@ namespace Module
 		{
 			File.Delete(path);
 		}
+		public void WriteContent(string content)
+		{
+			List<string> texts = ParsingPKG.ParseWithPattern(content, regexCitation);
+			List<string> citedNodeIds = new List<string>();
+			int index = 0;
+			foreach (string text in texts)
+			{
+				if (regexCitation.IsMatch(text))
+				{
+					string citedNode = ParsingPKG.GetMatchingSubstring(text, regexCitedNode);
+					if (citedNode != null)
+					{
+						string citedNodeId = ParsingPKG.GetMatchingSubstring(citedNode, regexNodeId);
+						if (citedNodeId != null)
+						{
+							texts[index] = $"[[{citedNode}]]"; // to match regexCiteForm
+							citedNodeIds.Add(citedNodeId);
+						}
+					}
+				}
+				index++;
+			}
+			Set<List<string>>(texts, CONTENT, TEXT);
+			Set<List<string>>(citedNodeIds, CONTENT, CITE);
+		}
+		public string ReadContent()
+		{
+			string content;
+			object textsLock = new object();
+			List<string> texts = Get<List<string>>(CONTENT, TEXT);
+			List<Thread> threadList = new List<Thread>();
+			for (int index = 0; index < texts.Count; index++)
+			{
+				string text;
+				lock (textsLock)
+				{
+					text = texts[index];
+				}
+				if (regexCiteForm.IsMatch(text))
+				{
+					string citedNodeId = ParsingPKG.GetMatchingSubstring(text, regexNodeId);
+					Thread thread = new Thread((index_) => { 
+						int index = (int)index_;
+						Node citedNode = vault.FetchNode(citedNodeId);
+						string subContent = citedNode.ReadContent();
+						lock (textsLock)
+						{
+							texts[index] = subContent;
+						}
+					});
+					threadList.Add(thread);
+					thread.Start(index);
+				}
+			}
+			foreach (Thread thread in threadList)
+			{
+				thread.Join();
+			}
+			content = string.Join("", texts);
+			return content;
+		}
 		#endregion
 
 		#region Properties (Accessors)
@@ -225,38 +298,6 @@ namespace Module
 		public string path { get { return Path.Combine(nodesDir, fileName); } }
 		#endregion
 
-		#region Ui-related operation
-		public static List<string> SeparateSubstringsAndCitations(string input)
-		{
-			List<string> substrings = new List<string>();
-			List<string> citations = new List<string>();
-
-			int currentIndex = 0;
-
-			MatchCollection matches = regexCitation.Matches(input);
-
-			foreach (Match match in matches)
-			{
-				if (match.Index > currentIndex)
-				{
-					string substring = input.Substring(currentIndex, match.Index - currentIndex);
-					substrings.Add(substring);
-				}
-
-				string citation = match.Groups[1].Value;
-				citations.Add(citation);
-				substrings.Add(CITATION_MARK);
-				currentIndex = match.Index + match.Length;
-			}
-
-			if (currentIndex < input.Length)
-			{
-				string remainingSubstring = input.Substring(currentIndex);
-				substrings.Add(remainingSubstring);
-			}
-
-			return substrings;
-		}
-		#endregion
+		
 	}
 }

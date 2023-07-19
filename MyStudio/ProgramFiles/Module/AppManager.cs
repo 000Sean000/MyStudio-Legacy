@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,7 @@ namespace Module
 		private static JObject _setting;
 		private static List<string> _VaultList { get { return _setting[deviceName][VAULT_ADDR].ToObject<List<string>>(); } }
 		//private static JArray _vaultJArray = new JArray(_vaultList);
+		public static Vault workingVault;
 		public static void LoadSetting()
 		{
 			_setting = PKG.JsonPKG.ReadJsonObjectFromFile(settingPath);
@@ -123,7 +125,9 @@ namespace Module
 		}
 		public static Vault OpenVault(string vaultPath)
 		{
-			return new Vault(vaultPath);
+			Debug.WriteLine($"Open Vault: {vaultPath}");
+			workingVault = new Vault(vaultPath);
+			return workingVault;
 		}
 		public static void RemoveVault(string vaultPath)
 		{

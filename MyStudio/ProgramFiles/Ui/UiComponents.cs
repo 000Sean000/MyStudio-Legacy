@@ -21,6 +21,7 @@ namespace Ui
 		{
 			appMenu = appMenu_;
 
+			#region Ui components initialization
 			// 
 			// tableLayoutPanel_vault
 			// 
@@ -81,6 +82,7 @@ namespace Ui
 			label_vaultPath.MouseHover += label_vaultPath_MouseHover;
 
 			tableLayoutPanel_vaultList.Controls.Add(tableLayoutPanel_vault, rowIndex, 0);
+			#endregion
 		}
 		public void SetVaultInfo(string vaultName_,  string vaultPath_)
 		{
@@ -98,8 +100,8 @@ namespace Ui
 			}
 			else
 			{
-				Vault vault = AppManager.OpenVault(_vaultPath);
-				UiNodeDev appMain = new UiNodeDev();
+				AppManager.OpenVault(_vaultPath);
+				AppMain appMain = new AppMain();
 				appMain.Show();
 				appMenu.Hide();
 			}

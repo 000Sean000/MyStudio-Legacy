@@ -104,6 +104,31 @@ namespace PKG
 			}
 			obj[keys[len - 1]] = JToken.FromObject(new JObject());
 		}
+		public static void MaintainJObject<T>(JObject obj, T? initValue, params string[] keys)
+		{
+			int len = keys.Length;
+			for (int i = 0; i < len - 1; i++)
+			{
+				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null) // check reference type null
+				{
+					obj[keys[i]] = new JObject();
+					obj = obj[keys[i]].ToObject<JObject>();
+				}
+				else
+				{
+					obj = obj[keys[i]].ToObject<JObject>();
+				}
+			}
+			if (!obj.ContainsKey(keys[len - 1]) || obj[keys[len - 1]].Type == JTokenType.Null) // check value type null
+			{
+				obj[keys[len - 1]] = JToken.FromObject(initValue);
+			}
+			else
+			{
+				// obj[keys[len - 1]] has value,
+				// don't overwrite the original value
+			}
+		}
 
 		// Modify JObject ( insert & remove ) 
 		public static void DemoModifyJsonObject(JObject jsonObject)

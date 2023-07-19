@@ -1,23 +1,24 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using PKG;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using PKG;
 
 namespace Module
 {
-	partial class Node
+	partial class Vault
 	{
-		public static Panel canvas;
-		
-
-		public static void CreateNodeUi()
+		#region Node Ui opation
+		public void ShowNode(string id)
 		{
+			Node node = FetchNode(id);
+			node.Get<List<string>>(Node.PROPERTY, Node.TAG);
+
+			//
+
+
 			Panel panel_Node;
 			TextBox textBox_NodeContent;
 			PictureBox pictureBox_NodeImage;
@@ -34,7 +35,7 @@ namespace Module
 			panel_Node.BorderStyle = BorderStyle.FixedSingle;
 			panel_Node.Controls.Add(pictureBox_NodeImage);
 			panel_Node.Controls.Add(panel_NodeContentAndTag);
-			panel_Node.Location = new Point(0,0);
+			panel_Node.Location = new Point(0, 0);
 			panel_Node.Name = "panel_Node";
 			panel_Node.Size = new Size(390, 244);
 			panel_Node.TabIndex = 6;
@@ -87,9 +88,12 @@ namespace Module
 			new AutoSizeTextBox(textBox_NodeContent);
 			ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
 			ControlAligner.AlignControlsHorizontally(panel_Node);
-			canvas.Controls.Add(panel_Node);
-			
+			///canvas.Controls.Add(panel_Node);
 		}
+		#endregion
+
+
+
+
 	}
-	
 }

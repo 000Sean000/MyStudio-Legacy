@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -14,7 +15,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Module
 {
-	public class Vault
+	public partial class Vault
 	{
 		#region Path names
 		public const string SETTING_FILE = "VaultSetting.json";
@@ -32,7 +33,7 @@ namespace Module
 		public string nodesDir;
 		public string mediaDir;
 		#endregion
-
+		
 		#region Data fields
 		protected JObject _setting;
 		////protected JObject _cache;
@@ -82,24 +83,9 @@ namespace Module
 			{
 				LoadSetting();
 			}
-			/*
-			if (!File.Exists(cachePath))
-			{
-				_cache = new JObject();
-				SaveCache();
-			}
-			else
-			{
-				LoadCache();
-			}
-			*/
 			#region maintain missing keys
 			MaintainSetting();
 			SaveSetting();
-			/*
-			MaintainCache();
-			SaveCache();
-			*/
 			#endregion
 			foreach (JProperty property in _setting[NODES].ToObject<JObject>().Properties())
 			{
@@ -107,10 +93,14 @@ namespace Module
 			}
 			Node.nodesDir = nodesDir;
 			Node.mediaDir = mediaDir;
+			Node.vault = this;
+			FirstLoadNodes();
+
 		}
 		#region Node operation
 		public void FirstLoadNodes()
 		{
+			Debug.WriteLine(">>Vault first load nodes");
 			List<Thread> threadList = new List<Thread>();
 			foreach (string id in _nodeIDs)
 			{
@@ -193,10 +183,18 @@ namespace Module
 			{
 				Node node = new Node(id);
 				_nodeIDs.Add(id);
-				_nodes[id] = node;
+				lock (NodesLock)
+				{
+					_nodes[id] = node;
+					return _nodes[id];
+				}
 			}
-			return _nodes[id];
+			lock (NodesLock)
+			{
+				return _nodes[id];
+			}
 		}
+		/*
 		public void WriteNodeContent(Node node, List<string> texts, List<string> citedNodes)
 		{
 			node.Set<List<string>>(texts, Node.CONTENT, Node.TEXT);
@@ -254,6 +252,7 @@ namespace Module
 			}
 			return content;
 		}
+		*/
 		#endregion
 		#region File Operation
 		public void MaintainSetting()
@@ -276,54 +275,7 @@ namespace Module
 				}
 			}
 		}
-		/*
-		public void MaintainCache()
-		{
-			if (!_cache.ContainsKey(VOLATILE))
-			{
-				_cache[VOLATILE] = new JObject();
-			}
-			if (!_cache[VOLATILE].ToObject<JObject>().ContainsKey(NODES))
-			{
-				_cache[VOLATILE][NODES] = new JObject();
-			}
-			if (!_cache.ContainsKey(INVOLATILE))
-			{
-				_cache[INVOLATILE] = new JObject();
-			}
-			if (!_cache[INVOLATILE].ToObject<JObject>().ContainsKey(PATH))
-			{
-				_cache[INVOLATILE][PATH] = new JObject();
-			}
-			if (!_cache[INVOLATILE].ToObject<JObject>().ContainsKey(FREQ))
-			{
-				_cache[INVOLATILE][FREQ] = new JObject();
-			}
-		}
 		
-		public Node GetNodeFromCache(string id)
-		{
-			if (_cache[VOLATILE][NODES].ToObject<JObject>().ContainsKey(id))
-			{
-				int modified_times = _cache[INVOLATILE][FREQ][id].Value<int>();
-				if (modified_times > 0)
-				{
-					_cache[INVOLATILE][FREQ][id] = JToken.FromObject(modified_times + 1);
-				}
-				else
-				{
-					_cache[INVOLATILE][FREQ][id] = JToken.FromObject(1);
-				}
-				return _cache[VOLATILE][NODES][id].ToObject<Node>();
-			}
-			else
-			{
-				Node node = new Node(id);
-
-				return node;
-			}
-		}
-		*/
 		public void LoadSetting()
 		{
 			lock (SettingLock)
@@ -338,16 +290,9 @@ namespace Module
 				JsonPKG.SaveJsonObjectToFile(_setting, settingPath);
 			}
 		}
-		/*
-		public void LoadCache()
-		{
-			_cache = JsonPKG.ReadJsonObjectFromFile(cachePath);
-		}
-		public void SaveCache()
-		{
-			JsonPKG.SaveJsonObjectToFile(_cache, cachePath);
-		}
-		*/
+		
 		#endregion
+
+		
 	}
 }
