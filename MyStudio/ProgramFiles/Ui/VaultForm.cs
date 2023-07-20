@@ -24,6 +24,9 @@ namespace Ui
 			AppManager.workingVault.UiCreateNode();
 		}
 
-		
+		private void pictureBox1_MouseEnter(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

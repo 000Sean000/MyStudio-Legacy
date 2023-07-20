@@ -1,7 +1,6 @@
 using PKG;
 using Module;
 using Ui;
-using MyStudio.ProgramFiles.Ui;
 
 namespace MyStudio2
 {
