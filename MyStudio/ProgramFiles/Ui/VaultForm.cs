@@ -21,7 +21,7 @@ namespace Ui
 
 		private void button_createNode_Click(object sender, EventArgs e)
 		{
-			AppManager.workingVault.UiCreateNode();
+			AppManager.workingVault.CreateUiNode();
 		}
 
 		private void pictureBox1_MouseEnter(object sender, EventArgs e)

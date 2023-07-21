@@ -19,12 +19,15 @@ namespace PKG
 	public static class UiPKG
 	{
 		public static FlexibleControl SetControlResizable(Control control_, int thickness_ = 10) { return new FlexibleControl(control_, thickness_); }
-		public static DraggableCanvas SetCanvasDaggable(Panel panel, float sensitivity = 1) { return new DraggableCanvas(panel, sensitivity); }
+		public static PanelCanvas SetCanvasDaggable(Panel panel, float sensitivity = 1) { return new PanelCanvas(panel, sensitivity); }
 		//public static SuperPictureBox SetPictureBoxFitImage(PictureBox pictureBox_) { return new SuperPictureBox(pictureBox_); }
 
 	}
 
+	public class dd<TKey, TValue> : Dictionary<TKey, TValue>
+	{
 
+	}
 
 	public static class ControlAligner
 	{
@@ -1165,125 +1168,7 @@ namespace PKG
 		#endregion
 	}
 
-
-	public class DraggableCanvas
-	{
-		protected Point _dragStartPoint;
-		protected Point _canvasStartPoint;
-		protected bool _isDragging;
-		protected bool _readyToDraw = false;
-		protected float _sensitivity;
-
-		public Panel _panel;
-		public Label canvasX = new Label();
-		public Label canvasY = new Label();
-		public Label canvasX0 = new Label();
-		public Label canvasY0 = new Label();
-		public Label mouseX = new Label();
-		public Label mouseY = new Label();
-		public Label mouseX0 = new Label();
-		public Label mouseY0 = new Label();
-		public DraggableCanvas(Panel panel, float sensitivity = 1)
-		{
-			_panel = panel;
-			_sensitivity = sensitivity;
-			_panel.MouseDown += MouseDown;
-			_panel.MouseUp += MouseUp;
-			_panel.MouseMove += MouseMove;
-			// Subscribe the AdjustWorldSpaceSize method to the appropriate events
-			_panel.ControlAdded += AdjustWorldSpaceSize;
-			_panel.ControlRemoved += AdjustWorldSpaceSize;
-		}
-		public void AdjustWorldSpaceSize(object sender, EventArgs e)
-		{
-			// Calculate the minimum required size for the world space
-			int minWidth = 0;
-			int minHeight = 0;
-			int offsetX = int.MaxValue;
-			int offsetY = int.MaxValue;
-
-			foreach (Control childControl in _panel.Controls)
-			{
-				// Subscribe to the LocationChanged event for each child control
-				childControl.LocationChanged -= AdjustWorldSpaceSize;
-				childControl.LocationChanged += AdjustWorldSpaceSize;
-
-				// Subscribe to the SizeChanged event for each child control
-				childControl.SizeChanged -= AdjustWorldSpaceSize;
-				childControl.SizeChanged += AdjustWorldSpaceSize;
-				// Adjust the required width and height based on the child control's position and size
-				minWidth = Math.Max(minWidth, childControl.Right);
-				minHeight = Math.Max(minHeight, childControl.Bottom);
-
-				// Track the minimum negative X and Y coordinates
-				offsetX = Math.Min(offsetX, childControl.Left);
-				offsetY = Math.Min(offsetY, childControl.Top);
-			}
-
-			// Adjust the minimum required size for the world space based on negative offsets
-			minWidth -= offsetX;
-			minHeight -= offsetY;
-
-			// Set the minimum required size for the world space
-			_panel.AutoScrollMinSize = new Size(minWidth, minHeight);
-			_panel.AutoScrollPosition = new Point(-offsetX, -offsetY);
-			Debug.WriteLine($"autoscroll: {_panel.AutoScroll}");
-		}
-		public void MouseDown(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Right)
-			{
-				_dragStartPoint = new Point(e.X, e.Y);
-				_isDragging = true;
-
-
-				Point currentPosition = _panel.AutoScrollPosition;
-				_canvasStartPoint = new Point(currentPosition.X, currentPosition.Y);
-				canvasX0.Text = currentPosition.X.ToString();
-				canvasY0.Text = currentPosition.Y.ToString();
-				mouseX.Text = e.X.ToString();
-				mouseY.Text = e.Y.ToString();
-				mouseX0.Text = _dragStartPoint.X.ToString();
-				mouseY0.Text = _dragStartPoint.Y.ToString();
-			}
-		}
-
-		public void MouseUp(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Right)
-			{
-				_isDragging = false;
-				/*
-				Point currentPosition = _panel.AutoScrollPosition;
-				_panel.AutoScrollPosition = new Point(
-					-_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * 1),
-					-_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * 1));
-				currentPosition = _panel.AutoScrollPosition; // read the AutoScrollPosition again
-				canvasX.Text = currentPosition.X.ToString();
-				canvasY.Text = currentPosition.Y.ToString();
-				*/
-			}
-		}
-
-		public void MouseMove(object sender, MouseEventArgs e)
-		{
-			if (_isDragging)
-			{
-
-				_panel.AutoScrollPosition = new Point(
-					-_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * _sensitivity),
-					-_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * _sensitivity));
-				Point currentPosition = _panel.AutoScrollPosition;
-				canvasX.Text = currentPosition.X.ToString();
-				canvasY.Text = currentPosition.Y.ToString();
-				mouseX.Text = e.X.ToString();
-				mouseY.Text = e.Y.ToString();
-
-
-			}
-		}
-	}
-
+	
 	#region Developing
 	public class MultiClickHandler
 	{

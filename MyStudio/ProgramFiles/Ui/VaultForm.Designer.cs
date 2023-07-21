@@ -91,7 +91,7 @@ namespace Ui
 		{
 			//TestNodeUi();
 			AppManager.workingVault.canvas = panel_canvas;
-			new DraggableCanvas(panel_canvas);
+			new PanelCanvas(panel_canvas);
 
 		}
 		public void TestNodeUi()
