@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-
+//
 public class PanelCanvas
 {
 	protected Point _dragStartPoint;
