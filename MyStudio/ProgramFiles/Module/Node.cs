@@ -107,24 +107,6 @@ namespace Module
 		}
 		public void MaintainNode()
 		{
-			/*
-			if (!_info.ContainsKey(METADATA))
-			{
-				_info[METADATA] = new JObject();
-			}
-			if (!_info.ContainsKey(CONTENT))
-			{
-				_info[CONTENT] = new JObject();
-			}
-			if (!_info.ContainsKey(PROPERTY))
-			{
-				_info[PROPERTY] = new JObject();
-			}
-			if (!_info.ContainsKey(ATTRIBUTE))
-			{
-				_info[ATTRIBUTE] = new JObject();
-			}
-			*/
 			Maintain(new string[] { });
 			Maintain(new string[] { METADATA });
 			Maintain<List<string>>(new List<string>(), new string[] { CONTENT, CITE });

@@ -24,10 +24,7 @@ namespace PKG
 
 	}
 
-	public class dd<TKey, TValue> : Dictionary<TKey, TValue>
-	{
 
-	}
 
 	public static class ControlAligner
 	{
@@ -153,52 +150,8 @@ namespace PKG
 
 	}
 
-	public class AutoSizeTextBox
-	{
-		private TextBox textBox;
-		private int basicWidth;
-		private int basicHeight;
-
-		public AutoSizeTextBox(TextBox textBox, int basicWidth=50, int basicHeight=0)
-		{
-			this.textBox = textBox;
-			this.basicWidth = basicWidth;
-			this.basicHeight = Math.Max(basicHeight, textBox.Font.Height);
-			textBox.Multiline = true;
-			// Subscribe to the TextChanged event of the TextBox
-			textBox.TextChanged += TextBox_TextChanged;
-
-			// Call the initial resize to adjust the size based on the initial text content
-			ResizeTextBox();
-		}
-
-		private void TextBox_TextChanged(object sender, EventArgs e)
-		{
-			ResizeTextBox();
-		}
-
-		private void ResizeTextBox()
-		{
-			// Create a temporary Graphics object to measure the text size
-			using (Graphics g = textBox.CreateGraphics())
-			{
-				SizeF textSize = g.MeasureString(textBox.Text, textBox.Font);
-
-				int newWidth = Math.Max((int)textSize.Width + 5, basicWidth);  // Add some padding
-
-				// Calculate the new height based on the number of lines
-				int lines = textBox.GetLineFromCharIndex(textBox.TextLength) + 1;
-				int newHeight = Math.Max(lines * textBox.Font.Height + 5, basicHeight);
-
-				// Update the TextBox size if it needs to be adjusted
-				if (textBox.Width != newWidth || textBox.Height != newHeight)
-				{
-					textBox.Size = new Size(newWidth, newHeight);
-				}
-			}
-		}
-	}
-
+	// AutoResize when text changed
+	
 	public class FlexiblePanel
 	{
 		protected Panel _panel;
@@ -447,7 +400,7 @@ namespace PKG
 		protected int widthDiff;
 		protected int heightDiff;
 
-		protected int thickness; // border thickness
+		protected int BorderThickness; // border BorderThickness
 		protected int basicWidth;
 		protected int basicHeight;
 		protected Rectangle border;
@@ -467,9 +420,9 @@ namespace PKG
 			control = control_;
 			parent = control_.Parent;
 			originalCursor = new Cursor(control_.Cursor.Handle);
-			thickness = thickness_;
-			basicWidth = 5 * thickness;
-			basicHeight = 5 * thickness;
+			BorderThickness = thickness_;
+			basicWidth = 5 * BorderThickness;
+			basicHeight = 5 * BorderThickness;
 			if (control.MinimumSize.Width > basicWidth)
 			{
 				basicWidth = control.MinimumSize.Width;
@@ -489,14 +442,14 @@ namespace PKG
 		{
 			border = control.ClientRectangle;
 			// Define the regions for each side of the border
-			borderN = new Rectangle(border.Left + thickness, border.Top, border.Width - (2 * thickness), thickness);
-			borderS = new Rectangle(border.Left + thickness, border.Bottom - thickness, border.Width - (2 * thickness), thickness);
-			borderW = new Rectangle(border.Left, border.Top + thickness, thickness, border.Height - (2 * thickness));
-			borderE = new Rectangle(border.Right - thickness, border.Top + thickness, thickness, border.Height - (2 * thickness));
-			borderNW = new Rectangle(border.Left, border.Top, thickness, thickness);
-			borderNE = new Rectangle(border.Right - thickness, border.Top, thickness, thickness);
-			borderSW = new Rectangle(border.Left, border.Bottom - thickness, thickness, thickness);
-			borderSE = new Rectangle(border.Right - thickness, border.Bottom - thickness, thickness, thickness);
+			borderN = new Rectangle(border.Left + BorderThickness, border.Top, border.Width - (2 * BorderThickness), BorderThickness);
+			borderS = new Rectangle(border.Left + BorderThickness, border.Bottom - BorderThickness, border.Width - (2 * BorderThickness), BorderThickness);
+			borderW = new Rectangle(border.Left, border.Top + BorderThickness, BorderThickness, border.Height - (2 * BorderThickness));
+			borderE = new Rectangle(border.Right - BorderThickness, border.Top + BorderThickness, BorderThickness, border.Height - (2 * BorderThickness));
+			borderNW = new Rectangle(border.Left, border.Top, BorderThickness, BorderThickness);
+			borderNE = new Rectangle(border.Right - BorderThickness, border.Top, BorderThickness, BorderThickness);
+			borderSW = new Rectangle(border.Left, border.Bottom - BorderThickness, BorderThickness, BorderThickness);
+			borderSE = new Rectangle(border.Right - BorderThickness, border.Bottom - BorderThickness, BorderThickness, BorderThickness);
 		}
 		public void RecoverCursor()
 		{
@@ -724,16 +677,107 @@ namespace PKG
 		}
 
 	}
-	
+	public class ExTextBox : ExControl
+	{
+		private TextBox textBox;
+		private int basicWidth;
+		private int basicHeight;
+
+		public ExTextBox(TextBox textBox, int basicWidth = 50, int basicHeight = 0) : base(textBox)
+		{
+			this.textBox = textBox;
+			this.basicWidth = basicWidth;
+			this.basicHeight = Math.Max(basicHeight, textBox.Font.Height);
+			textBox.Multiline = true;
+			// Subscribe to the TextChanged event of the TextBox
+			textBox.TextChanged += TextBox_TextChanged;
+
+			// Call the initial resize to adjust the size based on the initial text content
+			AutoResizeTextBox();
+		}
+
+		private void TextBox_TextChanged(object sender, EventArgs e)
+		{
+			AutoResizeTextBox();
+		}
+
+		private void AutoResizeTextBox()
+		{
+			// Create a temporary Graphics object to measure the text size
+			using (Graphics g = textBox.CreateGraphics())
+			{
+				SizeF textSize = g.MeasureString(textBox.Text, textBox.Font);
+
+				int newWidth = Math.Max((int)textSize.Width + 5, basicWidth);  // Add some padding
+
+				// Calculate the new height based on the number of lines
+				int lines = textBox.GetLineFromCharIndex(textBox.TextLength) + 1;
+				int newHeight = Math.Max(lines * textBox.Font.Height + 5, basicHeight);
+
+				// Update the TextBox size if it needs to be adjusted
+				if (textBox.Width != newWidth || textBox.Height != newHeight)
+				{
+					textBox.Size = new Size(newWidth, newHeight);
+				}
+			}
+		}
+	}
+	public class ExPictureBox:ExControl
+	{
+		PictureBox pictureBox;
+		public ExPictureBox(PictureBox pictureBox) : base(pictureBox)
+		{
+			this.pictureBox = pictureBox;
+			SizeRatio = ((float)pictureBox.Image.Size.Height / (float)pictureBox.Image.Size.Width);
+			enableRatioFixed = true;
+			control.AutoSize = false;
+			FitBoxToZoomedImage(true);
+		}
+		public void StretchWidth()
+		{
+			pictureBox.Size = new Size((int)(pictureBox.Size.Height / SizeRatio), (int)(pictureBox.Size.Height));
+		}
+		public void StretchHeight()
+		{
+			pictureBox.Size = new Size((int)(pictureBox.Size.Width), (int)(pictureBox.Size.Width * SizeRatio));
+		}
+		public void FitBoxToZoomedImage(bool byShrink = true)
+		{
+			if (byShrink)
+			{
+				// shrink pictureBox to match imageRatio(eliminate rundent space)
+				if (pictureBox.Size.Height > pictureBox.Size.Width * SizeRatio) // current height > expected height
+				{
+					StretchHeight();
+				}
+				else
+				{
+					StretchWidth();
+				}
+			}
+			else
+			{
+				// grow pictureBox to match imageRatio
+				if (pictureBox.Size.Height < pictureBox.Size.Width * SizeRatio) // current height > expected height
+				{
+					StretchHeight();
+				}
+				else
+				{
+					StretchWidth();
+				}
+			}
+			Debug.WriteLine("box:" + pictureBox.Size.ToString() + "  image:" + pictureBox.Image.Size.ToString());
+		}
+	}
 	public class ExControl
 	{
 		#region Fields
 		public Control control;
 		public Control parent; // parent control
-		public float sizeRatio;
-		#region Functionality enable
-		protected bool _enableGroup = false;
-		protected bool _enableFlex = true;
+		#region Functionality Enable
+		protected bool _enableGroup;
+		protected bool _enableFlex;
 		public bool EnableGroup
 		{
 			set
@@ -741,11 +785,11 @@ namespace PKG
 				_enableGroup = value;
 				if (value)
 				{
-					Subscribe_Group_Handlers();
+
 				}
 				else
 				{
-					Unsubscribe_Group_Handlers();
+
 				}
 			}
 			get { return _enableGroup; }
@@ -757,6 +801,7 @@ namespace PKG
 				_enableFlex = value;
 				if (value)
 				{
+					Unsubscribe_Flex_Handlers();// prevent duplicated handler subscription
 					Subscribe_Flex_Handlers();
 				}
 				else { Unsubscribe_Flex_Handlers();}
@@ -764,65 +809,80 @@ namespace PKG
 			get { return _enableFlex; }
 		}
 
-		public bool enableDrag = true;
-		public bool enableResize = true;
-		public bool enableRatioFixed = false;
+		public bool enableDrag;
+		public bool enableResize;
+		public bool enableRatioFixed;
 		
-
 		#endregion
 		#region Group Extension
-		public Control? root = null; // root control of group container
-		protected bool _isRoot = false;
-		public bool IsRoot
+		public Control? groupRoot = null; // groupRoot control of group container
+		protected bool _isGroupRoot;
+		public bool IsGroupRoot
 		{
 			set
 			{
-				_isRoot = value;
-				if (_isRoot)
+				_isGroupRoot = value;
+				if (_isGroupRoot)
 				{
-					control.MouseEnter += Group_MouseEnter;
-					control.MouseLeave += Group_MouseLeave;
-					control.MouseClick += Group_Click;
+					Unsubscribe_GroupRoot_Handlers();// prevent duplicated handler subscription
+					Subscribe_GroupRoot_Handlers();
 				}
 				else
 				{
-					control.MouseEnter -= Group_MouseEnter;
-					control.MouseLeave -= Group_MouseLeave;
-					control.MouseClick -= Group_Click;
+					Unsubscribe_GroupRoot_Handlers();
 				}
 			}
-			get { return _isRoot; }
+			get { return _isGroupRoot; }
 		}
 		public bool IsRootOpen // the group is being selected
 		{
 			set
 			{
-				if (root != null)
+				if (EnableGroup && groupRoot != null && !IsGroupRoot)
 				{
-					root.Capture = !value;
+					groupRoot.Capture = !value;
 				}
 			}
 			get
 			{
-				if (root == null)
+				if (!EnableGroup || groupRoot == null || IsGroupRoot)
 				{
 					return true;
 				}
                 else
                 {
-					return !root.Capture;
+					return !groupRoot.Capture;
 				}
             }
 		}
 		#endregion
-		#region Resize & Drag Extension
+		#region Flex Extension
 		public enum Side
 		{
 			N, S, W, E, None
 		}
 		protected Cursor originalCursor;
-		
-		protected int thickness; // border thickness
+		protected int _borderThickness; // border BorderThickness
+		public int BorderThickness
+		{
+			set
+			{
+				_borderThickness = value;
+				DefineBasicSize();
+			}
+			get { return _borderThickness; }
+		}
+
+		protected float _sizeRatio;
+		public float SizeRatio
+		{
+			set
+			{
+				_sizeRatio = value;
+				DefineBasicSize();
+			}
+			get { return _sizeRatio; }
+		}
 		protected int basicWidth;
 		protected int basicHeight;
 		protected Rectangle wholeRegion;
@@ -849,7 +909,7 @@ namespace PKG
 			this.control = control;
 			init();
 		}
-		#region Constructor with setting ".AutoSize = false"
+		#region Constructors with: "SizeRatio = ...", ".AutoSize = false"
 		public ExControl(Label control)
 		{
 			this.control = control;
@@ -859,20 +919,70 @@ namespace PKG
 		#endregion
 		public void init()
 		{
-			parent = control.Parent;
-			EnableGroup = true;
+			EnableGroup = false;
+			IsGroupRoot = false;
 			EnableFlex = true;
+			enableDrag = true;
+			enableResize = true;
+			enableRatioFixed = false;
+
+			parent = control.Parent;
+			originalCursor = new Cursor(control.Cursor.Handle);
+			BorderThickness = 10;
+
+		}
+		public void DefineBasicSize()
+		{
+			basicWidth = 5 * BorderThickness;
+			basicHeight = 5 * BorderThickness;
+			if (control.MinimumSize.Width > basicWidth)
+			{
+				basicWidth = control.MinimumSize.Width;
+			}
+			if (control.MinimumSize.Height > basicHeight)
+			{
+				basicHeight = control.MinimumSize.Height;
+			}
+			if (enableRatioFixed) // maintain ratio policy: only growth
+			{
+				int expectedBasicHeight = (int)((float)basicWidth * SizeRatio);
+				int expectedBasicWidth = (int)((float)basicHeight / SizeRatio);
+				if (SizeRatio > 1)
+				{
+					if (basicHeight < expectedBasicHeight)
+					{
+						basicHeight = expectedBasicHeight;
+					}
+					else
+					{
+						basicWidth = expectedBasicWidth;
+					}
+				}
+				else if (SizeRatio <= 1)
+				{
+					if (basicWidth < expectedBasicWidth)
+					{
+						basicWidth = expectedBasicWidth;
+					}
+					else
+					{
+						basicHeight = expectedBasicHeight;
+					}
+				}
+			}
+			control.MinimumSize = new Size(basicWidth, basicHeight);
+			DefineBorder();
 		}
 		#endregion
 
 		#region Group Extension
-		public void Subscribe_Group_Handlers()
+		public void Subscribe_GroupRoot_Handlers()
 		{
 			control.MouseEnter += Group_MouseEnter;
 			control.MouseLeave += Group_MouseLeave;
 			control.Click += Group_Click;
 		}
-		public void Unsubscribe_Group_Handlers()
+		public void Unsubscribe_GroupRoot_Handlers()
 		{
 			control.MouseEnter -= Group_MouseEnter;
 			control.MouseLeave -= Group_MouseLeave;
@@ -1008,10 +1118,10 @@ namespace PKG
 		{
 			wholeRegion = control.ClientRectangle;
 			// Define the regions for each side of the wholeRegion
-			borderN = new Rectangle(wholeRegion.Left, wholeRegion.Top, wholeRegion.Width, thickness);
-			borderS = new Rectangle(wholeRegion.Left, wholeRegion.Bottom - thickness, wholeRegion.Width, thickness);
-			borderW = new Rectangle(wholeRegion.Left, wholeRegion.Top, thickness, wholeRegion.Height);
-			borderE = new Rectangle(wholeRegion.Right - thickness, wholeRegion.Top, thickness, wholeRegion.Height);
+			borderN = new Rectangle(wholeRegion.Left, wholeRegion.Top, wholeRegion.Width, BorderThickness);
+			borderS = new Rectangle(wholeRegion.Left, wholeRegion.Bottom - BorderThickness, wholeRegion.Width, BorderThickness);
+			borderW = new Rectangle(wholeRegion.Left, wholeRegion.Top, BorderThickness, wholeRegion.Height);
+			borderE = new Rectangle(wholeRegion.Right - BorderThickness, wholeRegion.Top, BorderThickness, wholeRegion.Height);
 			
 		}
 		public void RecoverCursor()
@@ -1057,7 +1167,7 @@ namespace PKG
 			if (enableRatioFixed)
 			{
 
-				Debug.WriteLine("sizeRatio: " + sizeRatio);
+				Debug.WriteLine("SizeRatio: " + SizeRatio);
 				Debug.WriteLine("Ratio: " + (float)preHeight / (float)preWidth);
 				
 				if ((Convert.ToInt32(isAtSide[(int)Side.N]) 
@@ -1067,22 +1177,22 @@ namespace PKG
 				{
 					if (widthDiff >= heightDiff)
 					{
-						heightDiff = (int)((float)(preWidth + widthDiff) * sizeRatio - (float)preHeight);
+						heightDiff = (int)((float)(preWidth + widthDiff) * SizeRatio - (float)preHeight);
 					}
 					else
 					{
-						widthDiff = (int)((float)(preHeight + heightDiff) / sizeRatio - (float)preWidth);
+						widthDiff = (int)((float)(preHeight + heightDiff) / SizeRatio - (float)preWidth);
 					}
 				}
 				else 
 				{
 					if (isAtSide[(int)Side.N] | isAtSide[(int)Side.S])
 					{
-						widthDiff = (int)((float)(preHeight + heightDiff) / sizeRatio - (float)preWidth);
+						widthDiff = (int)((float)(preHeight + heightDiff) / SizeRatio - (float)preWidth);
 					}
 					else if (isAtSide[(int)Side.W] | isAtSide[(int)Side.E])
 					{
-						heightDiff = (int)((float)(preWidth + widthDiff) * sizeRatio - (float)preHeight);
+						heightDiff = (int)((float)(preWidth + widthDiff) * SizeRatio - (float)preHeight);
 					}
 				}
 			}

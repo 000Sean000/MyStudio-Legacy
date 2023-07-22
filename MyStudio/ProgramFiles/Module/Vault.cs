@@ -43,8 +43,9 @@ namespace Module
 		#endregion
 
 		#region Resource Locks
-		public object SettingLock = new object();
-		public object NodesLock = new object();
+		public object _settingLock = new object();
+		public object _nodeIDsLock = new object();
+		public object _nodesLock = new object();
 		public object _isNodeModifiedLock = new object();
 		#endregion
 
@@ -89,7 +90,10 @@ namespace Module
 			#endregion
 			foreach (JProperty property in _setting[NODES].ToObject<JObject>().Properties())
 			{
-				_nodeIDs.Add(property.Name);
+				lock (_nodeIDsLock)
+				{
+					_nodeIDs.Add(property.Name);
+				}
 			}
 			Node.nodesDir = nodesDir;
 			Node.mediaDir = mediaDir;
@@ -103,13 +107,19 @@ namespace Module
 		{
 			Debug.WriteLine(">>Vault first load nodes");
 			List<Thread> threadList = new List<Thread>();
-			foreach (string id in _nodeIDs)
+			List<string> clonedNodeIDs;
+			lock (_nodeIDsLock)
+			{
+				// Clone the _nodeIDs list to avoid concurrent modifications during iteration
+				clonedNodeIDs = new List<string>(_nodeIDs);
+			}
+			foreach (string id in clonedNodeIDs)
 			{
 				Node node;
 				Thread thread;
 				thread = new Thread(() => { 
 					node = new Node(id); 
-					lock (NodesLock)
+					lock (_nodesLock)
 					{
 						_nodes[id] = node;
 					}
@@ -126,7 +136,13 @@ namespace Module
 		public void SaveNodes()
 		{
 			List<Thread> threadList = new List<Thread>();
-			foreach (string id in _nodeIDs)
+			List<string> clonedNodeIDs;
+			lock (_nodeIDsLock)
+			{
+				// Clone the _nodeIDs list to avoid concurrent modifications during iteration
+				clonedNodeIDs = new List<string>(_nodeIDs);
+			}
+			foreach (string id in clonedNodeIDs)
 			{
 				Thread thread;
 				if (_isNodeModified[id])
@@ -138,7 +154,7 @@ namespace Module
 					thread = new Thread(() =>
 					{
 						int freq;
-						lock (SettingLock)
+						lock (_settingLock)
 						{
 							freq = _setting[NODES][id][FREQ].Value<int>();
 							if (freq < 0)
@@ -160,7 +176,7 @@ namespace Module
 					thread = new Thread(() =>
 					{
 						int freq;
-						lock (SettingLock)
+						lock (_settingLock)
 						{
 							freq = _setting[NODES][id][FREQ].Value<int>();
 							freq--;
@@ -182,44 +198,86 @@ namespace Module
 		{
 			Node node = new Node();
 			string id = node.id;
-			_nodeIDs.Add(id);
-			lock (NodesLock)
+			lock (_nodeIDsLock)
+			{
+				_nodeIDs.Add(id);
+			}
+			lock (_nodesLock)
 			{
 				_nodes[id] = node;
 				return _nodes[id];
 			}
 		}
+		
 		public Node FetchNode(string id)
 		{
-			if (!_nodeIDs.Contains(id))
+			bool isIdContained;
+			lock (_nodeIDsLock)
+			{
+				isIdContained = _nodeIDs.Contains(id);
+			}
+			if (!isIdContained)
 			{
 				Node node = new Node(id);
-				_nodeIDs.Add(id);
-				lock (NodesLock)
+				lock (_nodeIDsLock)
+				{
+					_nodeIDs.Add(id);
+				}
+				lock (_nodesLock)
 				{
 					_nodes[id] = node;
 					return _nodes[id];
 				}
 			}
-			lock (NodesLock)
+			lock (_nodesLock)
 			{
 				return _nodes[id];
 			}
 		}
+		public void ReleaseNode(string id)
+		{
+
+			if (_nodeIDs.Contains(id))
+			{
+				Node node = new Node(id);
+				_nodeIDs.Remove(id);
+				lock (_nodesLock)
+				{
+					_nodes.Remove(id);
+				}
+			}
+		}
 		#endregion
-		
+
+		#region Qick Lock Operatoin
+		public bool IsNodeIDsContains(string id)
+		{
+			bool isIdContained;
+			lock (_nodeIDsLock)
+			{
+				isIdContained = _nodeIDs.Contains(id);
+			}
+			return isIdContained;
+		}
+		#endregion
+
 		#region File Operation
 		public void MaintainSetting()
 		{
-			
-			lock (SettingLock)
+			List<string> clonedNodeIDs;
+			lock (_nodeIDsLock)
+			{
+				// Clone the _nodeIDs list to avoid concurrent modifications during iteration
+				clonedNodeIDs = new List<string>(_nodeIDs);
+			}
+			lock (_settingLock)
 			{
 				if (!_setting.ContainsKey(NODES))
 				{
 					_setting[NODES] = new JObject();
 				}
 				JObject nodeObj = _setting[NODES].ToObject<JObject>();
-				foreach (string id in _nodeIDs)
+				foreach (string id in clonedNodeIDs)
 				{
 					JObject idObj = nodeObj[id].ToObject<JObject>();
 					if (!idObj.ContainsKey(FREQ))
@@ -232,14 +290,14 @@ namespace Module
 		
 		public void LoadSetting()
 		{
-			lock (SettingLock)
+			lock (_settingLock)
 			{
 				_setting = JsonPKG.ReadJsonObjectFromFile(settingPath);
 			}
 		}
 		public void SaveSetting()
 		{
-			lock (SettingLock)
+			lock (_settingLock)
 			{
 				JsonPKG.SaveJsonObjectToFile(_setting, settingPath);
 			}
