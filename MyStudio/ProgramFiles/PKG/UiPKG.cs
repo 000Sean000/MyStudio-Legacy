@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using static PKG.FlexibleControl;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
-
 /*
  *  Control Extension
  */
@@ -18,31 +15,40 @@ namespace PKG
 {
 	public static class UiPKG
 	{
-		public static FlexibleControl SetControlResizable(Control control_, int thickness_ = 10) { return new FlexibleControl(control_, thickness_); }
-		public static PanelCanvas SetCanvasDaggable(Panel panel, float sensitivity = 1) { return new PanelCanvas(panel, sensitivity); }
-		//public static SuperPictureBox SetPictureBoxFitImage(PictureBox pictureBox_) { return new SuperPictureBox(pictureBox_); }
+		// Replace oldControl with newControl in parentControl
+		public static void ReplaceControl(Control oldControl, Control newControl, Control parentControl)
+		{
+			// Step 1: Find the index of oldControl in the Panel's Controls collection
+			int index = parentControl.Controls.IndexOf(oldControl);
 
+			// Step 2: Insert newControl at the same index as oldControl
+			parentControl.Controls.Add(newControl);
+			parentControl.Controls.SetChildIndex(newControl, index);
+
+			// Step 3: Remove oldControl from the Controls collection
+			parentControl.Controls.Remove(oldControl);
+		}
 	}
 
 
 
 	public static class ControlAligner
 	{
-		public static int GetTotalWidth_OfControlsInContainer(Panel panel)
+		public static int GetTotalWidth_OfControlsInContainer(Panel panel, int spacing = 0)
 		{
-			int totalWidth = 0;
+			int totalWidth = -spacing;
 			foreach (Control control in panel.Controls)
 			{
-				totalWidth += control.Width;
+				totalWidth += control.Width + spacing;
 			}
 			return totalWidth;
 		}
-		public static int GetTotalHeight_OfControlsInContainer(Panel panel)
+		public static int GetTotalHeight_OfControlsInContainer(Panel panel, int spacing = 0)
 		{
-			int totalHeight = 0;
+			int totalHeight = -spacing;
 			foreach (Control control in panel.Controls)
 			{
-				totalHeight += control.Height;
+				totalHeight += control.Height + spacing;
 			}
 			return totalHeight;
 		}
@@ -70,13 +76,13 @@ namespace PKG
 			}
 			return maxHeight;
 		}
-		public static void AlignControlsHorizontally(Panel panel, int spacing = 0)
+		public static void AlignControlsHorizontally(Panel panel, int padding = 0, int spacing = 0)
 		{
 			//panel.Height = GetMaxHeightOfControlsInContainer(panel);
-			panel.Size = new Size(GetTotalWidth_OfControlsInContainer(panel), GetMaxHeight_OfControlsInContainer(panel));
+			panel.Size = new Size(GetTotalWidth_OfControlsInContainer(panel, spacing) + 2 * padding, GetMaxHeight_OfControlsInContainer(panel) + 2 * padding);
 
 			int centerY = panel.Height / 2;
-			int currentX = 0;
+			int currentX = padding;
 			Debug.WriteLine(panel.Controls);
 			foreach (Control control in panel.Controls)
 			{
@@ -89,13 +95,13 @@ namespace PKG
 			}
 		}
 
-		public static void AlignControlsVertically(Panel panel, int spacing = 0)
+		public static void AlignControlsVertically(Panel panel, int padding = 0, int spacing = 0)
 		{
 			//panel.Width = GetMaxWidthOfControlsInContainer(panel);
-			panel.Size = new Size(GetMaxWidth_OfControlsInContainer(panel), GetTotalHeight_OfControlsInContainer(panel));
+			panel.Size = new Size(GetMaxWidth_OfControlsInContainer(panel) + 2 * padding, GetTotalHeight_OfControlsInContainer(panel, spacing) + 2 * padding);
 
 			int centerX = panel.Width / 2;
-			int currentY = 0;
+			int currentY = padding;
 
 			foreach (Control control in panel.Controls)
 			{
@@ -388,7 +394,7 @@ namespace PKG
 		}
 		public Control control;
 		public Control parent;
-		public bool enableDrag = true;
+		public bool EnableDrag = true;
 		//protected Control originalParent;
 		protected Cursor originalCursor;
 		protected Side cursorLocation = Side.None;
@@ -567,7 +573,7 @@ namespace PKG
 			}
 			else if (isDragging)
 			{
-				if (enableDrag)
+				if (EnableDrag)
 				{
 					horizontalMove = e.X - dragingStartPoint.X;
 					verticalMove = e.Y - dragingStartPoint.Y;
@@ -729,7 +735,7 @@ namespace PKG
 		{
 			this.pictureBox = pictureBox;
 			SizeRatio = ((float)pictureBox.Image.Size.Height / (float)pictureBox.Image.Size.Width);
-			enableRatioFixed = true;
+			EnableRatioFixed = true;
 			control.AutoSize = false;
 			FitBoxToZoomedImage(true);
 		}
@@ -798,25 +804,100 @@ namespace PKG
 		{
 			set
 			{
-				_enableFlex = value;
+				///_enableFlex = value;
 				if (value)
 				{
-					Unsubscribe_Flex_Handlers();// prevent duplicated handler subscription
 					Subscribe_Flex_Handlers();
 				}
-				else { Unsubscribe_Flex_Handlers();}
+				else
+				{
+					Unsubscribe_Flex_Handlers();
+				}
 			}
-			get { return _enableFlex; }
+			get	{ return _enableFlex; }
 		}
 
-		public bool enableDrag;
-		public bool enableResize;
-		public bool enableRatioFixed;
-		
+		public bool _enableDrag;
+		public bool _enableResize;
+		public bool _enableRatioFixed;
+		public bool EnableDrag
+		{
+			set
+			{
+				_enableDrag = value;
+				EnableFlex = EnableDrag | EnableResize;
+			}
+			get { return _enableDrag; }
+		}
+		public bool EnableResize
+		{
+			set
+			{
+				_enableResize = value;
+				EnableFlex = EnableDrag || EnableResize;
+			}
+			get { return _enableResize; }
+		}
+		public bool EnableRatioFixed
+		{
+			set
+			{
+				_enableRatioFixed = value;
+				EnableResize |= _enableRatioFixed;
+			}
+			get { return _enableRatioFixed; }
+		}
 		#endregion
+		#region Appearance Extension
+		public Color borderColor = Color.Red; // default border color
+		public Color BorderColor
+		{
+			get { return borderColor; }
+			set
+			{
+				borderColor = value;
+				control.Invalidate(); // Trigger a repaint to update the border color
+			}
+		}
+		#endregion
+
 		#region Group Extension
-		public Control? groupRoot = null; // groupRoot control of group container
+		private Color originalBorderColor;
+		public Color groupSelectedBorderColor = Color.Blue;
+		public Control? _groupRoot = null; // GroupRoot control of group container
+		public Control? GroupRoot
+		{
+			set
+			{
+				_groupRoot = value;
+				if (_groupRoot != null)
+				{
+					IsGroupRoot = false;
+				}
+				EnableGroup = GroupRoot != null || GroupInnerBody != null;
+			}
+			get { return _groupRoot; }
+		}
 		protected bool _isGroupRoot;
+		protected ExControl? _groupInnerBody; // to track child's isRootOpen
+		public ExControl? GroupInnerBody
+		{
+			set
+			{
+				_groupInnerBody = value;
+				if (_groupInnerBody != null)
+				{
+					IsGroupRoot = true;
+				}
+				else
+				{
+					IsGroupRoot = false;
+				}
+				EnableGroup = GroupRoot != null || GroupInnerBody != null;
+			}
+			get { return _groupInnerBody; }
+		}
+		protected bool _isRootOpen;
 		public bool IsGroupRoot
 		{
 			set
@@ -824,7 +905,7 @@ namespace PKG
 				_isGroupRoot = value;
 				if (_isGroupRoot)
 				{
-					Unsubscribe_GroupRoot_Handlers();// prevent duplicated handler subscription
+					GroupRoot = control;
 					Subscribe_GroupRoot_Handlers();
 				}
 				else
@@ -838,22 +919,33 @@ namespace PKG
 		{
 			set
 			{
-				if (EnableGroup && groupRoot != null && !IsGroupRoot)
+				if (EnableGroup && GroupRoot != null)
 				{
-					groupRoot.Capture = !value;
+					_isRootOpen = value;
+					if (_isRootOpen)
+					{
+						GroupRoot.Capture = false;
+						originalBorderColor = borderColor;
+						borderColor = groupSelectedBorderColor;
+					}
+					else
+					{
+						borderColor = originalBorderColor;
+					}
 				}
 			}
 			get
 			{
-				if (!EnableGroup || groupRoot == null || IsGroupRoot)
+				if (!EnableGroup || GroupRoot == null || IsGroupRoot)
 				{
 					return true;
 				}
-                else
-                {
-					return !groupRoot.Capture;
+				else
+				{
+					if (GroupRoot.Capture) { _isRootOpen = false;}
+					return _isRootOpen;
 				}
-            }
+			}
 		}
 		#endregion
 		#region Flex Extension
@@ -906,6 +998,7 @@ namespace PKG
 		#region Constructor
 		public ExControl(Control control)
 		{
+			
 			this.control = control;
 			init();
 		}
@@ -921,14 +1014,16 @@ namespace PKG
 		{
 			EnableGroup = false;
 			IsGroupRoot = false;
-			EnableFlex = true;
-			enableDrag = true;
-			enableResize = true;
-			enableRatioFixed = false;
+			EnableFlex = false;
+			EnableDrag = false;
+			EnableResize = false;
+			EnableRatioFixed = false;
 
 			parent = control.Parent;
 			originalCursor = new Cursor(control.Cursor.Handle);
 			BorderThickness = 10;
+
+			control.Paint += Control_Paint;
 
 		}
 		public void DefineBasicSize()
@@ -943,7 +1038,7 @@ namespace PKG
 			{
 				basicHeight = control.MinimumSize.Height;
 			}
-			if (enableRatioFixed) // maintain ratio policy: only growth
+			if (EnableRatioFixed) // maintain ratio policy: only growth
 			{
 				int expectedBasicHeight = (int)((float)basicWidth * SizeRatio);
 				int expectedBasicWidth = (int)((float)basicHeight / SizeRatio);
@@ -974,32 +1069,59 @@ namespace PKG
 			DefineBorder();
 		}
 		#endregion
+		#region Appearance Extension
+		private void Control_Paint(object sender, PaintEventArgs e)
+		{
+			// Draw the custom border using the specified color
+			using (var pen = new Pen(borderColor, 2))
+			{
+				e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, control.Width - 1, control.Height - 1));
+			}
+		}
+		#endregion
 
 		#region Group Extension
 		public void Subscribe_GroupRoot_Handlers()
 		{
+			Unsubscribe_GroupRoot_Handlers();// prevent duplicated handler subscription
 			control.MouseEnter += Group_MouseEnter;
-			control.MouseLeave += Group_MouseLeave;
+			control.MouseMove += Group_MouseMove;
 			control.Click += Group_Click;
 		}
 		public void Unsubscribe_GroupRoot_Handlers()
 		{
 			control.MouseEnter -= Group_MouseEnter;
-			control.MouseLeave -= Group_MouseLeave;
+			control.MouseMove -= Group_MouseMove;
 			control.Click -= Group_Click;
 		}
 		public void Group_MouseEnter(object sender, EventArgs e)
 		{
-			control.Capture = true;
+			Debug.WriteLine($"IsGroupRoot:{IsGroupRoot}, !GroupInnerBody.IsRootOpen:{!GroupInnerBody.IsRootOpen}");
+			if (IsGroupRoot)
+			{
+				//if (!GroupInnerBody.IsRootOpen)
+				//{
+					control.Capture = true;
+				//}
+			}
 		}
-		public void Group_MouseLeave(object sender, EventArgs e)
+		// MouseLeave will not be triggered when capture is still true
+		// so use MouseMove
+		public void Group_MouseMove(object sender, MouseEventArgs e) 
 		{
-			control.Capture = false;
+			//Debug.WriteLine($"control.Location:{control.Location}, Cursor:{e.Location}");
+			if (!control.ClientRectangle.Contains(e.Location))
+			{
+				control.Capture = false;
+				borderColor = originalBorderColor;
+			}
+
 		}
-		public void Group_Click(object sender, EventArgs e)
+		public void Group_Click(object sender, EventArgs e) // represent a quick click
 		{
-			control.Capture = false;
-			
+			IsRootOpen = true;
+			originalBorderColor = borderColor;
+			borderColor = Color.Blue;
 		}
 		//public delegate void EventHandler(object sender, EventArgs e);
 		public void ActWhenRootOpen(object sender, EventArgs e, EventHandler action)
@@ -1040,6 +1162,7 @@ namespace PKG
 		#region Flexibility Extension
 		public void Subscribe_Flex_Handlers()
 		{
+			Unsubscribe_Flex_Handlers();// prevent duplicated handler subscription
 			control.MouseMove += Flex_MouseMove;
 			control.MouseDown += Flex_MouseDown;
 			control.MouseUp += Flex_MouseUp;
@@ -1068,7 +1191,7 @@ namespace PKG
 			}
 			else if (isDragging)
 			{
-				if (enableDrag)
+				if (EnableDrag)
 				{
 					horizontalMove = e.X - dragingStartPoint.X;
 					verticalMove = e.Y - dragingStartPoint.Y;
@@ -1089,12 +1212,12 @@ namespace PKG
 			// Check if the mouse is near the border of the container
 			if (IsCursorNearBoundary())
 			{
-				isResizing = enableResize;
+				isResizing = EnableResize;
 				preCursorPoint = new Point(e.X, e.Y);
 			}
 			else
 			{
-				isDragging = enableDrag;
+				isDragging = EnableDrag;
 				dragingStartPoint = new Point(e.X, e.Y);
 			}
 
@@ -1164,7 +1287,7 @@ namespace PKG
 			widthDiff = isAtSide[(int)Side.W] ? -horizontalMove : horizontalMove;
 
 			// check ratio
-			if (enableRatioFixed)
+			if (EnableRatioFixed)
 			{
 
 				Debug.WriteLine("SizeRatio: " + SizeRatio);
@@ -1222,7 +1345,7 @@ namespace PKG
 		}
 		protected void ChangeCursorByRegion()
 		{
-			if (enableResize)
+			if (EnableResize)
 			{
 				if (isAtSide[(int)Side.N] & isAtSide[(int)Side.W])
 				{
@@ -1260,7 +1383,7 @@ namespace PKG
 					}
 				}
 			}
-			if (enableDrag)
+			if (EnableDrag)
 			{
 				if (!(isAtSide[(int)Side.N] | isAtSide[(int)Side.S] | isAtSide[(int)Side.W] | isAtSide[(int)Side.E]))
 				{
@@ -1277,8 +1400,125 @@ namespace PKG
 		#endregion
 		#endregion
 	}
+	public class PanelCanvas
+	{
+		protected Point _dragStartPoint;
+		protected Point _canvasStartPoint;
+		protected bool _isDragging;
+		protected bool _readyToDraw = false;
+		protected float _sensitivity;
 
-	
+		public Panel panel;
+		public Label canvasX = new Label();
+		public Label canvasY = new Label();
+		public Label canvasX0 = new Label();
+		public Label canvasY0 = new Label();
+		public Label mouseX = new Label();
+		public Label mouseY = new Label();
+		public Label mouseX0 = new Label();
+		public Label mouseY0 = new Label();
+		public PanelCanvas(Panel panel, float sensitivity = 1)
+		{
+			this.panel = panel;
+			panel.Capture = true;
+			_sensitivity = sensitivity;
+			panel.MouseDown += MouseDown;
+			panel.MouseUp += MouseUp;
+			panel.MouseMove += MouseMove;
+			// Subscribe the AdjustWorldSpaceSize method to the appropriate events
+			panel.ControlAdded += AdjustWorldSpaceSize;
+			panel.ControlRemoved += AdjustWorldSpaceSize;
+		}
+		public void AdjustWorldSpaceSize(object sender, EventArgs e)
+		{
+			// Calculate the minimum required size for the world space
+			int minWidth = 0;
+			int minHeight = 0;
+			int offsetX = int.MaxValue;
+			int offsetY = int.MaxValue;
+
+			foreach (Control childControl in panel.Controls)
+			{
+				// Subscribe to the LocationChanged event for each child control
+				childControl.LocationChanged -= AdjustWorldSpaceSize;
+				childControl.LocationChanged += AdjustWorldSpaceSize;
+
+				// Subscribe to the SizeChanged event for each child control
+				childControl.SizeChanged -= AdjustWorldSpaceSize;
+				childControl.SizeChanged += AdjustWorldSpaceSize;
+				// Adjust the required width and height based on the child control's position and size
+				minWidth = Math.Max(minWidth, childControl.Right);
+				minHeight = Math.Max(minHeight, childControl.Bottom);
+
+				// Track the minimum negative X and Y coordinates
+				offsetX = Math.Min(offsetX, childControl.Left);
+				offsetY = Math.Min(offsetY, childControl.Top);
+			}
+
+			// Adjust the minimum required size for the world space based on negative offsets
+			minWidth -= offsetX;
+			minHeight -= offsetY;
+
+			// Set the minimum required size for the world space
+			panel.AutoScrollMinSize = new Size(minWidth, minHeight);
+			panel.AutoScrollPosition = new Point(-offsetX, -offsetY);
+			//Debug.WriteLine($"autoscroll: {panel.AutoScroll}");
+		}
+		public void MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right)
+			{
+				_dragStartPoint = new Point(e.X, e.Y);
+				_isDragging = true;
+
+
+				Point currentPosition = panel.AutoScrollPosition;
+				_canvasStartPoint = new Point(currentPosition.X, currentPosition.Y);
+				canvasX0.Text = currentPosition.X.ToString();
+				canvasY0.Text = currentPosition.Y.ToString();
+				mouseX.Text = e.X.ToString();
+				mouseY.Text = e.Y.ToString();
+				mouseX0.Text = _dragStartPoint.X.ToString();
+				mouseY0.Text = _dragStartPoint.Y.ToString();
+			}
+		}
+
+		public void MouseUp(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right)
+			{
+				_isDragging = false;
+				/*
+				Point currentPosition = panel.AutoScrollPosition;
+				panel.AutoScrollPosition = new Point(
+					-_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * 1),
+					-_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * 1));
+				currentPosition = panel.AutoScrollPosition; // read the AutoScrollPosition again
+				canvasX.Text = currentPosition.X.ToString();
+				canvasY.Text = currentPosition.Y.ToString();
+				*/
+			}
+		}
+
+		public void MouseMove(object sender, MouseEventArgs e)
+		{
+			if (_isDragging)
+			{
+
+				panel.AutoScrollPosition = new Point(
+					-_canvasStartPoint.X - (int)((e.X - _dragStartPoint.X) * _sensitivity),
+					-_canvasStartPoint.Y - (int)((e.Y - _dragStartPoint.Y) * _sensitivity));
+				Point currentPosition = panel.AutoScrollPosition;
+				canvasX.Text = currentPosition.X.ToString();
+				canvasY.Text = currentPosition.Y.ToString();
+				mouseX.Text = e.X.ToString();
+				mouseY.Text = e.Y.ToString();
+
+
+			}
+		}
+	}
+
 	#region Developing
 	public class MultiClickHandler
 	{

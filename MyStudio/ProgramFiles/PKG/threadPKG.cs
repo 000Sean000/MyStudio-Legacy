@@ -11,7 +11,7 @@ namespace PKG
 {
 	public static class threadPKG
 	{
-		public delegate void Actions();
+		//public delegate void Actions();
 
 	}
 

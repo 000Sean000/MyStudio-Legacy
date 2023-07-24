@@ -60,9 +60,11 @@ namespace Ui
 			// 
 			// pictureBox1
 			// 
-			pictureBox1.BorderStyle = BorderStyle.FixedSingle;
+			pictureBox1.BackColor = SystemColors.ControlDark;
+			pictureBox1.BackgroundImageLayout = ImageLayout.None;
+			pictureBox1.BorderStyle = BorderStyle.Fixed3D;
 			pictureBox1.Image = MyStudio.Properties.Resources.kazimierz_black;
-			pictureBox1.Location = new Point(64, 139);
+			pictureBox1.Location = new Point(65, 141);
 			pictureBox1.Name = "pictureBox1";
 			pictureBox1.Size = new Size(125, 62);
 			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;

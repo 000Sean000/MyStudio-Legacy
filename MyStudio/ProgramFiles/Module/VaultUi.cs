@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using PKG;
 namespace Module
 {
 	partial class Vault
@@ -30,17 +30,24 @@ namespace Module
 			protected Node _node;
 
 			#region Ui components
-			Panel panel_Node;
+			Panel panel_NodeGroup;
+			Panel panel_NodeInnerBody;
+			Label label_NodeContent;
 			TextBox textBox_NodeContent;
 			PictureBox pictureBox_NodeImage;
 			FlowLayoutPanel flowLayoutPanel_NodeTags;
 			Panel panel_NodeContentAndTag;
 
-			ExControl exPanel_Node;
+			ExControl exPanel_NodeGroup;
+			ExControl exPanel_NodeInnerBody;
+			ExControl exLabel_NodeContent;
 			ExTextBox exTextBox_NodeContent;
 			ExPictureBox exPictureBox_NodeImage;
 			ExControl exFlowLayoutPanel_NodeTags;
 			ExControl exPanel_NodeContentAndTag;
+			#endregion
+			#region Ui parameters
+			public int GroupPadding = 10;
 			#endregion
 			public UiNode(Vault vault)
 			{
@@ -56,21 +63,42 @@ namespace Module
 
 				//...
 				#region Basic control initialization
-				panel_Node = new Panel();
+				panel_NodeGroup = new Panel();
+				panel_NodeInnerBody = new Panel();
+				label_NodeContent = new Label();
 				textBox_NodeContent = new TextBox();
 				pictureBox_NodeImage = new PictureBox();
 				panel_NodeContentAndTag = new Panel();
 				flowLayoutPanel_NodeTags = new FlowLayoutPanel();
 				// 
-				// panel_Node
+				// panel_NodeGroup
 				// 
-				panel_Node.BorderStyle = BorderStyle.FixedSingle;
-				panel_Node.Controls.Add(pictureBox_NodeImage);
-				panel_Node.Controls.Add(panel_NodeContentAndTag);
-				panel_Node.Location = new Point(0, 0);
-				panel_Node.Name = "panel_Node";
-				panel_Node.Size = new Size(390, 244);
-				panel_Node.TabIndex = 6;
+				panel_NodeGroup.BorderStyle = BorderStyle.FixedSingle;
+				panel_NodeGroup.Controls.Add(panel_NodeInnerBody);
+				panel_NodeGroup.Location = new Point(0, 0);
+				panel_NodeGroup.Name = "panel_NodeGroup";
+				panel_NodeGroup.Size = new Size(400, 300);
+				panel_NodeGroup.TabIndex = 6;
+
+				// 
+				// panel_NodeInnerBody
+				// 
+				panel_NodeInnerBody.BorderStyle = BorderStyle.FixedSingle;
+				panel_NodeInnerBody.Controls.Add(pictureBox_NodeImage);
+				panel_NodeInnerBody.Controls.Add(panel_NodeContentAndTag);
+				panel_NodeInnerBody.Location = new Point(0, 0);
+				panel_NodeInnerBody.Name = "panel_NodeInnerBody";
+				panel_NodeInnerBody.Size = new Size(390, 244);
+				panel_NodeInnerBody.TabIndex = 6;
+				// 
+				// label_NodeContent
+				// 
+				label_NodeContent.BorderStyle = BorderStyle.FixedSingle;
+				label_NodeContent.Location = new Point(45, 14);
+				label_NodeContent.Name = "label_NodeContent";
+				label_NodeContent.Size = new Size(125, 34);
+				label_NodeContent.TabIndex = 1;
+				label_NodeContent.Text = "Label"; // test
 				// 
 				// textBox_NodeContent
 				// 
@@ -95,8 +123,9 @@ namespace Module
 				// panel_NodeContentAndTag
 				// 
 				panel_NodeContentAndTag.BorderStyle = BorderStyle.FixedSingle;
-				panel_NodeContentAndTag.Controls.Add(flowLayoutPanel_NodeTags);
 				panel_NodeContentAndTag.Controls.Add(textBox_NodeContent);
+				panel_NodeContentAndTag.Controls.Add(flowLayoutPanel_NodeTags);
+				UiPKG.ReplaceControl(textBox_NodeContent, label_NodeContent, panel_NodeContentAndTag);
 				panel_NodeContentAndTag.Location = new Point(112, 83);
 				panel_NodeContentAndTag.Name = "panel_NodeContentAndTag";
 				panel_NodeContentAndTag.Size = new Size(250, 125);
@@ -118,27 +147,39 @@ namespace Module
 				#endregion
 
 				#region Control Extension initialization
-				exPanel_Node = new ExControl(panel_Node) { EnableGroup = true, IsGroupRoot = true, EnableFlex = true, enableDrag = true, enableResize = false };
-				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTags) { EnableGroup = true, groupRoot = panel_Node, EnableFlex = false, enableDrag = false, enableResize = false };
-				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { EnableGroup = true, groupRoot = panel_Node, EnableFlex = false, enableDrag = false, enableResize = false };
-				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnableGroup = true, groupRoot = panel_Node, EnableFlex = true, enableDrag = false, enableResize = true};
-				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { EnableGroup = true, groupRoot = panel_Node, EnableFlex = false, enableDrag = false, enableResize = false };
-
-
+				exPanel_NodeGroup = new ExControl(panel_NodeGroup) { GroupInnerBody = exPanel_NodeInnerBody, EnableDrag = true };
+				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup};
+				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTags) { GroupRoot = panel_NodeGroup};
+				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup};
+				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
+				exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
+				/*
+				 *exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnableGroup = true, GroupInnerBody = exPanel_NodeInnerBody, EnableFlex = true, EnableDrag = true, EnableResize = false };
+				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
+				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTags) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
+				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
+				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = true, EnableDrag = false, EnableResize = true, EnableRatioFixed = true};
+				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
+				exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
+				 */
 				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
-				ControlAligner.AlignControlsHorizontally(panel_Node);
+				ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
+				ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
 
 				pictureBox_NodeImage.SizeChanged += AlignControlsInNode;
 				textBox_NodeContent.SizeChanged += AlignControlsInNode;
 				flowLayoutPanel_NodeTags.SizeChanged += AlignControlsInNode;
 				#endregion
 
-				_canvas.Controls.Add(panel_Node);
+				_canvas.Controls.Add(panel_NodeGroup);
 			}
 			public void AlignControlsInNode(object sender,  EventArgs e)
 			{
+				// the order is important
 				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
-				ControlAligner.AlignControlsHorizontally(panel_Node);
+				ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
+				ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
 			}
 		}
 		public void CreateUiNode()
