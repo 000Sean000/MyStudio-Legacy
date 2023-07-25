@@ -781,6 +781,19 @@ namespace PKG
 		#region Fields
 		public Control control;
 		public Control parent; // parent control
+		/*
+		 * To prevent recusion of accessor:
+		 * Define the direction of calling and forbit reverse direction calling.
+		 * 
+		 * 1. Let object accessor call flag accessor
+		 *	e.g. GroupRoot = someControl call IsGroupRoot
+		 * 
+		 * 2. Let parent flag accessor getter refresh itself according to child flag,
+		 *    And let getter call setter, setter don't call getter
+		 * (Letting child flag accessor setter refresh parent will repeat many same refresh action)
+		 *	e.g. EnableFlex = EnableDrag || EnableResize
+		 * 
+		 */
 		#region Functionality Enable
 		protected bool _enableGroup;
 		protected bool _enableFlex;
@@ -789,23 +802,19 @@ namespace PKG
 			set
 			{
 				_enableGroup = value;
-				if (value)
-				{
-
-				}
-				else
-				{
-
-				}
 			}
-			get { return _enableGroup; }
+			get
+			{
+				EnableGroup = GroupRoot != null || GroupInnerBody != null;
+				return _enableGroup;
+			}
 		}
 		public bool EnableFlex
 		{
 			set
 			{
-				///_enableFlex = value;
-				if (value)
+				_enableFlex = value;
+				if (_enableFlex)
 				{
 					Subscribe_Flex_Handlers();
 				}
@@ -814,7 +823,11 @@ namespace PKG
 					Unsubscribe_Flex_Handlers();
 				}
 			}
-			get	{ return _enableFlex; }
+			get
+			{
+				EnableFlex = EnableDrag || EnableResize; 
+				return _enableFlex;
+			}
 		}
 
 		public bool _enableDrag;
@@ -825,7 +838,6 @@ namespace PKG
 			set
 			{
 				_enableDrag = value;
-				EnableFlex = EnableDrag | EnableResize;
 			}
 			get { return _enableDrag; }
 		}
@@ -834,16 +846,18 @@ namespace PKG
 			set
 			{
 				_enableResize = value;
-				EnableFlex = EnableDrag || EnableResize;
 			}
-			get { return _enableResize; }
+			get 
+			{
+				EnableResize |= _enableRatioFixed;
+				return _enableResize; 
+			}
 		}
 		public bool EnableRatioFixed
 		{
 			set
 			{
 				_enableRatioFixed = value;
-				EnableResize |= _enableRatioFixed;
 			}
 			get { return _enableRatioFixed; }
 		}
@@ -852,15 +866,14 @@ namespace PKG
 		public Color borderColor = Color.Red; // default border color
 		public Color BorderColor
 		{
-			get { return borderColor; }
 			set
 			{
 				borderColor = value;
 				control.Invalidate(); // Trigger a repaint to update the border color
 			}
+			get { return borderColor; }
 		}
 		#endregion
-
 		#region Group Extension
 		private Color originalBorderColor;
 		public Color groupSelectedBorderColor = Color.Blue;
@@ -870,11 +883,16 @@ namespace PKG
 			set
 			{
 				_groupRoot = value;
-				if (_groupRoot != null)
+				Debug.WriteLine($"\t_groupRoot:{_groupRoot}, control:{control}");
+				if (_groupRoot == control)
+				{
+					IsGroupRoot = true;
+				}
+				else
 				{
 					IsGroupRoot = false;
 				}
-				EnableGroup = GroupRoot != null || GroupInnerBody != null;
+				
 			}
 			get { return _groupRoot; }
 		}
@@ -887,13 +905,15 @@ namespace PKG
 				_groupInnerBody = value;
 				if (_groupInnerBody != null)
 				{
+					GroupRoot = control;
 					IsGroupRoot = true;
+					Debug.WriteLine($"\tGroupInnerBody is not null. IsGroupRoot:{IsGroupRoot}");
 				}
 				else
 				{
 					IsGroupRoot = false;
+					Debug.WriteLine("\tGroupInnerBody is null!");
 				}
-				EnableGroup = GroupRoot != null || GroupInnerBody != null;
 			}
 			get { return _groupInnerBody; }
 		}
@@ -905,7 +925,6 @@ namespace PKG
 				_isGroupRoot = value;
 				if (_isGroupRoot)
 				{
-					GroupRoot = control;
 					Subscribe_GroupRoot_Handlers();
 				}
 				else
@@ -938,6 +957,7 @@ namespace PKG
 			{
 				if (!EnableGroup || GroupRoot == null || IsGroupRoot)
 				{
+					//Debug.WriteLine($"\tEnableGroup:{EnableGroup}, GroupRoot == null:{GroupRoot == null}, IsGroupRoot:{IsGroupRoot}");
 					return true;
 				}
 				else
@@ -995,6 +1015,7 @@ namespace PKG
 		#endregion
 
 		#endregion
+
 		#region Constructor
 		public ExControl(Control control)
 		{
@@ -1079,7 +1100,6 @@ namespace PKG
 			}
 		}
 		#endregion
-
 		#region Group Extension
 		public void Subscribe_GroupRoot_Handlers()
 		{
@@ -1087,6 +1107,7 @@ namespace PKG
 			control.MouseEnter += Group_MouseEnter;
 			control.MouseMove += Group_MouseMove;
 			control.Click += Group_Click;
+			Debug.WriteLine("\tGroup Extension Subscription");
 		}
 		public void Unsubscribe_GroupRoot_Handlers()
 		{
@@ -1096,7 +1117,7 @@ namespace PKG
 		}
 		public void Group_MouseEnter(object sender, EventArgs e)
 		{
-			Debug.WriteLine($"IsGroupRoot:{IsGroupRoot}, !GroupInnerBody.IsRootOpen:{!GroupInnerBody.IsRootOpen}");
+			Debug.WriteLine($"\tIsGroupRoot:{IsGroupRoot}, GroupInnerBody.IsRootOpen:{GroupInnerBody.IsRootOpen}");
 			if (IsGroupRoot)
 			{
 				//if (!GroupInnerBody.IsRootOpen)
@@ -1158,8 +1179,7 @@ namespace PKG
 		}
 
 		#endregion
-
-		#region Flexibility Extension
+		#region Flex Extension
 		public void Subscribe_Flex_Handlers()
 		{
 			Unsubscribe_Flex_Handlers();// prevent duplicated handler subscription

@@ -147,13 +147,15 @@ namespace Module
 				#endregion
 
 				#region Control Extension initialization
-				exPanel_NodeGroup = new ExControl(panel_NodeGroup) { GroupInnerBody = exPanel_NodeInnerBody, EnableDrag = true };
+				exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnableDrag = true };
 				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup};
 				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTags) { GroupRoot = panel_NodeGroup};
 				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup};
 				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
 				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
 				exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
+
+				exPanel_NodeGroup.GroupInnerBody = exPanel_NodeInnerBody;
 				/*
 				 *exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnableGroup = true, GroupInnerBody = exPanel_NodeInnerBody, EnableFlex = true, EnableDrag = true, EnableResize = false };
 				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
