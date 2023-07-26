@@ -1,0 +1,5 @@
+﻿
+cursor recover necessarity?
+group root cannot open
+should also draw inner region to wipe old border
+sample node bug: textBox autosize will shrink whole node

@@ -32,9 +32,19 @@ namespace Ui
 		private void InitializeComponent()
 		{
 			panel_canvas = new Panel();
+			panel_NodeGroup = new Panel();
+			panel_NodeInnerBody = new Panel();
+			pictureBox_NodeImage = new PictureBox();
+			panel_NodeContentAndTag = new Panel();
+			textBox_NodeContent = new TextBox();
+			flowLayoutPanel_NodeTag = new FlowLayoutPanel();
+			button_NodeTag = new Button();
 			button_createNode = new Button();
-			pictureBox1 = new PictureBox();
-			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+			panel_NodeGroup.SuspendLayout();
+			panel_NodeInnerBody.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)pictureBox_NodeImage).BeginInit();
+			panel_NodeContentAndTag.SuspendLayout();
+			flowLayoutPanel_NodeTag.SuspendLayout();
 			SuspendLayout();
 			// 
 			// panel_canvas
@@ -42,15 +52,84 @@ namespace Ui
 			panel_canvas.AutoScroll = true;
 			panel_canvas.AutoScrollMinSize = new Size(500, 500);
 			panel_canvas.BorderStyle = BorderStyle.FixedSingle;
-			panel_canvas.Location = new Point(225, 116);
+			panel_canvas.Location = new Point(400, 72);
 			panel_canvas.Name = "panel_canvas";
 			panel_canvas.Padding = new Padding(10);
 			panel_canvas.Size = new Size(388, 250);
 			panel_canvas.TabIndex = 0;
 			// 
+			// panel_NodeGroup
+			// 
+			panel_NodeGroup.BorderStyle = BorderStyle.FixedSingle;
+			panel_NodeGroup.Controls.Add(panel_NodeInnerBody);
+			panel_NodeGroup.Location = new Point(57, 127);
+			panel_NodeGroup.Name = "panel_NodeGroup";
+			panel_NodeGroup.Padding = new Padding(10);
+			panel_NodeGroup.Size = new Size(250, 125);
+			panel_NodeGroup.TabIndex = 2;
+			// 
+			// panel_NodeInnerBody
+			// 
+			panel_NodeInnerBody.BorderStyle = BorderStyle.FixedSingle;
+			panel_NodeInnerBody.Controls.Add(pictureBox_NodeImage);
+			panel_NodeInnerBody.Controls.Add(panel_NodeContentAndTag);
+			panel_NodeInnerBody.Dock = DockStyle.Fill;
+			panel_NodeInnerBody.Location = new Point(10, 10);
+			panel_NodeInnerBody.Name = "panel_NodeInnerBody";
+			panel_NodeInnerBody.Size = new Size(228, 103);
+			panel_NodeInnerBody.TabIndex = 0;
+			// 
+			// pictureBox_NodeImage
+			// 
+			pictureBox_NodeImage.BorderStyle = BorderStyle.FixedSingle;
+			pictureBox_NodeImage.Image = MyStudio.Properties.Resources.kazimierz_black;
+			pictureBox_NodeImage.Location = new Point(168, 0);
+			pictureBox_NodeImage.Name = "pictureBox_NodeImage";
+			pictureBox_NodeImage.Size = new Size(58, 101);
+			pictureBox_NodeImage.SizeMode = PictureBoxSizeMode.Zoom;
+			pictureBox_NodeImage.TabIndex = 0;
+			pictureBox_NodeImage.TabStop = false;
+			// 
+			// panel_NodeContentAndTag
+			// 
+			panel_NodeContentAndTag.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			panel_NodeContentAndTag.BorderStyle = BorderStyle.FixedSingle;
+			panel_NodeContentAndTag.Controls.Add(textBox_NodeContent);
+			panel_NodeContentAndTag.Controls.Add(flowLayoutPanel_NodeTag);
+			panel_NodeContentAndTag.Location = new Point(0, 0);
+			panel_NodeContentAndTag.Name = "panel_NodeContentAndTag";
+			panel_NodeContentAndTag.Size = new Size(168, 101);
+			panel_NodeContentAndTag.TabIndex = 1;
+			// 
+			// textBox_NodeContent
+			// 
+			textBox_NodeContent.BorderStyle = BorderStyle.FixedSingle;
+			textBox_NodeContent.Location = new Point(0, 0);
+			textBox_NodeContent.Name = "textBox_NodeContent";
+			textBox_NodeContent.Size = new Size(166, 27);
+			textBox_NodeContent.TabIndex = 0;
+			// 
+			// flowLayoutPanel_NodeTag
+			// 
+			flowLayoutPanel_NodeTag.BorderStyle = BorderStyle.FixedSingle;
+			flowLayoutPanel_NodeTag.Controls.Add(button_NodeTag);
+			flowLayoutPanel_NodeTag.Location = new Point(0, 62);
+			flowLayoutPanel_NodeTag.Name = "flowLayoutPanel_NodeTag";
+			flowLayoutPanel_NodeTag.Size = new Size(166, 37);
+			flowLayoutPanel_NodeTag.TabIndex = 1;
+			// 
+			// button_NodeTag
+			// 
+			button_NodeTag.Location = new Point(3, 3);
+			button_NodeTag.Name = "button_NodeTag";
+			button_NodeTag.Size = new Size(49, 29);
+			button_NodeTag.TabIndex = 0;
+			button_NodeTag.Text = "tag";
+			button_NodeTag.UseVisualStyleBackColor = true;
+			// 
 			// button_createNode
 			// 
-			button_createNode.Location = new Point(361, 369);
+			button_createNode.Location = new Point(575, 359);
 			button_createNode.Name = "button_createNode";
 			button_createNode.Size = new Size(159, 29);
 			button_createNode.TabIndex = 1;
@@ -58,31 +137,22 @@ namespace Ui
 			button_createNode.UseVisualStyleBackColor = true;
 			button_createNode.Click += button_createNode_Click;
 			// 
-			// pictureBox1
-			// 
-			pictureBox1.BackColor = SystemColors.ControlDark;
-			pictureBox1.BackgroundImageLayout = ImageLayout.None;
-			pictureBox1.BorderStyle = BorderStyle.Fixed3D;
-			pictureBox1.Image = MyStudio.Properties.Resources.kazimierz_black;
-			pictureBox1.Location = new Point(65, 141);
-			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new Size(125, 62);
-			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-			pictureBox1.TabIndex = 2;
-			pictureBox1.TabStop = false;
-			pictureBox1.MouseEnter += pictureBox1_MouseEnter;
-			// 
 			// VaultForm
 			// 
 			AutoScaleDimensions = new SizeF(9F, 19F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
-			Controls.Add(pictureBox1);
+			Controls.Add(panel_NodeGroup);
 			Controls.Add(button_createNode);
 			Controls.Add(panel_canvas);
 			Name = "VaultForm";
 			Text = "VaultUi";
-			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+			panel_NodeGroup.ResumeLayout(false);
+			panel_NodeInnerBody.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)pictureBox_NodeImage).EndInit();
+			panel_NodeContentAndTag.ResumeLayout(false);
+			panel_NodeContentAndTag.PerformLayout();
+			flowLayoutPanel_NodeTag.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -93,18 +163,64 @@ namespace Ui
 		{
 			//TestNodeUi();
 			AppManager.workingVault.canvas = panel_canvas;
-			new PanelCanvas(panel_canvas);
+			ExControl exControl_Canvas = new ExControl(panel_canvas);
+			ExPanel exPanel_Canvas = new ExPanel(panel_canvas);
+			TestNodeUi();
 
 		}
 		public void TestNodeUi()
 		{
+			int GroupPadding = 10;
 
+			ExControl exPanel_NodeGroup;
+			ExControl exPanel_NodeInnerBody;
+			ExControl exLabel_NodeContent;
+			ExTextBox exTextBox_NodeContent;
+			ExPictureBox exPictureBox_NodeImage;
+			ExControl exFlowLayoutPanel_NodeTags;
+			ExControl exPanel_NodeContentAndTag;
+
+
+			#region Control Extension initialization
+			exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnablePaintBorder = true, EnableDrag = true };
+			exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup };
+			exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = panel_NodeGroup };
+			exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup };
+			exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = true, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+			exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup };
+			exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup };
+
+			exPanel_NodeGroup.GroupInnerBody = exPanel_NodeInnerBody;
+			exPanel_NodeGroup.CheckFunctionalityEnable();
+
+			ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
+			ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
+			ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
+
+			pictureBox_NodeImage.SizeChanged += AlignControlsInNode;
+			textBox_NodeContent.SizeChanged += AlignControlsInNode;
+			flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
+			#endregion
+		}
+		public void AlignControlsInNode(object sender, EventArgs e)
+		{
+			int GroupPadding = 10;
+			// the order is important
+			ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
+			ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
+			ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
 		}
 		#endregion
 
 
 		private Panel panel_canvas;
 		private Button button_createNode;
-		private PictureBox pictureBox1;
+		private Panel panel_NodeGroup;
+		private Panel panel_NodeInnerBody;
+		private PictureBox pictureBox_NodeImage;
+		private Panel panel_NodeContentAndTag;
+		private FlowLayoutPanel flowLayoutPanel_NodeTag;
+		private Button button_NodeTag;
+		private TextBox textBox_NodeContent;
 	}
 }

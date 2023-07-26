@@ -406,7 +406,7 @@ namespace PKG
 		protected int widthDiff;
 		protected int heightDiff;
 
-		protected int BorderThickness; // border BorderThickness
+		protected int BorderSize; // border BorderSize
 		protected int basicWidth;
 		protected int basicHeight;
 		protected Rectangle border;
@@ -426,9 +426,9 @@ namespace PKG
 			control = control_;
 			parent = control_.Parent;
 			originalCursor = new Cursor(control_.Cursor.Handle);
-			BorderThickness = thickness_;
-			basicWidth = 5 * BorderThickness;
-			basicHeight = 5 * BorderThickness;
+			BorderSize = thickness_;
+			basicWidth = 5 * BorderSize;
+			basicHeight = 5 * BorderSize;
 			if (control.MinimumSize.Width > basicWidth)
 			{
 				basicWidth = control.MinimumSize.Width;
@@ -448,14 +448,14 @@ namespace PKG
 		{
 			border = control.ClientRectangle;
 			// Define the regions for each side of the border
-			borderN = new Rectangle(border.Left + BorderThickness, border.Top, border.Width - (2 * BorderThickness), BorderThickness);
-			borderS = new Rectangle(border.Left + BorderThickness, border.Bottom - BorderThickness, border.Width - (2 * BorderThickness), BorderThickness);
-			borderW = new Rectangle(border.Left, border.Top + BorderThickness, BorderThickness, border.Height - (2 * BorderThickness));
-			borderE = new Rectangle(border.Right - BorderThickness, border.Top + BorderThickness, BorderThickness, border.Height - (2 * BorderThickness));
-			borderNW = new Rectangle(border.Left, border.Top, BorderThickness, BorderThickness);
-			borderNE = new Rectangle(border.Right - BorderThickness, border.Top, BorderThickness, BorderThickness);
-			borderSW = new Rectangle(border.Left, border.Bottom - BorderThickness, BorderThickness, BorderThickness);
-			borderSE = new Rectangle(border.Right - BorderThickness, border.Bottom - BorderThickness, BorderThickness, BorderThickness);
+			borderN = new Rectangle(border.Left + BorderSize, border.Top, border.Width - (2 * BorderSize), BorderSize);
+			borderS = new Rectangle(border.Left + BorderSize, border.Bottom - BorderSize, border.Width - (2 * BorderSize), BorderSize);
+			borderW = new Rectangle(border.Left, border.Top + BorderSize, BorderSize, border.Height - (2 * BorderSize));
+			borderE = new Rectangle(border.Right - BorderSize, border.Top + BorderSize, BorderSize, border.Height - (2 * BorderSize));
+			borderNW = new Rectangle(border.Left, border.Top, BorderSize, BorderSize);
+			borderNE = new Rectangle(border.Right - BorderSize, border.Top, BorderSize, BorderSize);
+			borderSW = new Rectangle(border.Left, border.Bottom - BorderSize, BorderSize, BorderSize);
+			borderSE = new Rectangle(border.Right - BorderSize, border.Bottom - BorderSize, BorderSize, BorderSize);
 		}
 		public void RecoverCursor()
 		{
@@ -778,7 +778,7 @@ namespace PKG
 	}
 	public class ExControl
 	{
-		#region Fields
+		#region Fields & Accessors
 		public Control control;
 		public Control parent; // parent control
 		/*
@@ -795,6 +795,26 @@ namespace PKG
 		 * 
 		 */
 		#region Functionality Enable
+		protected bool _enablePaintBorder;
+		public bool EnablePaintBorder
+		{
+			set
+			{
+				_enablePaintBorder = value;
+				if (_enablePaintBorder)
+				{
+					Subscribe_PaintBorder_Handlers();
+				}
+				else
+				{
+					Unsubscribe_PaintBorder_Handlers();
+				}
+			}
+			get
+			{
+				return _enablePaintBorder;
+			}
+		}
 		protected bool _enableGroup;
 		protected bool _enableFlex;
 		public bool EnableGroup
@@ -849,7 +869,7 @@ namespace PKG
 			}
 			get 
 			{
-				EnableResize |= _enableRatioFixed;
+				EnableResize = _enableResize || EnableRatioFixed;
 				return _enableResize; 
 			}
 		}
@@ -863,16 +883,28 @@ namespace PKG
 		}
 		#endregion
 		#region Appearance Extension
-		public Color borderColor = Color.Red; // default border color
+		protected Color _borderColor = Color.Red; // default border color
+		protected int _borderThickness = 1;
 		public Color BorderColor
 		{
+			get { return _borderColor; }
 			set
 			{
-				borderColor = value;
-				control.Invalidate(); // Trigger a repaint to update the border color
+				_borderColor = value;
+				control.Invalidate(); // Trigger repaint
 			}
-			get { return borderColor; }
 		}
+
+		public int BorderThickness
+		{
+			get { return _borderThickness; }
+			set
+			{
+				_borderThickness = value;
+				control.Invalidate(); // Trigger repaint
+			}
+		}
+
 		#endregion
 		#region Group Extension
 		private Color originalBorderColor;
@@ -883,14 +915,14 @@ namespace PKG
 			set
 			{
 				_groupRoot = value;
-				Debug.WriteLine($"\t_groupRoot:{_groupRoot}, control:{control}");
+				//Debug.WriteLine($"\t_groupRoot:{_groupRoot}, control:{control}");
 				if (_groupRoot == control)
 				{
-					IsGroupRoot = true;
+					//IsGroupRoot = true;
 				}
 				else
 				{
-					IsGroupRoot = false;
+					//IsGroupRoot = false;
 				}
 				
 			}
@@ -944,12 +976,12 @@ namespace PKG
 					if (_isRootOpen)
 					{
 						GroupRoot.Capture = false;
-						originalBorderColor = borderColor;
-						borderColor = groupSelectedBorderColor;
+						originalBorderColor = _borderColor;
+						_borderColor = groupSelectedBorderColor;
 					}
 					else
 					{
-						borderColor = originalBorderColor;
+						_borderColor = originalBorderColor;
 					}
 				}
 			}
@@ -974,15 +1006,15 @@ namespace PKG
 			N, S, W, E, None
 		}
 		protected Cursor originalCursor;
-		protected int _borderThickness; // border BorderThickness
-		public int BorderThickness
+		protected int _borderSize; // border BorderSize
+		public int BorderSize
 		{
 			set
 			{
-				_borderThickness = value;
+				_borderSize = value;
 				DefineBasicSize();
 			}
-			get { return _borderThickness; }
+			get { return _borderSize; }
 		}
 
 		protected float _sizeRatio;
@@ -1006,7 +1038,7 @@ namespace PKG
 		protected bool isResizing = false;
 		protected bool isDragging = false;
 		// calculation variables
-		bool[] isAtSide = new bool[4];
+		protected bool[] isAtSide = new bool[4];
 		protected Point preCursorPoint; // previous cursor point
 		protected Point dragingStartPoint;
 		protected int verticalMove, horizontalMove; // mouse movement
@@ -1033,6 +1065,7 @@ namespace PKG
 		#endregion
 		public void init()
 		{
+			EnablePaintBorder = false;
 			EnableGroup = false;
 			IsGroupRoot = false;
 			EnableFlex = false;
@@ -1042,15 +1075,15 @@ namespace PKG
 
 			parent = control.Parent;
 			originalCursor = new Cursor(control.Cursor.Handle);
-			BorderThickness = 10;
+			BorderSize = 10;
 
-			control.Paint += Control_Paint;
+			
 
 		}
 		public void DefineBasicSize()
 		{
-			basicWidth = 5 * BorderThickness;
-			basicHeight = 5 * BorderThickness;
+			basicWidth = 5 * BorderSize;
+			basicHeight = 5 * BorderSize;
 			if (control.MinimumSize.Width > basicWidth)
 			{
 				basicWidth = control.MinimumSize.Width;
@@ -1090,13 +1123,36 @@ namespace PKG
 			DefineBorder();
 		}
 		#endregion
-		#region Appearance Extension
-		private void Control_Paint(object sender, PaintEventArgs e)
+		public void CheckFunctionalityEnable()
 		{
+			Debug.WriteLine($"\t>>CheckFunctionalityEnable");
+			Debug.WriteLine($"\tEnableGroup:{EnableGroup}");
+			Debug.WriteLine($"\tIsGroupRoot:{IsGroupRoot}");
+			Debug.WriteLine($"\tEnableFlex:{EnableFlex}");
+			Debug.WriteLine($"\tEnableDrag:{EnableDrag}");
+			Debug.WriteLine($"\tEnableResize:{EnableResize}");
+			Debug.WriteLine($"\tEnableRatioFixed:{EnableRatioFixed}");
+		}
+
+		#region Appearance Extension
+		public void Subscribe_PaintBorder_Handlers()
+		{
+			Unsubscribe_PaintBorder_Handlers();
+			control.Paint += PaintBorder;
+		}
+		public void Unsubscribe_PaintBorder_Handlers()
+		{
+			control.Paint -= PaintBorder;
+		}
+		private void PaintBorder(object sender, PaintEventArgs e)
+		{
+			_borderThickness = 10;
 			// Draw the custom border using the specified color
-			using (var pen = new Pen(borderColor, 2))
+			using (var pen = new Pen(BorderColor, BorderThickness))
 			{
-				e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, control.Width - 1, control.Height - 1));
+				int shift = 3;
+				Rectangle borderRect = new Rectangle(0, 0, control.Width - shift, control.Height - shift);
+				e.Graphics.DrawRectangle(pen, borderRect);
 			}
 		}
 		#endregion
@@ -1114,6 +1170,7 @@ namespace PKG
 			control.MouseEnter -= Group_MouseEnter;
 			control.MouseMove -= Group_MouseMove;
 			control.Click -= Group_Click;
+			Debug.WriteLine("\tGroup Extension Unsubscription");
 		}
 		public void Group_MouseEnter(object sender, EventArgs e)
 		{
@@ -1125,6 +1182,7 @@ namespace PKG
 					control.Capture = true;
 				//}
 			}
+			Debug.WriteLine($"\tCapture:{ control.Capture}");
 		}
 		// MouseLeave will not be triggered when capture is still true
 		// so use MouseMove
@@ -1134,15 +1192,15 @@ namespace PKG
 			if (!control.ClientRectangle.Contains(e.Location))
 			{
 				control.Capture = false;
-				borderColor = originalBorderColor;
+				_borderColor = originalBorderColor;
 			}
 
 		}
 		public void Group_Click(object sender, EventArgs e) // represent a quick click
 		{
 			IsRootOpen = true;
-			originalBorderColor = borderColor;
-			borderColor = Color.Blue;
+			originalBorderColor = _borderColor;
+			_borderColor = Color.Blue;
 		}
 		//public delegate void EventHandler(object sender, EventArgs e);
 		public void ActWhenRootOpen(object sender, EventArgs e, EventHandler action)
@@ -1198,6 +1256,7 @@ namespace PKG
 		#region Event Handlers
 		protected virtual void Flex_MouseMove(object sender, MouseEventArgs e)
 		{
+			//Debug.WriteLine($"\tIsRootOpen:{IsRootOpen}");
 			if (!IsRootOpen) { return; } 
 			if (isResizing)
 			{
@@ -1232,12 +1291,12 @@ namespace PKG
 			// Check if the mouse is near the border of the container
 			if (IsCursorNearBoundary())
 			{
-				isResizing = EnableResize;
+				isResizing = true;// = EnableResize;
 				preCursorPoint = new Point(e.X, e.Y);
 			}
 			else
 			{
-				isDragging = EnableDrag;
+				isDragging = true;// = EnableDrag;
 				dragingStartPoint = new Point(e.X, e.Y);
 			}
 
@@ -1247,13 +1306,13 @@ namespace PKG
 			if (!IsRootOpen) { return; }
 			isResizing = false;
 			isDragging = false;
-			RecoverCursor();
+			//RecoverCursor();
 			DefineBorder();
 		}
 		protected void Flex_MouseLeave(object sender, EventArgs e)
 		{
 			if (!IsRootOpen) { return; }
-			RecoverCursor();
+			//RecoverCursor();
 		}
 		#endregion
 		#region Functions for Handlers
@@ -1261,10 +1320,10 @@ namespace PKG
 		{
 			wholeRegion = control.ClientRectangle;
 			// Define the regions for each side of the wholeRegion
-			borderN = new Rectangle(wholeRegion.Left, wholeRegion.Top, wholeRegion.Width, BorderThickness);
-			borderS = new Rectangle(wholeRegion.Left, wholeRegion.Bottom - BorderThickness, wholeRegion.Width, BorderThickness);
-			borderW = new Rectangle(wholeRegion.Left, wholeRegion.Top, BorderThickness, wholeRegion.Height);
-			borderE = new Rectangle(wholeRegion.Right - BorderThickness, wholeRegion.Top, BorderThickness, wholeRegion.Height);
+			borderN = new Rectangle(wholeRegion.Left, wholeRegion.Top, wholeRegion.Width, BorderSize);
+			borderS = new Rectangle(wholeRegion.Left, wholeRegion.Bottom - BorderSize, wholeRegion.Width, BorderSize);
+			borderW = new Rectangle(wholeRegion.Left, wholeRegion.Top, BorderSize, wholeRegion.Height);
+			borderE = new Rectangle(wholeRegion.Right - BorderSize, wholeRegion.Top, BorderSize, wholeRegion.Height);
 			
 		}
 		public void RecoverCursor()
@@ -1420,7 +1479,7 @@ namespace PKG
 		#endregion
 		#endregion
 	}
-	public class PanelCanvas
+	public class ExPanel
 	{
 		protected Point _dragStartPoint;
 		protected Point _canvasStartPoint;
@@ -1437,7 +1496,7 @@ namespace PKG
 		public Label mouseY = new Label();
 		public Label mouseX0 = new Label();
 		public Label mouseY0 = new Label();
-		public PanelCanvas(Panel panel, float sensitivity = 1)
+		public ExPanel(Panel panel, float sensitivity = 1)
 		{
 			this.panel = panel;
 			panel.Capture = true;
@@ -1446,8 +1505,8 @@ namespace PKG
 			panel.MouseUp += MouseUp;
 			panel.MouseMove += MouseMove;
 			// Subscribe the AdjustWorldSpaceSize method to the appropriate events
-			panel.ControlAdded += AdjustWorldSpaceSize;
-			panel.ControlRemoved += AdjustWorldSpaceSize;
+			///panel.ControlAdded += AdjustWorldSpaceSize;
+			///panel.ControlRemoved += AdjustWorldSpaceSize;
 		}
 		public void AdjustWorldSpaceSize(object sender, EventArgs e)
 		{

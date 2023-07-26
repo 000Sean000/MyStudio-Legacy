@@ -11,7 +11,9 @@ namespace Module
 	partial class Vault
 	{
 		#region Field
+		public Panel canvas;
 		protected List<UiNode> _uiNodes = new List<UiNode>();
+
 		#endregion
 
 		#region Resource Locks
@@ -19,7 +21,12 @@ namespace Module
 		#endregion
 
 		#region VaultForm Config
-		public Panel canvas;
+		public void ConfigUi()
+		{
+			
+		}
+
+		
 		#endregion
 
 		#region Node Ui Operation
@@ -35,7 +42,7 @@ namespace Module
 			Label label_NodeContent;
 			TextBox textBox_NodeContent;
 			PictureBox pictureBox_NodeImage;
-			FlowLayoutPanel flowLayoutPanel_NodeTags;
+			FlowLayoutPanel flowLayoutPanel_NodeTag;
 			Panel panel_NodeContentAndTag;
 
 			ExControl exPanel_NodeGroup;
@@ -69,7 +76,7 @@ namespace Module
 				textBox_NodeContent = new TextBox();
 				pictureBox_NodeImage = new PictureBox();
 				panel_NodeContentAndTag = new Panel();
-				flowLayoutPanel_NodeTags = new FlowLayoutPanel();
+				flowLayoutPanel_NodeTag = new FlowLayoutPanel();
 				// 
 				// panel_NodeGroup
 				// 
@@ -123,55 +130,49 @@ namespace Module
 				// panel_NodeContentAndTag
 				// 
 				panel_NodeContentAndTag.BorderStyle = BorderStyle.FixedSingle;
-				panel_NodeContentAndTag.Controls.Add(textBox_NodeContent);
-				panel_NodeContentAndTag.Controls.Add(flowLayoutPanel_NodeTags);
-				UiPKG.ReplaceControl(textBox_NodeContent, label_NodeContent, panel_NodeContentAndTag);
+				panel_NodeContentAndTag.Controls.Add(label_NodeContent);
+				panel_NodeContentAndTag.Controls.Add(flowLayoutPanel_NodeTag);
 				panel_NodeContentAndTag.Location = new Point(112, 83);
 				panel_NodeContentAndTag.Name = "panel_NodeContentAndTag";
 				panel_NodeContentAndTag.Size = new Size(250, 125);
 				panel_NodeContentAndTag.TabIndex = 9;
 				// 
-				// flowLayoutPanel_NodeTags
+				// flowLayoutPanel_NodeTag
 				// 
-				flowLayoutPanel_NodeTags.AutoSize = true;
-				flowLayoutPanel_NodeTags.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-				flowLayoutPanel_NodeTags.BorderStyle = BorderStyle.FixedSingle;
-				//flowLayoutPanel_NodeTags.Controls.Add(button3);
-				//flowLayoutPanel_NodeTags.Controls.Add(button4);
-				//flowLayoutPanel_NodeTags.Controls.Add(button5);
-				flowLayoutPanel_NodeTags.FlowDirection = FlowDirection.RightToLeft;
-				flowLayoutPanel_NodeTags.Location = new Point(23, 72);
-				flowLayoutPanel_NodeTags.Name = "flowLayoutPanel_NodeTags";
-				flowLayoutPanel_NodeTags.Size = new Size(302, 37);
-				flowLayoutPanel_NodeTags.TabIndex = 2;
+				flowLayoutPanel_NodeTag.AutoSize = true;
+				flowLayoutPanel_NodeTag.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+				flowLayoutPanel_NodeTag.BorderStyle = BorderStyle.FixedSingle;
+				//flowLayoutPanel_NodeTag.Controls.Add(button3);
+				//flowLayoutPanel_NodeTag.Controls.Add(button4);
+				//flowLayoutPanel_NodeTag.Controls.Add(button5);
+				flowLayoutPanel_NodeTag.FlowDirection = FlowDirection.RightToLeft;
+				flowLayoutPanel_NodeTag.Location = new Point(23, 72);
+				flowLayoutPanel_NodeTag.Name = "flowLayoutPanel_NodeTag";
+				flowLayoutPanel_NodeTag.Size = new Size(302, 37);
+				flowLayoutPanel_NodeTag.TabIndex = 2;
 				#endregion
 
 				#region Control Extension initialization
-				exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnableDrag = true };
+
+				UiPKG.ReplaceControl(label_NodeContent, textBox_NodeContent, panel_NodeContentAndTag);
+				exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnablePaintBorder = true, EnableDrag = true };
 				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup};
-				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTags) { GroupRoot = panel_NodeGroup};
+				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = panel_NodeGroup};
 				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup};
-				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = true, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
 				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
 				exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
 
 				exPanel_NodeGroup.GroupInnerBody = exPanel_NodeInnerBody;
-				/*
-				 *exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnableGroup = true, GroupInnerBody = exPanel_NodeInnerBody, EnableFlex = true, EnableDrag = true, EnableResize = false };
-				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
-				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTags) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
-				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
-				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = true, EnableDrag = false, EnableResize = true, EnableRatioFixed = true};
-				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
-				exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { EnableGroup = true, GroupRoot = panel_NodeGroup, EnableFlex = false, EnableDrag = false, EnableResize = false };
-				 */
+				exPanel_NodeGroup.CheckFunctionalityEnable();
+
 				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
 				ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
 				ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
 
 				pictureBox_NodeImage.SizeChanged += AlignControlsInNode;
 				textBox_NodeContent.SizeChanged += AlignControlsInNode;
-				flowLayoutPanel_NodeTags.SizeChanged += AlignControlsInNode;
+				flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
 				#endregion
 
 				_canvas.Controls.Add(panel_NodeGroup);
