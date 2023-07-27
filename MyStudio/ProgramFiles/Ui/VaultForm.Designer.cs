@@ -39,6 +39,8 @@ namespace Ui
 			textBox_NodeContent = new TextBox();
 			flowLayoutPanel_NodeTag = new FlowLayoutPanel();
 			button_NodeTag = new Button();
+			button2 = new Button();
+			button1 = new Button();
 			button_createNode = new Button();
 			panel_NodeGroup.SuspendLayout();
 			panel_NodeInnerBody.SuspendLayout();
@@ -73,7 +75,6 @@ namespace Ui
 			panel_NodeInnerBody.BorderStyle = BorderStyle.FixedSingle;
 			panel_NodeInnerBody.Controls.Add(pictureBox_NodeImage);
 			panel_NodeInnerBody.Controls.Add(panel_NodeContentAndTag);
-			panel_NodeInnerBody.Dock = DockStyle.Fill;
 			panel_NodeInnerBody.Location = new Point(10, 10);
 			panel_NodeInnerBody.Name = "panel_NodeInnerBody";
 			panel_NodeInnerBody.Size = new Size(228, 103);
@@ -92,7 +93,6 @@ namespace Ui
 			// 
 			// panel_NodeContentAndTag
 			// 
-			panel_NodeContentAndTag.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			panel_NodeContentAndTag.BorderStyle = BorderStyle.FixedSingle;
 			panel_NodeContentAndTag.Controls.Add(textBox_NodeContent);
 			panel_NodeContentAndTag.Controls.Add(flowLayoutPanel_NodeTag);
@@ -104,28 +104,52 @@ namespace Ui
 			// textBox_NodeContent
 			// 
 			textBox_NodeContent.BorderStyle = BorderStyle.FixedSingle;
-			textBox_NodeContent.Location = new Point(0, 0);
+			textBox_NodeContent.Location = new Point(45, 14);
+			textBox_NodeContent.Multiline = true;
 			textBox_NodeContent.Name = "textBox_NodeContent";
-			textBox_NodeContent.Size = new Size(166, 27);
+			textBox_NodeContent.Size = new Size(125, 34);
 			textBox_NodeContent.TabIndex = 0;
 			// 
 			// flowLayoutPanel_NodeTag
 			// 
+			flowLayoutPanel_NodeTag.AutoSize = true;
+			flowLayoutPanel_NodeTag.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 			flowLayoutPanel_NodeTag.BorderStyle = BorderStyle.FixedSingle;
 			flowLayoutPanel_NodeTag.Controls.Add(button_NodeTag);
+			flowLayoutPanel_NodeTag.Controls.Add(button2);
+			flowLayoutPanel_NodeTag.Controls.Add(button1);
+			flowLayoutPanel_NodeTag.FlowDirection = FlowDirection.RightToLeft;
 			flowLayoutPanel_NodeTag.Location = new Point(0, 62);
 			flowLayoutPanel_NodeTag.Name = "flowLayoutPanel_NodeTag";
-			flowLayoutPanel_NodeTag.Size = new Size(166, 37);
+			flowLayoutPanel_NodeTag.Size = new Size(257, 37);
 			flowLayoutPanel_NodeTag.TabIndex = 1;
 			// 
 			// button_NodeTag
 			// 
-			button_NodeTag.Location = new Point(3, 3);
+			button_NodeTag.Location = new Point(203, 3);
 			button_NodeTag.Name = "button_NodeTag";
 			button_NodeTag.Size = new Size(49, 29);
 			button_NodeTag.TabIndex = 0;
 			button_NodeTag.Text = "tag";
 			button_NodeTag.UseVisualStyleBackColor = true;
+			// 
+			// button2
+			// 
+			button2.Location = new Point(103, 3);
+			button2.Name = "button2";
+			button2.Size = new Size(94, 29);
+			button2.TabIndex = 2;
+			button2.Text = "button2";
+			button2.UseVisualStyleBackColor = true;
+			// 
+			// button1
+			// 
+			button1.Location = new Point(3, 3);
+			button1.Name = "button1";
+			button1.Size = new Size(94, 29);
+			button1.TabIndex = 1;
+			button1.Text = "button1";
+			button1.UseVisualStyleBackColor = true;
 			// 
 			// button_createNode
 			// 
@@ -186,7 +210,7 @@ namespace Ui
 			exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup };
 			exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = panel_NodeGroup };
 			exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup };
-			exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = true, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+			exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = false, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
 			exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup };
 			exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup };
 
@@ -222,5 +246,7 @@ namespace Ui
 		private FlowLayoutPanel flowLayoutPanel_NodeTag;
 		private Button button_NodeTag;
 		private TextBox textBox_NodeContent;
+		private Button button2;
+		private Button button1;
 	}
 }

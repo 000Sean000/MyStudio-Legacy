@@ -688,6 +688,7 @@ namespace PKG
 		private TextBox textBox;
 		private int basicWidth;
 		private int basicHeight;
+		public int space = 10; // reserve some space for correct resizing
 
 		public ExTextBox(TextBox textBox, int basicWidth = 50, int basicHeight = 0) : base(textBox)
 		{
@@ -714,7 +715,7 @@ namespace PKG
 			{
 				SizeF textSize = g.MeasureString(textBox.Text, textBox.Font);
 
-				int newWidth = Math.Max((int)textSize.Width + 5, basicWidth);  // Add some padding
+				int newWidth = Math.Max((int)textSize.Width + space, basicWidth);  // Add some padding
 
 				// Calculate the new height based on the number of lines
 				int lines = textBox.GetLineFromCharIndex(textBox.TextLength) + 1;
@@ -801,6 +802,7 @@ namespace PKG
 			set
 			{
 				_enablePaintBorder = value;
+				_borderColor = _original_borderColor;
 				if (_enablePaintBorder)
 				{
 					Subscribe_PaintBorder_Handlers();
@@ -883,8 +885,21 @@ namespace PKG
 		}
 		#endregion
 		#region Appearance Extension
-		protected Color _borderColor = Color.Red; // default border color
-		protected int _borderThickness = 1;
+		public Color _original_borderColor = Color.Black;
+		public Color _hover_borderColor = Color.Green;
+		public Color _rootOpen_borderColor = Color.Blue;
+		protected Color _backColor = Color.Gray;
+		protected Color _borderColor; // default border color
+		protected int _borderThickness = 2;
+		public Color BackColor
+		{
+			get { return _backColor; }
+			set
+			{
+				_backColor = value;
+				control.Invalidate(); // Trigger repaint
+			}
+		}
 		public Color BorderColor
 		{
 			get { return _borderColor; }
@@ -1138,22 +1153,64 @@ namespace PKG
 		public void Subscribe_PaintBorder_Handlers()
 		{
 			Unsubscribe_PaintBorder_Handlers();
-			control.Paint += PaintBorder;
+			control.Paint += Appearance_Paint;
+			control.SizeChanged += Appearance_SizeChanged;
 		}
 		public void Unsubscribe_PaintBorder_Handlers()
 		{
-			control.Paint -= PaintBorder;
+			control.Paint -= Appearance_Paint;
+			control.SizeChanged -= Appearance_SizeChanged;
 		}
-		private void PaintBorder(object sender, PaintEventArgs e)
+		public void DrawBorder(PaintEventArgs e)
 		{
-			_borderThickness = 10;
-			// Draw the custom border using the specified color
+			_borderThickness = 1;
+			// Draw the custom border using the specified color and thickness
 			using (var pen = new Pen(BorderColor, BorderThickness))
 			{
-				int shift = 3;
+				int shift = 3; // error shift
 				Rectangle borderRect = new Rectangle(0, 0, control.Width - shift, control.Height - shift);
 				e.Graphics.DrawRectangle(pen, borderRect);
 			}
+		}
+
+		protected void DrawBackground(PaintEventArgs e)
+		{
+
+			using (var backBrush = new SolidBrush(BackColor))
+			{
+				Rectangle rect = control.ClientRectangle;
+				e.Graphics.FillRectangle(backBrush, rect);
+				Debug.WriteLine($"\t({rect.Width} x {rect.Height}) at ({rect.X}, {rect.Y}) ");
+			}
+			///if (_backColor != Color.Gray) { _backColor = Color.Gray; }
+			///else { _backColor = Color.Blue; }
+		}
+		private void Appearance_SizeChanged(object sender, EventArgs e)
+		{
+			control.Invalidate();
+		}
+
+
+		// Pass the Paint event to draw border and background
+		public void Appearance_Paint(object sender, PaintEventArgs e)
+		{
+			DrawBackground(e);
+			DrawBorder(e);
+		}
+		private void PaintBorder(object sender, PaintEventArgs e)
+		{
+			_borderThickness = 1;
+
+			// Draw the custom border using the specified color
+			using (var pen = new Pen(BorderColor, BorderThickness))
+			{
+				int shift = 3; // error shift
+				Rectangle borderRect = new Rectangle(0, 0, control.Width - shift, control.Height - shift);
+				e.Graphics.DrawRectangle(pen, borderRect);
+			}
+			if (_borderColor == Color.Red) { _borderColor = Color.Green; }
+			else { _borderColor = Color.Red; }
+			
 		}
 		#endregion
 		#region Group Extension
@@ -1177,10 +1234,11 @@ namespace PKG
 			Debug.WriteLine($"\tIsGroupRoot:{IsGroupRoot}, GroupInnerBody.IsRootOpen:{GroupInnerBody.IsRootOpen}");
 			if (IsGroupRoot)
 			{
-				//if (!GroupInnerBody.IsRootOpen)
-				//{
+				if (!GroupInnerBody.IsRootOpen)
+				{
 					control.Capture = true;
-				//}
+					BorderColor = _hover_borderColor;
+				}
 			}
 			Debug.WriteLine($"\tCapture:{ control.Capture}");
 		}
@@ -1192,7 +1250,11 @@ namespace PKG
 			if (!control.ClientRectangle.Contains(e.Location))
 			{
 				control.Capture = false;
-				_borderColor = originalBorderColor;
+				//_borderColor = originalBorderColor;
+				if (!IsRootOpen)
+				{
+					
+				}
 			}
 
 		}

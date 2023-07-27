@@ -77,6 +77,11 @@ namespace Module
 				pictureBox_NodeImage = new PictureBox();
 				panel_NodeContentAndTag = new Panel();
 				flowLayoutPanel_NodeTag = new FlowLayoutPanel();
+				panel_NodeGroup.SuspendLayout();
+				panel_NodeInnerBody.SuspendLayout();
+				((System.ComponentModel.ISupportInitialize)pictureBox_NodeImage).BeginInit();
+				panel_NodeContentAndTag.SuspendLayout();
+				flowLayoutPanel_NodeTag.SuspendLayout();
 				// 
 				// panel_NodeGroup
 				// 
@@ -84,6 +89,7 @@ namespace Module
 				panel_NodeGroup.Controls.Add(panel_NodeInnerBody);
 				panel_NodeGroup.Location = new Point(0, 0);
 				panel_NodeGroup.Name = "panel_NodeGroup";
+				panel_NodeGroup.Padding = new Padding(10);
 				panel_NodeGroup.Size = new Size(400, 300);
 				panel_NodeGroup.TabIndex = 6;
 
@@ -150,6 +156,13 @@ namespace Module
 				flowLayoutPanel_NodeTag.Name = "flowLayoutPanel_NodeTag";
 				flowLayoutPanel_NodeTag.Size = new Size(302, 37);
 				flowLayoutPanel_NodeTag.TabIndex = 2;
+
+				panel_NodeGroup.ResumeLayout(false);
+				panel_NodeInnerBody.ResumeLayout(false);
+				((System.ComponentModel.ISupportInitialize)pictureBox_NodeImage).EndInit();
+				panel_NodeContentAndTag.ResumeLayout(false);
+				panel_NodeContentAndTag.PerformLayout();
+				flowLayoutPanel_NodeTag.ResumeLayout(false);
 				#endregion
 
 				#region Control Extension initialization
@@ -159,7 +172,7 @@ namespace Module
 				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup};
 				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = panel_NodeGroup};
 				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup};
-				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = true, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = false, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
 				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
 				exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
 
@@ -172,6 +185,7 @@ namespace Module
 
 				pictureBox_NodeImage.SizeChanged += AlignControlsInNode;
 				textBox_NodeContent.SizeChanged += AlignControlsInNode;
+				label_NodeContent.SizeChanged += AlignControlsInNode;
 				flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
 				#endregion
 
