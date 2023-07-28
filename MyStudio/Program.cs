@@ -2,7 +2,7 @@ using PKG;
 using Module;
 using Ui;
 
-namespace MyStudio2
+namespace MyStudio
 {
     internal static class Program
     {

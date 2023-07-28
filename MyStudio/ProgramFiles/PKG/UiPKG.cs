@@ -11,6 +11,26 @@ using System.Diagnostics;
  *  Control Extension
  */
 
+/*
+* To prevent recursion of accessor:
+* Define the direction of calling and forbit reverse direction calling.
+* 
+* 1. Let object accessor call flag accessor
+*	e.g. GroupRoot = someControl call IsGroupRoot
+* 
+
+* 2. disable of parent don't modify child enable=>
+*	refresh parent at child setter, encapsulate refresh 
+*	(e.g. EnableFlex = EnableDrag || EnableResize)
+*	let setter call getter, getter don't call setter
+*	
+* old 2. Let parent flag accessor getter refresh itself according to child flag,
+*    And let getter call setter, setter don't call getter
+* (Letting child flag accessor setter refresh parent will repeat many same refresh action)
+*	e.g. EnableFlex = EnableDrag || EnableResize
+*	
+*/
+
 namespace PKG
 {
 	public static class UiPKG
@@ -158,531 +178,11 @@ namespace PKG
 
 	// AutoResize when text changed
 	
-	public class FlexiblePanel
-	{
-		protected Panel _panel;
-		protected Control _control;
-		public int padding;
-		public FlexiblePanel(Panel panel_, Control control_, int padding_ = 10)
-		{
-			_panel = panel_;
-			_control = control_;
-			_control.SizeChanged += PictureBoxSizeChanged;
-			padding = padding_;
-		}
-		public void PictureBoxSizeChanged(object sender, EventArgs e)
-		{
-
-			_panel.Size = new Size(_control.Width +2*padding, _control.Height+2*padding);
-			_control.Location = new Point(padding, padding);
-		}
-	}
-	public class FlexiblePictureBox : FlexibleControl
-	{
-		PictureBox pictureBox;
-		float imageRatio;
-		public FlexiblePictureBox(PictureBox pictureBox_) : base(pictureBox_)
-		{
-			pictureBox = pictureBox_;
-			imageRatio = ((float)pictureBox.Image.Size.Height / (float)pictureBox.Image.Size.Width);
-			FitZoomedImage(true);
-			int expectedBasicHeight = (int)((float)basicWidth * imageRatio);
-			int expectedBasicWidth = (int)((float)basicHeight / imageRatio);
-			if (imageRatio > 1)
-			{
-				if (basicHeight < expectedBasicHeight)
-				{
-					basicHeight = expectedBasicHeight;
-				}
-				else
-				{
-					basicWidth = expectedBasicWidth;
-				}
-			}
-			else if (imageRatio <= 1)
-			{
-				if (basicWidth < expectedBasicWidth)
-				{
-					basicWidth = expectedBasicWidth;
-				}
-				else
-				{
-					basicHeight = expectedBasicHeight;
-				}
-			}
-			control.MinimumSize = new Size(basicWidth, basicHeight);
-			Debug.WriteLine("minimum size: "+control.MinimumSize.ToString());
-		}
-		public void StretchWidth()
-		{
-			pictureBox.Size = new Size((int)(pictureBox.Size.Height / imageRatio), (int)(pictureBox.Size.Height));
-		}
-		public void StretchHeight()
-		{
-			pictureBox.Size = new Size((int)(pictureBox.Size.Width), (int)(pictureBox.Size.Width * imageRatio));
-		}
-		public void MoveVertically()
-		{
-			int diff = (int)(pictureBox.Size.Width * imageRatio) - pictureBox.Size.Height;
-			pictureBox.Location = new Point(pictureBox.Location.X, pictureBox.Location.Y - diff);
-		}
-		public void MoveHorizontally()
-		{
-			int diff = (int)(pictureBox.Size.Height / imageRatio) - pictureBox.Size.Width;
-			pictureBox.Location = new Point(pictureBox.Location.X - diff, pictureBox.Location.Y);
-		}
-		public void FitZoomedImage(bool byShrink = false)
-		{
-			if (byShrink)
-			{
-				// shrink pictureBox to match imageRatio(eliminate rundent space)
-				if (pictureBox.Size.Height > pictureBox.Size.Width * imageRatio) // current height > expected height
-				{
-					StretchHeight();
-				}
-				else
-				{
-					StretchWidth();
-				}
-			}
-			else
-			{
-				// grow pictureBox to match imageRatio
-				if (pictureBox.Size.Height < pictureBox.Size.Width * imageRatio) // current height > expected height
-				{
-					StretchHeight();
-				}
-				else
-				{
-					StretchWidth();
-				}
-			}
-			
-			
-			Debug.WriteLine("box:" + pictureBox.Size.ToString() + "  image:" + pictureBox.Image.Size.ToString());
-
-		}
-
-
-		protected override void ResizeControl(MouseEventArgs e)
-		{
-			// Adjust the size of the resizable block control_
-			// don't update preCursorPosition when mousemove relates to N or W direction,
-			int x, y;
-			int parentX = parent.Location.X;
-			int parentY = parent.Location.Y;
-
-			if (cursorLocation == Side.NW || cursorLocation == Side.N)
-			{
-				x = control.Location.X - widthDiff;
-				y = control.Location.Y - heightDiff;
-				if (x < 0) { parentX += x; }
-				if (y < 0) { parentY += y; }
-				parent.Location = new Point(parentX, parentY);
-				control.Location = new Point(x, y);
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-			}
-
-			else if (cursorLocation == Side.SW || cursorLocation == Side.W)
-			{
-				//...
-				control.Location = new Point(control.Location.X - widthDiff, control.Location.Y);
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(preCursorPoint.X, e.Y);
-			}
-			else if (cursorLocation == Side.SE　|| cursorLocation == Side.S)
-			{
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(e.X, e.Y);
-			}
-
-			else if (cursorLocation == Side.NE || cursorLocation == Side.E)
-			{
-				control.Location = new Point(control.Location.X, control.Location.Y - heightDiff);
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(e.X, preCursorPoint.Y);
-			}
-
-			//Thread.Sleep(1000);
-			Debug.WriteLine("Resize to " + control.Size.ToString() + " at " + control.Location.ToString());
-		}
-		//protected  void CalculateDiff2()
-		protected override void CalculateSizeDifference()
-		{
-			//recover cursorLocation
-
-			widthDiff = horizontalMove;
-			heightDiff = verticalMove;
-			/* border near N or W need opposite diff
-			 * positive diff => grow
-			 * negative diff => shrink
-			 */
-			if (cursorLocation == Side.NW)
-			{
-				widthDiff = -widthDiff;
-				heightDiff = -heightDiff;
-			}
-			else if (cursorLocation == Side.N || cursorLocation == Side.NE)
-			{
-				heightDiff = -heightDiff;
-			}
-			else if (cursorLocation == Side.W || cursorLocation == Side.SW)
-			{
-				widthDiff = -widthDiff;
-			}
-			// fit image ratio
-			Debug.WriteLine("imageRatio: " + imageRatio);
-			Debug.WriteLine("Ratio: " + (float)preHeight / (float)preWidth);
-
-			if (cursorLocation == Side.N || cursorLocation == Side.S)
-			{
-				widthDiff = (int)((float)(preHeight + heightDiff) / imageRatio - (float)preWidth);
-			}
-			else if (cursorLocation == Side.W || cursorLocation == Side.E)
-			{
-				heightDiff = (int)((float)(preWidth + widthDiff) * imageRatio - (float)preHeight);
-			}
-			else if (cursorLocation == Side.NW || cursorLocation == Side.SE || cursorLocation == Side.SW || cursorLocation == Side.NE)
-			{
-				if (widthDiff >= heightDiff)
-				{
-					heightDiff = (int)((float)(preWidth + widthDiff) * imageRatio - (float)preHeight);
-				}
-				else
-				{
-					widthDiff = (int)((float)(preHeight + heightDiff) / imageRatio - (float)preWidth);
-				}
-			}
-			// check basic Size
-			if (preHeight + heightDiff <= control.MinimumSize.Height)
-			{
-				Debug.WriteLine("preHeight: " + preHeight + " heightDiff: " + heightDiff);
-				heightDiff = 0;
-			}
-			if (preWidth + widthDiff <= control.MinimumSize.Width)
-			{
-				Debug.WriteLine("preWidth: " + preWidth + " widthDiff: " + widthDiff);
-				widthDiff = 0;
-			}
-			Debug.WriteLine("widthDiff: " + widthDiff + "  heightDiff: " + heightDiff);
-		}
-	}
-	/*
+/*
 	 * Remember to set property "AutoSize" of the control to False!!!!!
 	 * Do not put the control in "table layout panel", it will work badly
 	 * It is better to put the control in a "panel"
 	 */
-	#region those having ".AutoSize" can set false:
-	public class FlexbleLabel: FlexibleControl
-	{
-		public FlexbleLabel(Label control_, int thickness_ = 10):base(control_, thickness_)
-		{
-			control_.AutoSize = false;
-		}
-	}
-	#endregion
-	public class FlexibleControl
-	{
-		#region Fields
-		public enum Side
-		{
-			N, S, W, E, NW, NE, SW, SE, None
-		}
-		public Control control;
-		public Control parent;
-		public bool EnableDrag = true;
-		//protected Control originalParent;
-		protected Cursor originalCursor;
-		protected Side cursorLocation = Side.None;
-		protected bool isResizing = false;
-		protected Point preCursorPoint; // previous cursor point
-		protected Point dragingStartPoint;
-		protected int verticalMove, horizontalMove; // mouse movement
-		protected int preWidth, preHeight; // previous W/H
-		protected int widthDiff;
-		protected int heightDiff;
-
-		protected int BorderSize; // border BorderSize
-		protected int basicWidth;
-		protected int basicHeight;
-		protected Rectangle border;
-		protected Rectangle borderN;
-		protected Rectangle borderS;
-		protected Rectangle borderW;
-		protected Rectangle borderE;
-		protected Rectangle borderNW;
-		protected Rectangle borderNE;
-		protected Rectangle borderSW;
-		protected Rectangle borderSE;
-		#endregion
-
-		public bool isDragging = false;
-		public FlexibleControl(Control control_, int thickness_ = 10)
-		{
-			control = control_;
-			parent = control_.Parent;
-			originalCursor = new Cursor(control_.Cursor.Handle);
-			BorderSize = thickness_;
-			basicWidth = 5 * BorderSize;
-			basicHeight = 5 * BorderSize;
-			if (control.MinimumSize.Width > basicWidth)
-			{
-				basicWidth = control.MinimumSize.Width;
-			}
-			if (control.MinimumSize.Height > basicHeight)
-			{
-				basicHeight = control.MinimumSize.Height;
-			}
-			control.MinimumSize = new Size(basicWidth, basicHeight);
-			DefineBorder();
-			control.MouseDown += MouseDown;
-			control.MouseUp += MouseUp;
-			control.MouseMove += MouseMove;
-			control.MouseLeave += MouseLeave;
-		}
-		public void DefineBorder()
-		{
-			border = control.ClientRectangle;
-			// Define the regions for each side of the border
-			borderN = new Rectangle(border.Left + BorderSize, border.Top, border.Width - (2 * BorderSize), BorderSize);
-			borderS = new Rectangle(border.Left + BorderSize, border.Bottom - BorderSize, border.Width - (2 * BorderSize), BorderSize);
-			borderW = new Rectangle(border.Left, border.Top + BorderSize, BorderSize, border.Height - (2 * BorderSize));
-			borderE = new Rectangle(border.Right - BorderSize, border.Top + BorderSize, BorderSize, border.Height - (2 * BorderSize));
-			borderNW = new Rectangle(border.Left, border.Top, BorderSize, BorderSize);
-			borderNE = new Rectangle(border.Right - BorderSize, border.Top, BorderSize, BorderSize);
-			borderSW = new Rectangle(border.Left, border.Bottom - BorderSize, BorderSize, BorderSize);
-			borderSE = new Rectangle(border.Right - BorderSize, border.Bottom - BorderSize, BorderSize, BorderSize);
-		}
-		public void RecoverCursor()
-		{
-			control.Cursor = new Cursor(originalCursor.Handle);
-		}
-
-		protected virtual void ResizeControl(MouseEventArgs e)
-		{
-			// Adjust the size of the resizable block control_
-			// don't update preCursorPosition when mousemove relates to N or W direction,
-			int x, y;
-			if (cursorLocation == Side.N)
-			{
-				y = control.Location.Y - heightDiff;
-				if (y < 0)
-				{
-					parent.Location = new Point(parent.Location.X, parent.Location.Y - heightDiff);
-				}
-				control.Location = new Point(control.Location.X, y);
-				control.Height += heightDiff;
-			}
-			else if (cursorLocation == Side.NW)
-			{
-				control.Location = new Point(control.Location.X - widthDiff, control.Location.Y - heightDiff);
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-			}
-			else if (cursorLocation == Side.W)
-			{
-				control.Location = new Point(control.Location.X - widthDiff, control.Location.Y);
-				control.Width += widthDiff;
-			}
-			else if (cursorLocation == Side.SW)
-			{
-				control.Location = new Point(control.Location.X - widthDiff, control.Location.Y);
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(preCursorPoint.X, e.Y);
-			}
-			else if (cursorLocation == Side.S)
-			{
-				control.Height += heightDiff;
-				preCursorPoint = new Point(preCursorPoint.X, e.Y);
-			}
-			else if (cursorLocation == Side.SE)
-			{
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(e.X, e.Y);
-			}
-			else if (cursorLocation == Side.E)
-			{
-				control.Width += widthDiff;
-				preCursorPoint = new Point(e.X, preCursorPoint.Y);
-			}
-			else if (cursorLocation == Side.NE)
-			{
-				control.Location = new Point(control.Location.X, control.Location.Y - heightDiff);
-				control.Width += widthDiff;
-				control.Height += heightDiff;
-				preCursorPoint = new Point(e.X, preCursorPoint.Y);
-			}
-			
-			//Thread.Sleep(1000);
-			Debug.WriteLine("Resize to " + control.Size.ToString() +" at " + control.Location.ToString());
-		}
-		protected virtual void CalculateSizeDifference()
-		{
-			widthDiff = horizontalMove;
-			heightDiff = verticalMove;
-			/* border near N or W need opposite diff
-			 * positive diff => grow
-			 * negative diff => shrink
-			 */
-			if (cursorLocation == Side.NW)
-			{
-				widthDiff = -widthDiff;
-				heightDiff = -heightDiff;
-			}
-			else if (cursorLocation == Side.N || cursorLocation == Side.NE) 
-			{ 
-				heightDiff = -heightDiff; 
-			}
-			else if (cursorLocation == Side.W || cursorLocation == Side.SW) 
-			{ 
-				widthDiff = -widthDiff; 
-			}
-			// check basic Size
-			if (preHeight + heightDiff <= control.MinimumSize.Height)
-			{
-				heightDiff = 0;
-			}
-			if (preWidth + widthDiff <= control.MinimumSize.Width)
-			{
-				widthDiff = 0;
-			}
-			Debug.WriteLine("widthDiff: " + widthDiff+ "  heightDiff: " + heightDiff);
-		}
-
-		protected virtual void DragControl(int horizontalMove, int verticalMove)
-		{
-			control.Location = new Point(control.Location.X + horizontalMove, control.Location.Y + verticalMove);
-		}
-		protected virtual void MouseMove(object sender, MouseEventArgs e)
-		{
-			if (isResizing)
-			{
-				// Calculate the size difference based on the mouse movement
-				preWidth = control.Width;
-				preHeight = control.Height;
-				horizontalMove = e.X - preCursorPoint.X;
-				verticalMove = e.Y - preCursorPoint.Y;
-				CalculateSizeDifference();
-				ResizeControl(e);
-			}
-			else if (isDragging)
-			{
-				if (EnableDrag)
-				{
-					horizontalMove = e.X - dragingStartPoint.X;
-					verticalMove = e.Y - dragingStartPoint.Y;
-					DragControl(horizontalMove, verticalMove);
-					//preCursorPoint = e.Location;
-				}
-
-			}
-			else
-			{
-				ChangeCursorByRegion(e.Location);
-			}
-		}
-		protected void MouseDown(object sender, MouseEventArgs e)
-		{
-			// Check if the mouse is near the border of the container
-			if (IsCursorNearBoundary())
-			{
-				isResizing = true;
-				preCursorPoint = new Point(e.X, e.Y);
-			}
-			else
-			{
-				isDragging = true;
-				dragingStartPoint = new Point(e.X, e.Y);
-			}
-			
-		}
-		protected virtual void MouseUp(object sender, MouseEventArgs e)
-		{
-			isResizing = false;
-			isDragging = false;
-			RecoverCursor();
-			DefineBorder();
-		}
-
-		protected void MouseLeave(object sender, EventArgs e)
-		{
-			RecoverCursor();
-		}
-		protected void ChangeCursorByRegion(Point cursorPosition)
-		{
-			if (borderN.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the north side
-				control.Cursor = Cursors.SizeNS;
-				cursorLocation = Side.N;
-			}
-			else if (borderS.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the south side
-				control.Cursor = Cursors.SizeNS;
-				cursorLocation = Side.S;
-			}
-			else if (borderW.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the west side
-				control.Cursor = Cursors.SizeWE;
-				cursorLocation = Side.W;
-			}
-			else if (borderE.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the east side
-				control.Cursor = Cursors.SizeWE;
-				cursorLocation = Side.E;
-			}
-			else if (borderNW.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the top-left corner
-				control.Cursor = Cursors.SizeNWSE;
-				cursorLocation = Side.NW;
-			}
-			else if (borderNE.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the top-right corner
-				control.Cursor = Cursors.SizeNESW;
-				cursorLocation = Side.NE;
-			}
-			else if (borderSW.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the bottom-left corner
-				control.Cursor = Cursors.SizeNESW;
-				cursorLocation = Side.SW;
-			}
-			else if (borderSE.Contains(cursorPosition))
-			{
-				// Mouse cursor is at the bottom-right corner
-				control.Cursor = Cursors.SizeNWSE;
-				cursorLocation = Side.SE;
-			}
-			else
-			{
-				control.Cursor = Cursors.Hand;
-				cursorLocation = Side.None;
-			}
-		}
-		protected bool IsCursorNearBoundary()
-		{
-			if (cursorLocation != Side.None)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-	}
 	public class ExTextBox : ExControl
 	{
 		private TextBox textBox;
@@ -782,19 +282,7 @@ namespace PKG
 		#region Fields & Accessors
 		public Control control;
 		public Control parent; // parent control
-		/*
-		 * To prevent recusion of accessor:
-		 * Define the direction of calling and forbit reverse direction calling.
-		 * 
-		 * 1. Let object accessor call flag accessor
-		 *	e.g. GroupRoot = someControl call IsGroupRoot
-		 * 
-		 * 2. Let parent flag accessor getter refresh itself according to child flag,
-		 *    And let getter call setter, setter don't call getter
-		 * (Letting child flag accessor setter refresh parent will repeat many same refresh action)
-		 *	e.g. EnableFlex = EnableDrag || EnableResize
-		 * 
-		 */
+
 		#region Functionality Enable
 		protected bool _enablePaintBorder;
 		public bool EnablePaintBorder
@@ -802,7 +290,6 @@ namespace PKG
 			set
 			{
 				_enablePaintBorder = value;
-				_borderColor = _original_borderColor;
 				if (_enablePaintBorder)
 				{
 					Subscribe_PaintBorder_Handlers();
@@ -811,6 +298,7 @@ namespace PKG
 				{
 					Unsubscribe_PaintBorder_Handlers();
 				}
+				BorderColor = original_borderColor;
 			}
 			get
 			{
@@ -824,12 +312,19 @@ namespace PKG
 			set
 			{
 				_enableGroup = value;
+				if (_enableGroup) { Subscribe_Group_Handlers(); }
+				else { Unsubscribe_Group_Handlers(); }
+				/// no group hander to subscribe, only root need to subscribe GroupRootHanders
 			}
 			get
 			{
-				EnableGroup = GroupRoot != null || GroupInnerBody != null;
 				return _enableGroup;
 			}
+		}
+		public void Refresh_EnableGroup()
+		{
+			///EnableGroup = GroupRoot != null || GroupInnerBody != null; 
+			EnableGroup = IsGroupRoot || GroupRoot != null;
 		}
 		public bool EnableFlex
 		{
@@ -847,11 +342,10 @@ namespace PKG
 			}
 			get
 			{
-				EnableFlex = EnableDrag || EnableResize; 
 				return _enableFlex;
 			}
 		}
-
+		public void Refresh_EnableFlex() { EnableFlex = EnableDrag || EnableResize; }
 		public bool _enableDrag;
 		public bool _enableResize;
 		public bool _enableRatioFixed;
@@ -860,6 +354,7 @@ namespace PKG
 			set
 			{
 				_enableDrag = value;
+				if (_enableDrag) Refresh_EnableFlex();
 			}
 			get { return _enableDrag; }
 		}
@@ -868,29 +363,31 @@ namespace PKG
 			set
 			{
 				_enableResize = value;
+				if (_enableResize) Refresh_EnableFlex();
 			}
 			get 
 			{
-				EnableResize = _enableResize || EnableRatioFixed;
 				return _enableResize; 
 			}
 		}
+		public void Refresh_EnableResize() { EnableResize = EnableResize || EnableRatioFixed; }
 		public bool EnableRatioFixed
 		{
 			set
 			{
+				Refresh_EnableResize();
 				_enableRatioFixed = value;
 			}
 			get { return _enableRatioFixed; }
 		}
 		#endregion
 		#region Appearance Extension
-		public Color _original_borderColor = Color.Black;
-		public Color _hover_borderColor = Color.Green;
-		public Color _rootOpen_borderColor = Color.Blue;
+		public Color original_borderColor = Color.Black;
+		public Color hover_borderColor = Color.Cyan;
+		public Color rootOpen_borderColor = Color.Blue;
 		protected Color _backColor = Color.Gray;
 		protected Color _borderColor; // default border color
-		protected int _borderThickness = 2;
+		protected int _borderThickness = 5;
 		public Color BackColor
 		{
 			get { return _backColor; }
@@ -905,8 +402,11 @@ namespace PKG
 			get { return _borderColor; }
 			set
 			{
-				_borderColor = value;
-				control.Invalidate(); // Trigger repaint
+				if (EnablePaintBorder)
+				{
+					_borderColor = value;
+					control.Invalidate(); // Trigger repaint
+				}
 			}
 		}
 
@@ -922,28 +422,69 @@ namespace PKG
 
 		#endregion
 		#region Group Extension
-		private Color originalBorderColor;
-		public Color groupSelectedBorderColor = Color.Blue;
-		public Control? _groupRoot = null; // GroupRoot control of group container
-		public Control? GroupRoot
+		public enum GroupSt // Group States
+		{
+			BeyondGroup, AimingGroup, EditingGroup, 
+		}
+		protected GroupSt _groupState = GroupSt.BeyondGroup;
+		public GroupSt GroupState
+		{
+			set
+			{
+				if (!IsGroupRoot)
+				{
+					Debug.WriteLine($"\t this is not groupRoot: {this}");
+					return;
+				}
+				_groupState = value;
+				if (_groupState == GroupSt.BeyondGroup)
+				{
+					control.Capture = false;
+					BorderColor = original_borderColor;
+					Debug.WriteLine($"\tGroupState: {_groupState}");
+				}
+				else if (_groupState == GroupSt.AimingGroup)
+				{
+					control.Capture = true;
+					_isRootOpen = false;
+					BorderColor = hover_borderColor;
+					Debug.WriteLine($"\tGroupState: {_groupState}");
+				}
+				else if (_groupState == GroupSt.EditingGroup)
+				{
+					control.Capture = false;
+					_isRootOpen = true;
+					BorderColor = rootOpen_borderColor;
+					Debug.WriteLine($"\tGroupState: {_groupState}");
+				}
+				else
+				{
+					Debug.WriteLine($"\tGroupState: {_groupState}");
+				}
+			}
+			get { return _groupState; }
+		}
+		public ExControl? _groupRoot = null; // GroupRoot control of group container
+		public ExControl? GroupRoot
 		{
 			set
 			{
 				_groupRoot = value;
 				//Debug.WriteLine($"\t_groupRoot:{_groupRoot}, control:{control}");
-				if (_groupRoot == control)
+				Refresh_EnableGroup();
+				if (_groupRoot != null)
 				{
-					//IsGroupRoot = true;
-				}
-				else
-				{
-					//IsGroupRoot = false;
+					if (!_groupRoot.IsGroupRoot)
+					{
+						_groupRoot.IsGroupRoot = true;
+					}
 				}
 				
 			}
 			get { return _groupRoot; }
 		}
 		protected bool _isGroupRoot;
+		/*
 		protected ExControl? _groupInnerBody; // to track child's isRootOpen
 		public ExControl? GroupInnerBody
 		{
@@ -952,9 +493,10 @@ namespace PKG
 				_groupInnerBody = value;
 				if (_groupInnerBody != null)
 				{
-					GroupRoot = control;
+					///GroupRoot = this; it may have higher level root
 					IsGroupRoot = true;
-					Debug.WriteLine($"\tGroupInnerBody is not null. IsGroupRoot:{IsGroupRoot}");
+					Refresh_EnableGroup();
+					//Debug.WriteLine($"\tGroupInnerBody is not null. IsGroupRoot:{IsGroupRoot}");
 				}
 				else
 				{
@@ -964,54 +506,50 @@ namespace PKG
 			}
 			get { return _groupInnerBody; }
 		}
+		*/
 		protected bool _isRootOpen;
 		public bool IsGroupRoot
 		{
 			set
 			{
 				_isGroupRoot = value;
+				Refresh_EnableGroup();
+				/*
 				if (_isGroupRoot)
 				{
-					Subscribe_GroupRoot_Handlers();
+					Subscribe_Group_Handlers();
 				}
 				else
 				{
-					Unsubscribe_GroupRoot_Handlers();
+					Unsubscribe_Group_Handlers();
 				}
+				*/
 			}
 			get { return _isGroupRoot; }
+		}
+		public void Refresh_IsRootOpen()
+		{
+			if (!EnableGroup || GroupRoot == null || IsGroupRoot)
+			{
+				//Debug.WriteLine($"\tEnableGroup:{EnableGroup}, GroupRoot == null:{GroupRoot == null}, IsGroupRoot:{IsGroupRoot}");
+				IsRootOpen = true;
+			}
+			else
+			{
+				if (GroupRoot.GroupState == GroupSt.EditingGroup) { IsRootOpen = true; }
+				else { IsRootOpen = false; }
+			}
 		}
 		public bool IsRootOpen // the group is being selected
 		{
 			set
 			{
-				if (EnableGroup && GroupRoot != null)
-				{
-					_isRootOpen = value;
-					if (_isRootOpen)
-					{
-						GroupRoot.Capture = false;
-						originalBorderColor = _borderColor;
-						_borderColor = groupSelectedBorderColor;
-					}
-					else
-					{
-						_borderColor = originalBorderColor;
-					}
-				}
+				_isRootOpen = value;
 			}
 			get
 			{
-				if (!EnableGroup || GroupRoot == null || IsGroupRoot)
-				{
-					//Debug.WriteLine($"\tEnableGroup:{EnableGroup}, GroupRoot == null:{GroupRoot == null}, IsGroupRoot:{IsGroupRoot}");
-					return true;
-				}
-				else
-				{
-					if (GroupRoot.Capture) { _isRootOpen = false;}
-					return _isRootOpen;
-				}
+				Refresh_IsRootOpen(); // to be put to child setter
+				return _isRootOpen;
 			}
 		}
 		#endregion
@@ -1064,16 +602,16 @@ namespace PKG
 		#endregion
 
 		#region Constructor
-		public ExControl(Control control)
+		public ExControl(Control control_)
 		{
 			
-			this.control = control;
+			control = control_;
 			init();
 		}
 		#region Constructors with: "SizeRatio = ...", ".AutoSize = false"
-		public ExControl(Label control)
+		public ExControl(Label control_)
 		{
-			this.control = control;
+			control = control_;
 			control.AutoSize = false;
 			init();
 		}
@@ -1089,6 +627,7 @@ namespace PKG
 			EnableRatioFixed = false;
 
 			parent = control.Parent;
+			if (parent == null) { Debug.WriteLine($"\tparent is null: {control}"); }
 			originalCursor = new Cursor(control.Cursor.Handle);
 			BorderSize = 10;
 
@@ -1180,7 +719,7 @@ namespace PKG
 			{
 				Rectangle rect = control.ClientRectangle;
 				e.Graphics.FillRectangle(backBrush, rect);
-				Debug.WriteLine($"\t({rect.Width} x {rect.Height}) at ({rect.X}, {rect.Y}) ");
+				//Debug.WriteLine($"\t({rect.Width} x {rect.Height}) at ({rect.X}, {rect.Y}) ");
 			}
 			///if (_backColor != Color.Gray) { _backColor = Color.Gray; }
 			///else { _backColor = Color.Blue; }
@@ -1199,7 +738,6 @@ namespace PKG
 		}
 		private void PaintBorder(object sender, PaintEventArgs e)
 		{
-			_borderThickness = 1;
 
 			// Draw the custom border using the specified color
 			using (var pen = new Pen(BorderColor, BorderThickness))
@@ -1214,15 +752,15 @@ namespace PKG
 		}
 		#endregion
 		#region Group Extension
-		public void Subscribe_GroupRoot_Handlers()
+		public void Subscribe_Group_Handlers()
 		{
-			Unsubscribe_GroupRoot_Handlers();// prevent duplicated handler subscription
+			Unsubscribe_Group_Handlers();// prevent duplicated handler subscription
 			control.MouseEnter += Group_MouseEnter;
 			control.MouseMove += Group_MouseMove;
 			control.Click += Group_Click;
 			Debug.WriteLine("\tGroup Extension Subscription");
 		}
-		public void Unsubscribe_GroupRoot_Handlers()
+		public void Unsubscribe_Group_Handlers()
 		{
 			control.MouseEnter -= Group_MouseEnter;
 			control.MouseMove -= Group_MouseMove;
@@ -1231,39 +769,61 @@ namespace PKG
 		}
 		public void Group_MouseEnter(object sender, EventArgs e)
 		{
-			Debug.WriteLine($"\tIsGroupRoot:{IsGroupRoot}, GroupInnerBody.IsRootOpen:{GroupInnerBody.IsRootOpen}");
 			if (IsGroupRoot)
 			{
-				if (!GroupInnerBody.IsRootOpen)
+				Debug.WriteLine($"\tIsGroupRoot:{IsGroupRoot}");
+				if (GroupState == GroupSt.BeyondGroup)
 				{
-					control.Capture = true;
-					BorderColor = _hover_borderColor;
+					GroupState = GroupSt.AimingGroup;
 				}
+				Debug.WriteLine($"\tCapture:{control.Capture}");
 			}
-			Debug.WriteLine($"\tCapture:{ control.Capture}");
+			
 		}
 		// MouseLeave will not be triggered when capture is still true
 		// so use MouseMove
 		public void Group_MouseMove(object sender, MouseEventArgs e) 
 		{
-			//Debug.WriteLine($"control.Location:{control.Location}, Cursor:{e.Location}");
-			if (!control.ClientRectangle.Contains(e.Location))
+			if (IsGroupRoot)
 			{
-				control.Capture = false;
-				//_borderColor = originalBorderColor;
-				if (!IsRootOpen)
+				///Debug.WriteLine($"control.Location:{control.Location}, Cursor:{e.Location}");
+				if (!control.ClientRectangle.Contains(e.Location)) // leave control
 				{
-					
+					if (GroupState == GroupSt.AimingGroup)
+					{
+						GroupState = GroupSt.BeyondGroup;
+					}
 				}
 			}
-
+				
 		}
 		public void Group_Click(object sender, EventArgs e) // represent a quick click
 		{
-			IsRootOpen = true;
-			originalBorderColor = _borderColor;
-			_borderColor = Color.Blue;
+			if (IsGroupRoot)
+			{
+				if (GroupState == GroupSt.AimingGroup)
+				{
+					GroupState = GroupSt.EditingGroup;
+				}
+				else if (GroupState == GroupSt.EditingGroup)
+				{
+					GroupState = GroupSt.AimingGroup;
+				}
+			}
+			else // Group Members
+			{
+				if (GroupRoot != null)
+				{
+					if (GroupRoot.GroupState == GroupSt.EditingGroup)
+					{
+						GroupRoot.GroupState = GroupSt.AimingGroup;
+					}
+				}
+				
+			}
+			
 		}
+		
 		//public delegate void EventHandler(object sender, EventArgs e);
 		public void ActWhenRootOpen(object sender, EventArgs e, EventHandler action)
 		{
@@ -1322,13 +882,16 @@ namespace PKG
 			if (!IsRootOpen) { return; } 
 			if (isResizing)
 			{
-				// Calculate the size difference based on the mouse movement
-				preWidth = control.Width;
-				preHeight = control.Height;
-				horizontalMove = e.X - preCursorPoint.X;
-				verticalMove = e.Y - preCursorPoint.Y;
-				CalculateSizeDifference();
-				ResizeControl(e);
+				if (EnableResize)
+				{
+					// Calculate the size difference based on the mouse movement
+					preWidth = control.Width;
+					preHeight = control.Height;
+					horizontalMove = e.X - preCursorPoint.X;
+					verticalMove = e.Y - preCursorPoint.Y;
+					CalculateSizeDifference();
+					ResizeControl(e);
+				}
 			}
 			else if (isDragging)
 			{
@@ -1351,25 +914,33 @@ namespace PKG
 		{
 			if (!IsRootOpen) { return; }
 			// Check if the mouse is near the border of the container
-			if (IsCursorNearBoundary())
+			if (EnableFlex)
 			{
-				isResizing = true;// = EnableResize;
-				preCursorPoint = new Point(e.X, e.Y);
+				if (IsCursorNearBoundary())
+				{
+					isResizing = EnableResize;
+					preCursorPoint = new Point(e.X, e.Y);
+				}
+				else
+				{
+					isDragging = EnableDrag;
+					dragingStartPoint = new Point(e.X, e.Y);
+				}
 			}
-			else
-			{
-				isDragging = true;// = EnableDrag;
-				dragingStartPoint = new Point(e.X, e.Y);
-			}
+			
 
 		}
 		protected virtual void Flex_MouseUp(object sender, MouseEventArgs e)
 		{
 			if (!IsRootOpen) { return; }
-			isResizing = false;
-			isDragging = false;
-			//RecoverCursor();
-			DefineBorder();
+			if (EnableFlex)
+			{
+				isResizing = false;
+				isDragging = false;
+				//RecoverCursor();
+				DefineBorder();
+			}
+				
 		}
 		protected void Flex_MouseLeave(object sender, EventArgs e)
 		{
@@ -1415,7 +986,7 @@ namespace PKG
 			control.Height += heightDiff * Convert.ToInt32(isAtSide[(int)Side.N] | isAtSide[(int)Side.S]);
 			preCursorPoint = new Point(preCursorX, preCursorY);
 
-			Debug.WriteLine("Resize to " + control.Size.ToString() + " at " + control.Location.ToString());
+			///Debug.WriteLine("Resize to " + control.Size.ToString() + " at " + control.Location.ToString());
 		}
 		protected virtual void CalculateSizeDifference()
 		{
@@ -1431,8 +1002,8 @@ namespace PKG
 			if (EnableRatioFixed)
 			{
 
-				Debug.WriteLine("SizeRatio: " + SizeRatio);
-				Debug.WriteLine("Ratio: " + (float)preHeight / (float)preWidth);
+				///Debug.WriteLine("SizeRatio: " + SizeRatio);
+				///Debug.WriteLine("Ratio: " + (float)preHeight / (float)preWidth);
 				
 				if ((Convert.ToInt32(isAtSide[(int)Side.N]) 
 					+ Convert.ToInt32(isAtSide[(int)Side.S]) 
@@ -1470,7 +1041,7 @@ namespace PKG
 			{
 				widthDiff = 0;
 			}
-			Debug.WriteLine("widthDiff: " + widthDiff + "  heightDiff: " + heightDiff);
+			///Debug.WriteLine("widthDiff: " + widthDiff + "  heightDiff: " + heightDiff);
 		}
 
 		protected virtual void DragControl(int horizontalMove, int verticalMove)

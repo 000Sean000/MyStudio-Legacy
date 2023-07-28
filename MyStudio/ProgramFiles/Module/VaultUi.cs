@@ -169,14 +169,13 @@ namespace Module
 
 				UiPKG.ReplaceControl(label_NodeContent, textBox_NodeContent, panel_NodeContentAndTag);
 				exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnablePaintBorder = true, EnableDrag = true };
-				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup};
-				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = panel_NodeGroup};
-				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup};
-				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = false, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
-				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
-				exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup};
+				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = exPanel_NodeGroup};
+				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = exPanel_NodeGroup};
+				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = exPanel_NodeGroup};
+				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = false, GroupRoot = exPanel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = exPanel_NodeGroup};
+				exLabel_NodeContent = new ExControl(label_NodeContent) { GroupRoot = exPanel_NodeGroup};
 
-				exPanel_NodeGroup.GroupInnerBody = exPanel_NodeInnerBody;
 				exPanel_NodeGroup.CheckFunctionalityEnable();
 
 				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);

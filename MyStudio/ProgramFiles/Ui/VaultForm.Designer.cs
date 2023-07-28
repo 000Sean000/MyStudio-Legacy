@@ -42,6 +42,7 @@ namespace Ui
 			button2 = new Button();
 			button1 = new Button();
 			button_createNode = new Button();
+			label_NodeContent = new Label();
 			panel_NodeGroup.SuspendLayout();
 			panel_NodeInnerBody.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBox_NodeImage).BeginInit();
@@ -161,11 +162,21 @@ namespace Ui
 			button_createNode.UseVisualStyleBackColor = true;
 			button_createNode.Click += button_createNode_Click;
 			// 
+			// label_NodeContent
+			// 
+			label_NodeContent.AutoSize = true;
+			label_NodeContent.Location = new Point(96, 331);
+			label_NodeContent.Name = "label_NodeContent";
+			label_NodeContent.Size = new Size(51, 19);
+			label_NodeContent.TabIndex = 3;
+			label_NodeContent.Text = "label1";
+			// 
 			// VaultForm
 			// 
 			AutoScaleDimensions = new SizeF(9F, 19F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
+			Controls.Add(label_NodeContent);
 			Controls.Add(panel_NodeGroup);
 			Controls.Add(button_createNode);
 			Controls.Add(panel_canvas);
@@ -178,6 +189,7 @@ namespace Ui
 			panel_NodeContentAndTag.PerformLayout();
 			flowLayoutPanel_NodeTag.ResumeLayout(false);
 			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -207,14 +219,13 @@ namespace Ui
 
 			#region Control Extension initialization
 			exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnablePaintBorder = true, EnableDrag = true };
-			exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = panel_NodeGroup };
-			exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = panel_NodeGroup };
-			exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = panel_NodeGroup };
-			exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = false, GroupRoot = panel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
-			exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup };
-			exLabel_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = panel_NodeGroup };
+			exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = exPanel_NodeGroup };
+			exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = exPanel_NodeGroup };
+			exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = exPanel_NodeGroup };
+			exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = false, GroupRoot = exPanel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+			exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = exPanel_NodeGroup };
+			exLabel_NodeContent = new ExControl(label_NodeContent) { GroupRoot = exPanel_NodeGroup };
 
-			exPanel_NodeGroup.GroupInnerBody = exPanel_NodeInnerBody;
 			exPanel_NodeGroup.CheckFunctionalityEnable();
 
 			ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
@@ -223,6 +234,7 @@ namespace Ui
 
 			pictureBox_NodeImage.SizeChanged += AlignControlsInNode;
 			textBox_NodeContent.SizeChanged += AlignControlsInNode;
+			flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
 			flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
 			#endregion
 		}
@@ -248,5 +260,6 @@ namespace Ui
 		private TextBox textBox_NodeContent;
 		private Button button2;
 		private Button button1;
+		private Label label_NodeContent;
 	}
 }
