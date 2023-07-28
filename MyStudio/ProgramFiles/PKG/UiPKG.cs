@@ -442,20 +442,17 @@ namespace PKG
 				control.Capture = captureWhen[(int)GroupState];
 				if (_groupState == GroupSt.BeyondGroup)
 				{
-					control.Capture = false;
 					BorderColor = original_borderColor;
 					Debug.WriteLine($"\tGroupState: {_groupState}");
 				}
 				else if (_groupState == GroupSt.AimingGroup)
 				{
-					control.Capture = true;
 					_isRootOpen = false;
 					BorderColor = hover_borderColor;
 					Debug.WriteLine($"\tGroupState: {_groupState}");
 				}
 				else if (_groupState == GroupSt.EditingGroup)
 				{
-					control.Capture = false;
 					_isRootOpen = true;
 					BorderColor = rootOpen_borderColor;
 					Debug.WriteLine($"\tGroupState: {_groupState}");
