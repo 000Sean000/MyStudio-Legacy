@@ -2,7 +2,7 @@
 cursor recover necessarity?
 group root cannot open
 debug show group state
-
+drag control cause .Capture be set to false
 
 
 

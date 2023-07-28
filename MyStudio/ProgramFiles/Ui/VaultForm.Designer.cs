@@ -170,6 +170,7 @@ namespace Ui
 			label_NodeContent.Size = new Size(51, 19);
 			label_NodeContent.TabIndex = 3;
 			label_NodeContent.Text = "label1";
+			label_NodeContent.MouseLeave += label_NodeContent_MouseLeave;
 			// 
 			// VaultForm
 			// 

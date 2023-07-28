@@ -292,13 +292,13 @@ namespace PKG
 				_enablePaintBorder = value;
 				if (_enablePaintBorder)
 				{
+					BorderColor = original_borderColor;
 					Subscribe_PaintBorder_Handlers();
 				}
 				else
 				{
 					Unsubscribe_PaintBorder_Handlers();
 				}
-				BorderColor = original_borderColor;
 			}
 			get
 			{
@@ -312,6 +312,7 @@ namespace PKG
 			set
 			{
 				_enableGroup = value;
+				Refresh_IsRootOpen();
 				if (_enableGroup) { Subscribe_Group_Handlers(); }
 				else { Unsubscribe_Group_Handlers(); }
 				/// no group hander to subscribe, only root need to subscribe GroupRootHanders
@@ -437,6 +438,8 @@ namespace PKG
 					return;
 				}
 				_groupState = value;
+				Refresh_IsRootOpen();
+				control.Capture = captureWhen[(int)GroupState];
 				if (_groupState == GroupSt.BeyondGroup)
 				{
 					control.Capture = false;
@@ -464,13 +467,22 @@ namespace PKG
 			}
 			get { return _groupState; }
 		}
+		public delegate void StateAction();
+		public StateAction[] stateActions = new StateAction[Enum.GetValues(typeof(GroupSt)).Length];
+		public static bool[] captureWhen = new bool[Enum.GetValues(typeof(GroupSt)).Length];
+
+		public void SetStateAction(GroupSt groupState, StateAction stateAction)
+		{
+			stateActions[(int)groupState] = stateAction;
+		}
 		public ExControl? _groupRoot = null; // GroupRoot control of group container
 		public ExControl? GroupRoot
 		{
 			set
 			{
 				_groupRoot = value;
-				//Debug.WriteLine($"\t_groupRoot:{_groupRoot}, control:{control}");
+				Refresh_IsRootOpen();
+				//Debug.WriteLine($"\t_groupRoot:{_groupRoot}, control:{control.Name}");
 				Refresh_EnableGroup();
 				if (_groupRoot != null)
 				{
@@ -484,35 +496,13 @@ namespace PKG
 			get { return _groupRoot; }
 		}
 		protected bool _isGroupRoot;
-		/*
-		protected ExControl? _groupInnerBody; // to track child's isRootOpen
-		public ExControl? GroupInnerBody
-		{
-			set
-			{
-				_groupInnerBody = value;
-				if (_groupInnerBody != null)
-				{
-					///GroupRoot = this; it may have higher level root
-					IsGroupRoot = true;
-					Refresh_EnableGroup();
-					//Debug.WriteLine($"\tGroupInnerBody is not null. IsGroupRoot:{IsGroupRoot}");
-				}
-				else
-				{
-					IsGroupRoot = false;
-					Debug.WriteLine("\tGroupInnerBody is null!");
-				}
-			}
-			get { return _groupInnerBody; }
-		}
-		*/
 		protected bool _isRootOpen;
 		public bool IsGroupRoot
 		{
 			set
 			{
 				_isGroupRoot = value;
+				Refresh_IsRootOpen();
 				Refresh_EnableGroup();
 				/*
 				if (_isGroupRoot)
@@ -531,7 +521,7 @@ namespace PKG
 		{
 			if (!EnableGroup || GroupRoot == null || IsGroupRoot)
 			{
-				//Debug.WriteLine($"\tEnableGroup:{EnableGroup}, GroupRoot == null:{GroupRoot == null}, IsGroupRoot:{IsGroupRoot}");
+				///Debug.WriteLine($"\tEnableGroup:{EnableGroup}, GroupRoot == null:{GroupRoot == null}, IsGroupRoot:{IsGroupRoot}");
 				IsRootOpen = true;
 			}
 			else
@@ -539,6 +529,7 @@ namespace PKG
 				if (GroupRoot.GroupState == GroupSt.EditingGroup) { IsRootOpen = true; }
 				else { IsRootOpen = false; }
 			}
+			///Debug.WriteLine($"\tRefresh {control.Name} IsRootOpen to {_isRootOpen}");
 		}
 		public bool IsRootOpen // the group is being selected
 		{
@@ -602,6 +593,12 @@ namespace PKG
 		#endregion
 
 		#region Constructor
+		static ExControl()
+		{
+			captureWhen[(int)GroupSt.BeyondGroup] = false;
+			captureWhen[(int)GroupSt.AimingGroup] = true;
+			captureWhen[(int)GroupSt.EditingGroup] = false;
+		}
 		public ExControl(Control control_)
 		{
 			
@@ -618,6 +615,7 @@ namespace PKG
 		#endregion
 		public void init()
 		{
+			/*
 			EnablePaintBorder = false;
 			EnableGroup = false;
 			IsGroupRoot = false;
@@ -625,14 +623,14 @@ namespace PKG
 			EnableDrag = false;
 			EnableResize = false;
 			EnableRatioFixed = false;
-
+			*/
 			parent = control.Parent;
-			if (parent == null) { Debug.WriteLine($"\tparent is null: {control}"); }
+			if (parent == null) { Debug.WriteLine($"\tparent is null: {control.Name}"); }
 			originalCursor = new Cursor(control.Cursor.Handle);
 			BorderSize = 10;
 
 			
-
+			Debug.WriteLine("\tFinish init");
 		}
 		public void DefineBasicSize()
 		{
@@ -758,25 +756,35 @@ namespace PKG
 			control.MouseEnter += Group_MouseEnter;
 			control.MouseMove += Group_MouseMove;
 			control.Click += Group_Click;
-			Debug.WriteLine("\tGroup Extension Subscription");
+			Debug.WriteLine($"\tGroup Extension Subscription of {control.Name}");
 		}
 		public void Unsubscribe_Group_Handlers()
 		{
 			control.MouseEnter -= Group_MouseEnter;
 			control.MouseMove -= Group_MouseMove;
 			control.Click -= Group_Click;
-			Debug.WriteLine("\tGroup Extension Unsubscription");
+			Debug.WriteLine($"\tGroup Extension Unsubscription of {control.Name}");
 		}
 		public void Group_MouseEnter(object sender, EventArgs e)
 		{
 			if (IsGroupRoot)
 			{
-				Debug.WriteLine($"\tIsGroupRoot:{IsGroupRoot}");
 				if (GroupState == GroupSt.BeyondGroup)
 				{
 					GroupState = GroupSt.AimingGroup;
 				}
-				Debug.WriteLine($"\tCapture:{control.Capture}");
+				///Debug.WriteLine($"\tCapture:{control.Capture}");
+			}
+			else
+			{
+				if (GroupRoot != null)
+				{
+					if (GroupRoot.GroupState == GroupSt.AimingGroup)
+					{
+						//GroupRoot.control.Capture = true;
+					}
+				}
+				
 			}
 			
 		}
@@ -786,7 +794,13 @@ namespace PKG
 		{
 			if (IsGroupRoot)
 			{
-				///Debug.WriteLine($"control.Location:{control.Location}, Cursor:{e.Location}");
+				Debug.WriteLine($"{control.Name}.Capture: {control.Capture}");
+				///Debug.WriteLine($"control:{control.ClientRectangle.Size} at {control.Location}, Cursor:{e.Location}");
+				if (GroupState == GroupSt.AimingGroup)
+				{
+					control.Capture = true; 
+					// hold ".Capture" being true, since Flex action will modify ".Capture"
+				}
 				if (!control.ClientRectangle.Contains(e.Location)) // leave control
 				{
 					if (GroupState == GroupSt.AimingGroup)
@@ -795,12 +809,26 @@ namespace PKG
 					}
 				}
 			}
-				
+			else
+			{
+				if (GroupRoot != null)
+				{
+					if (GroupRoot.GroupState == GroupSt.AimingGroup)
+					{
+						//GroupRoot.control.Capture = true;
+						// hold ".Capture" being true, since Flex action will modify ".Capture"
+					}
+				}
+			}
 		}
+
 		public void Group_Click(object sender, EventArgs e) // represent a quick click
 		{
+			Debug.WriteLine($"\tclick on {control.Name}");
 			if (IsGroupRoot)
 			{
+
+				Debug.WriteLine($"\t\tself {control.Name}.Capture: {control.Capture}");
 				if (GroupState == GroupSt.AimingGroup)
 				{
 					GroupState = GroupSt.EditingGroup;
@@ -814,7 +842,13 @@ namespace PKG
 			{
 				if (GroupRoot != null)
 				{
-					if (GroupRoot.GroupState == GroupSt.EditingGroup)
+					Debug.WriteLine($"\t\troot {GroupRoot.control.Name}.Capture: {GroupRoot.control.Capture}");
+
+					if (GroupRoot.GroupState == GroupSt.AimingGroup)
+					{
+						GroupRoot.GroupState = GroupSt.EditingGroup;
+					}
+					else if (GroupRoot.GroupState == GroupSt.EditingGroup)
 					{
 						GroupRoot.GroupState = GroupSt.AimingGroup;
 					}
@@ -916,6 +950,7 @@ namespace PKG
 			// Check if the mouse is near the border of the container
 			if (EnableFlex)
 			{
+				Debug.WriteLine("\tStart Flex");
 				if (IsCursorNearBoundary())
 				{
 					isResizing = EnableResize;
@@ -939,6 +974,7 @@ namespace PKG
 				isDragging = false;
 				//RecoverCursor();
 				DefineBorder();
+				Debug.WriteLine("\tFinish Flex");
 			}
 				
 		}
@@ -1265,4 +1301,6 @@ namespace PKG
 
 	}
 	#endregion
+
+
 }

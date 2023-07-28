@@ -28,5 +28,10 @@ namespace Ui
 		{
 
 		}
+
+		private void label_NodeContent_MouseLeave(object sender, EventArgs e)
+		{
+
+		}
 	}
 }
