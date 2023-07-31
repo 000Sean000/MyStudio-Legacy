@@ -125,10 +125,10 @@ namespace Module
 				// pictureBox_NodeImage
 				// 
 				pictureBox_NodeImage.BorderStyle = BorderStyle.FixedSingle;
-				pictureBox_NodeImage.Image = MyStudio.Properties.Resources.kazimierz_black;
-				pictureBox_NodeImage.Location = new Point(87, 3);
+				pictureBox_NodeImage.Image = MyStudio.Properties.Resources.foxlink_icon;
+				pictureBox_NodeImage.Location = new Point(-1, 9);
 				pictureBox_NodeImage.Name = "pictureBox_NodeImage";
-				pictureBox_NodeImage.Size = new Size(56, 55);
+				pictureBox_NodeImage.Size = new Size(224, 44);
 				pictureBox_NodeImage.SizeMode = PictureBoxSizeMode.Zoom;
 				pictureBox_NodeImage.TabIndex = 0;
 				pictureBox_NodeImage.TabStop = false;
@@ -176,26 +176,28 @@ namespace Module
 				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = exPanel_NodeGroup};
 				exLabel_NodeContent = new ExControl(label_NodeContent) { GroupRoot = exPanel_NodeGroup};
 
-				exPanel_NodeGroup.CheckFunctionalityEnable();
+				exPanel_NodeGroup.Watch_FunctionalityEnable();
 
-				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
-				ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
-				ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
+				AlignControlsInNode();
 
-				pictureBox_NodeImage.SizeChanged += AlignControlsInNode;
-				textBox_NodeContent.SizeChanged += AlignControlsInNode;
-				label_NodeContent.SizeChanged += AlignControlsInNode;
-				flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
+				pictureBox_NodeImage.SizeChanged += AlignControlsInNode_handler;
+				textBox_NodeContent.SizeChanged += AlignControlsInNode_handler;
+				label_NodeContent.SizeChanged += AlignControlsInNode_handler;
+				flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode_handler;
 				#endregion
 
 				_canvas.Controls.Add(panel_NodeGroup);
 			}
-			public void AlignControlsInNode(object sender,  EventArgs e)
+			public void AlignControlsInNode()
 			{
 				// the order is important
 				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
-				ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
+				ControlAligner.AlignControlsVertically(panel_NodeInnerBody);
 				ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
+			}
+			public void AlignControlsInNode_handler(object sender,  EventArgs e)
+			{
+				AlignControlsInNode();
 			}
 		}
 		public void CreateUiNode()

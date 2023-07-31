@@ -43,11 +43,15 @@ namespace Ui
 			button1 = new Button();
 			button_createNode = new Button();
 			label_NodeContent = new Label();
+			pictureBox1 = new PictureBox();
+			pictureBox2 = new PictureBox();
 			panel_NodeGroup.SuspendLayout();
 			panel_NodeInnerBody.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)pictureBox_NodeImage).BeginInit();
 			panel_NodeContentAndTag.SuspendLayout();
 			flowLayoutPanel_NodeTag.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+			((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
 			SuspendLayout();
 			// 
 			// panel_canvas
@@ -65,10 +69,10 @@ namespace Ui
 			// 
 			panel_NodeGroup.BorderStyle = BorderStyle.FixedSingle;
 			panel_NodeGroup.Controls.Add(panel_NodeInnerBody);
-			panel_NodeGroup.Location = new Point(57, 127);
+			panel_NodeGroup.Location = new Point(28, 12);
 			panel_NodeGroup.Name = "panel_NodeGroup";
 			panel_NodeGroup.Padding = new Padding(10);
-			panel_NodeGroup.Size = new Size(250, 125);
+			panel_NodeGroup.Size = new Size(284, 205);
 			panel_NodeGroup.TabIndex = 2;
 			// 
 			// panel_NodeInnerBody
@@ -78,16 +82,16 @@ namespace Ui
 			panel_NodeInnerBody.Controls.Add(panel_NodeContentAndTag);
 			panel_NodeInnerBody.Location = new Point(10, 10);
 			panel_NodeInnerBody.Name = "panel_NodeInnerBody";
-			panel_NodeInnerBody.Size = new Size(228, 103);
+			panel_NodeInnerBody.Size = new Size(261, 184);
 			panel_NodeInnerBody.TabIndex = 0;
 			// 
 			// pictureBox_NodeImage
 			// 
 			pictureBox_NodeImage.BorderStyle = BorderStyle.FixedSingle;
-			pictureBox_NodeImage.Image = MyStudio.Properties.Resources.kazimierz_black;
-			pictureBox_NodeImage.Location = new Point(168, 0);
+			pictureBox_NodeImage.Image = MyStudio.Properties.Resources.foxlink_icon;
+			pictureBox_NodeImage.Location = new Point(-1, 9);
 			pictureBox_NodeImage.Name = "pictureBox_NodeImage";
-			pictureBox_NodeImage.Size = new Size(58, 101);
+			pictureBox_NodeImage.Size = new Size(224, 50);
 			pictureBox_NodeImage.SizeMode = PictureBoxSizeMode.Zoom;
 			pictureBox_NodeImage.TabIndex = 0;
 			pictureBox_NodeImage.TabStop = false;
@@ -97,15 +101,15 @@ namespace Ui
 			panel_NodeContentAndTag.BorderStyle = BorderStyle.FixedSingle;
 			panel_NodeContentAndTag.Controls.Add(textBox_NodeContent);
 			panel_NodeContentAndTag.Controls.Add(flowLayoutPanel_NodeTag);
-			panel_NodeContentAndTag.Location = new Point(0, 0);
+			panel_NodeContentAndTag.Location = new Point(3, 65);
 			panel_NodeContentAndTag.Name = "panel_NodeContentAndTag";
-			panel_NodeContentAndTag.Size = new Size(168, 101);
+			panel_NodeContentAndTag.Size = new Size(253, 93);
 			panel_NodeContentAndTag.TabIndex = 1;
 			// 
 			// textBox_NodeContent
 			// 
 			textBox_NodeContent.BorderStyle = BorderStyle.FixedSingle;
-			textBox_NodeContent.Location = new Point(45, 14);
+			textBox_NodeContent.Location = new Point(42, 3);
 			textBox_NodeContent.Multiline = true;
 			textBox_NodeContent.Name = "textBox_NodeContent";
 			textBox_NodeContent.Size = new Size(125, 34);
@@ -120,7 +124,7 @@ namespace Ui
 			flowLayoutPanel_NodeTag.Controls.Add(button2);
 			flowLayoutPanel_NodeTag.Controls.Add(button1);
 			flowLayoutPanel_NodeTag.FlowDirection = FlowDirection.RightToLeft;
-			flowLayoutPanel_NodeTag.Location = new Point(0, 62);
+			flowLayoutPanel_NodeTag.Location = new Point(3, 43);
 			flowLayoutPanel_NodeTag.Name = "flowLayoutPanel_NodeTag";
 			flowLayoutPanel_NodeTag.Size = new Size(257, 37);
 			flowLayoutPanel_NodeTag.TabIndex = 1;
@@ -165,18 +169,42 @@ namespace Ui
 			// label_NodeContent
 			// 
 			label_NodeContent.AutoSize = true;
-			label_NodeContent.Location = new Point(96, 331);
+			label_NodeContent.Location = new Point(435, 359);
 			label_NodeContent.Name = "label_NodeContent";
 			label_NodeContent.Size = new Size(51, 19);
 			label_NodeContent.TabIndex = 3;
 			label_NodeContent.Text = "label1";
 			label_NodeContent.MouseLeave += label_NodeContent_MouseLeave;
 			// 
+			// pictureBox1
+			// 
+			pictureBox1.BorderStyle = BorderStyle.FixedSingle;
+			pictureBox1.Image = MyStudio.Properties.Resources.kazimierz_black;
+			pictureBox1.Location = new Point(302, 260);
+			pictureBox1.Name = "pictureBox1";
+			pictureBox1.Size = new Size(74, 62);
+			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+			pictureBox1.TabIndex = 4;
+			pictureBox1.TabStop = false;
+			// 
+			// pictureBox2
+			// 
+			pictureBox2.BorderStyle = BorderStyle.FixedSingle;
+			pictureBox2.Image = MyStudio.Properties.Resources.foxlink_icon;
+			pictureBox2.Location = new Point(39, 282);
+			pictureBox2.Name = "pictureBox2";
+			pictureBox2.Size = new Size(125, 62);
+			pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+			pictureBox2.TabIndex = 5;
+			pictureBox2.TabStop = false;
+			// 
 			// VaultForm
 			// 
 			AutoScaleDimensions = new SizeF(9F, 19F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(800, 450);
+			Controls.Add(pictureBox2);
+			Controls.Add(pictureBox1);
 			Controls.Add(label_NodeContent);
 			Controls.Add(panel_NodeGroup);
 			Controls.Add(button_createNode);
@@ -189,6 +217,8 @@ namespace Ui
 			panel_NodeContentAndTag.ResumeLayout(false);
 			panel_NodeContentAndTag.PerformLayout();
 			flowLayoutPanel_NodeTag.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+			((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -203,7 +233,8 @@ namespace Ui
 			ExControl exControl_Canvas = new ExControl(panel_canvas);
 			ExPanel exPanel_Canvas = new ExPanel(panel_canvas);
 			TestNodeUi();
-
+			new ExPictureBox(pictureBox1) { EnableDrag = true, EnableResize = true, EnableRatioFixed = true };
+			new ExPictureBox(pictureBox2) { EnableDrag = true, EnableResize = true, EnableRatioFixed = true };
 		}
 		public void TestNodeUi()
 		{
@@ -227,25 +258,27 @@ namespace Ui
 			exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = exPanel_NodeGroup };
 			exLabel_NodeContent = new ExControl(label_NodeContent) { GroupRoot = exPanel_NodeGroup };
 
-			exPanel_NodeGroup.CheckFunctionalityEnable();
+			exPanel_NodeGroup.Watch_FunctionalityEnable();
 
-			ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
-			ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
-			ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
+			AlignControlsInNode();
 
-			pictureBox_NodeImage.SizeChanged += AlignControlsInNode;
-			textBox_NodeContent.SizeChanged += AlignControlsInNode;
-			flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
-			flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode;
+			pictureBox_NodeImage.SizeChanged += AlignControlsInNode_handler;
+			textBox_NodeContent.SizeChanged += AlignControlsInNode_handler;
+			label_NodeContent.SizeChanged += AlignControlsInNode_handler;
+			flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode_handler;
 			#endregion
 		}
-		public void AlignControlsInNode(object sender, EventArgs e)
+		public void AlignControlsInNode()
 		{
 			int GroupPadding = 10;
 			// the order is important
 			ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
-			ControlAligner.AlignControlsHorizontally(panel_NodeInnerBody);
+			ControlAligner.AlignControlsVertically(panel_NodeInnerBody);
 			ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
+		}
+		public void AlignControlsInNode_handler(object sender, EventArgs e)
+		{
+			AlignControlsInNode();
 		}
 		#endregion
 
@@ -262,5 +295,7 @@ namespace Ui
 		private Button button2;
 		private Button button1;
 		private Label label_NodeContent;
+		private PictureBox pictureBox1;
+		private PictureBox pictureBox2;
 	}
 }

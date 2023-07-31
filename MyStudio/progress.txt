@@ -1,15 +1,17 @@
 ﻿
-cursor recover necessarity?
+
 group root cannot open
 debug show group state
 drag control cause .Capture be set to false
+child control cannot close root
 
 
 
+Solved Bugs:
 
-Solved Bugs 
 textBox autosize will shrink whole node => forgot to set ".Dock" to None
 
 cannot wipe old border =>
 	e.Graphics.FillRectangle only repaint new regoin,
 	call "Invalidate()" to force whole region repainting
+	cursor recover necessarity? Yes, original cursor is not hand
