@@ -1,17 +1,30 @@
 ﻿
-
-group root cannot open
-debug show group state
-drag control cause .Capture be set to false
-child control cannot close root
+find gitHub package
 
 
 
-Solved Bugs:
+
+after enter a control, the control always miss the first click signal. i have to click once first additionally before trigger click event or mousedoubleclick event
+	: When a control gains focus, it usually receives the first click event as a focus event rather than a click event.
+	=> take focus event into consigeration
+	: Drag will also trigger focus, the double click will cause double state transition
+	=>
+
+[Solved Bugs]:
 
 textBox autosize will shrink whole node => forgot to set ".Dock" to None
 
 cannot wipe old border =>
 	e.Graphics.FillRectangle only repaint new regoin,
 	call "Invalidate()" to force whole region repainting
-	cursor recover necessarity? Yes, original cursor is not hand
+
+cursor recover necessarity? Yes, original cursor is not hand
+
+group root cannot open: drag control cause .Capture be set to false=> manual force
+
+resize N side in ratioFixed mode cannot update Height:
+	mouse move (4, -10) at side N
+		move(0, -10), size(4, 6)
+		to (302, 171) with (51 x 68)
+	=> should also calibrate location movement
+

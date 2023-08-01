@@ -33,5 +33,15 @@ namespace Ui
 		{
 
 		}
+
+		private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+
+		}
+
+		private void pictureBox2_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

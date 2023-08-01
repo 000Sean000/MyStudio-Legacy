@@ -186,6 +186,7 @@ namespace Ui
 			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 			pictureBox1.TabIndex = 4;
 			pictureBox1.TabStop = false;
+			pictureBox1.MouseDoubleClick += pictureBox1_MouseDoubleClick;
 			// 
 			// pictureBox2
 			// 
@@ -193,10 +194,11 @@ namespace Ui
 			pictureBox2.Image = MyStudio.Properties.Resources.foxlink_icon;
 			pictureBox2.Location = new Point(39, 282);
 			pictureBox2.Name = "pictureBox2";
-			pictureBox2.Size = new Size(125, 62);
+			pictureBox2.Size = new Size(206, 62);
 			pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 			pictureBox2.TabIndex = 5;
 			pictureBox2.TabStop = false;
+			pictureBox2.Click += pictureBox2_Click;
 			// 
 			// VaultForm
 			// 
@@ -233,8 +235,8 @@ namespace Ui
 			ExControl exControl_Canvas = new ExControl(panel_canvas);
 			ExPanel exPanel_Canvas = new ExPanel(panel_canvas);
 			TestNodeUi();
-			new ExPictureBox(pictureBox1) { EnableDrag = true, EnableResize = true, EnableRatioFixed = true };
-			new ExPictureBox(pictureBox2) { EnableDrag = true, EnableResize = true, EnableRatioFixed = true };
+			new ExPictureBox(pictureBox1) { EnableDrag = true, EnableResize = true, EnableRatioFixed = false };
+			new ExPictureBox(pictureBox2) { EnableDrag = true, EnableResize = true, EnableRatioFixed = false };
 		}
 		public void TestNodeUi()
 		{

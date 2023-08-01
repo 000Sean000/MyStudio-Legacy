@@ -277,6 +277,7 @@ namespace PKG
 	public class ExControl
 	{
 		#region Debug Log
+		public void FlexDebugLog(string message) { Debug.WriteLine(message); }
 		public void Watch_FunctionalityEnable()
 		{
 			Debug.WriteLine($"\t>>CheckFunctionalityEnable");
@@ -292,8 +293,14 @@ namespace PKG
 			Debug.WriteLine($"\t{control.Name} GroupState: {GroupState}");
 			Debug.WriteLine($"\t{control.Name} IsRootOpen: {IsRootOpen}");
 		}
+		public void Watch_RootGroupState()
+		{
+			Debug.WriteLine($"\t{GroupRoot.control.Name} GroupState: {GroupState}");
+			Debug.WriteLine($"\t{control.Name} IsRootOpen: {IsRootOpen}");
+		}
+		public void Watch_ControlFocused() { Debug.WriteLine($"\t\t{control.Name} Focused: {control.Focused}"); }
 		public void Watch_IsParentNull() { }/// Debug.WriteLine($"\tparent is null: {control.Name}"); }
-		public void Watch_OriginalCursor() { Debug.WriteLine($"{control.Name} originalCursor: {originalCursor}"); }
+		public void Watch_OriginalCursor() { }/// Debug.WriteLine($"{control.Name} originalCursor: {originalCursor}"); }
 		public void Watch_GroupHandlerSubscription() { } /// Debug.WriteLine($"\tGroup Extension Subscription of {control.Name}"); }
 		public void Watch_GroupHanderUnsubscription() { } /// Debug.WriteLine($"\tGroup Extension Unsubscription of {control.Name}"); }
 		public void Watch_Capture() { }/// Debug.WriteLine($"{control.Name}.Capture: {control.Capture}"); }
@@ -457,9 +464,9 @@ namespace PKG
 		#region Group Extension
 		public enum GroupSt // Group States
 		{
-			BeyondGroup, AimingGroup, EditingGroup, 
+			BeyondGroup, AimingGroup, EditingGroup, None
 		}
-		protected GroupSt _groupState = GroupSt.BeyondGroup;
+		protected GroupSt _groupState = GroupSt.None;
 		public GroupSt GroupState
 		{
 			set
@@ -529,6 +536,8 @@ namespace PKG
 			set
 			{
 				_isGroupRoot = value;
+				if (_isGroupRoot && GroupState == GroupSt.None) // init group state
+					{ GroupState = GroupSt.BeyondGroup; }
 				Refresh_IsRootOpen();
 				Refresh_EnableGroup();
 				/*
@@ -570,6 +579,7 @@ namespace PKG
 				return _isRootOpen;
 			}
 		}
+		protected bool _isControlFocused;
 		#endregion
 		#region Flex Extension
 		public enum Side
@@ -609,8 +619,25 @@ namespace PKG
 		protected bool isResizing = false;
 		protected bool isDragging = false;
 		// calculation variables
-		protected bool[] isAtSide = new bool[4];
+		protected bool[] isAtSide = new bool[Enum.GetValues(typeof(Side)).Length];
 		protected bool isAtCorner;
+		public string AtSide
+		{
+			get
+			{
+				string side = "";
+				Side[] sides = (Side[])Enum.GetValues(typeof(Side));
+				foreach (Side s in sides)
+				{
+					if (isAtSide[(int)s])
+					{
+						side += s.ToString();
+					}
+				}
+
+				return side;
+			}
+		}
 		protected Point preCursorPoint; // previous cursor point
 		protected Point dragingStartPoint;
 		protected int verticalMove, horizontalMove; // mouse movement
@@ -643,7 +670,7 @@ namespace PKG
 		#endregion
 		public void init()
 		{
-			/*
+			/* Disable all
 			EnablePaintBorder = false;
 			EnableGroup = false;
 			IsGroupRoot = false;
@@ -656,12 +683,12 @@ namespace PKG
 			if (parent == null) {  }
 			originalCursor = new Cursor(control.Cursor.Handle);
 			Watch_OriginalCursor();
-			BorderSize = 5;
+			BorderSize = 8;
 		}
 		public void DefineBasicSize()
 		{
-			basicWidth = 5 * BorderSize;
-			basicHeight = 5 * BorderSize;
+			basicWidth = 3 * BorderSize;
+			basicHeight = 3 * BorderSize;
 			if (control.MinimumSize.Width > basicWidth)
 			{
 				basicWidth = control.MinimumSize.Width;
@@ -771,19 +798,45 @@ namespace PKG
 			Unsubscribe_Group_Handlers();// prevent duplicated handler subscription
 			control.MouseEnter += Group_MouseEnter;
 			control.MouseMove += Group_MouseMove;
-			control.Click += Group_Click;
+			control.MouseClick += Group_Click;
+			control.MouseDoubleClick += Group_DoubleClick;
 			Watch_GroupHandlerSubscription();
 		}
 		public void Unsubscribe_Group_Handlers()
 		{
 			control.MouseEnter -= Group_MouseEnter;
 			control.MouseMove -= Group_MouseMove;
-			control.Click -= Group_Click;
+			control.MouseClick -= Group_Click;
+			control.MouseDoubleClick -= Group_DoubleClick;
 			Watch_GroupHanderUnsubscription();
 		}
 		public void Group_MouseEnter(object sender, EventArgs e)
 		{
 			Watch_Enter();
+			///control.Focus();
+
+				// the "Enter" event of a control is not being detected when actions are performed too quickl
+			if (GroupRoot != null && GroupRoot.GroupState == GroupSt.BeyondGroup)
+			{
+				Watch_ForceEnterRoot();
+				GroupRoot.Group_MouseEnter(sender, e);
+				Watch_RootGroupState();
+			}
+			else
+			{
+				if (GroupState == GroupSt.BeyondGroup)
+				{
+					GroupState = GroupSt.AimingGroup;
+				}
+				Watch_GroupState();
+			}
+			///control.Focus(); // put focus at the end to wait for control stack pop
+			///Watch_ControlFocused();
+		}
+		public void old_Group_MouseEnter(object sender, EventArgs e)
+		{
+			Watch_Enter();
+			///control.Focus();
 			if (IsGroupRoot)
 			{
 				if (GroupState == GroupSt.BeyondGroup)
@@ -860,6 +913,33 @@ namespace PKG
 				{
 					GroupState = GroupSt.EditingGroup;
 				}
+			}
+			else // Group Members
+			{
+				if (GroupRoot != null)
+				{
+					Watch_ClickOnGroupMember();
+					if (GroupRoot.GroupState == GroupSt.AimingGroup)
+					{
+						GroupRoot.GroupState = GroupSt.EditingGroup;
+						Watch_RootGroupState();
+					}
+				}
+				
+			}
+			
+		}
+		public void Group_DoubleClick(object sender, EventArgs e) // represent a quick click
+		{
+			Watch_Click();
+			if (IsGroupRoot)
+			{
+
+				Watch_ClickOnGroupRoot();
+				if (GroupState == GroupSt.AimingGroup)
+				{
+					GroupState = GroupSt.EditingGroup;
+				}
 				else if (GroupState == GroupSt.EditingGroup)
 				{
 					GroupState = GroupSt.AimingGroup;
@@ -867,23 +947,25 @@ namespace PKG
 			}
 			else // Group Members
 			{
-				if (GroupRoot != null && GroupRoot.GroupState == GroupSt.AimingGroup)
+				if (GroupRoot != null)
 				{
 					Watch_ClickOnGroupMember();
 					if (GroupRoot.GroupState == GroupSt.AimingGroup)
 					{
 						GroupRoot.GroupState = GroupSt.EditingGroup;
+						Watch_RootGroupState();
 					}
 					else if (GroupRoot.GroupState == GroupSt.EditingGroup)
 					{
 						GroupRoot.GroupState = GroupSt.AimingGroup;
+						Watch_RootGroupState();
 					}
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		//public delegate void EventHandler(object sender, EventArgs e);
 		public void ActWhenRootOpen(object sender, EventArgs e, EventHandler action)
 		{
@@ -1012,6 +1094,15 @@ namespace PKG
 		}
 		#endregion
 		#region Functions for Handlers
+		public string SideLocation()
+		{
+			string side = "";
+			foreach (bool s in isAtSide)
+			{
+
+			}
+			return side;
+		}
 		public void DefineBorder()
 		{
 			wholeRegion = control.ClientRectangle;
@@ -1032,9 +1123,10 @@ namespace PKG
 			//  clear the value according to side condition
 			horizontalMove *= Convert.ToInt32(isAtSide[(int)Side.W]);
 			verticalMove  *= Convert.ToInt32(isAtSide[(int)Side.N]);
-			widthDiff *= Convert.ToInt32(isAtSide[(int)Side.W] | isAtSide[(int)Side.E] | EnableRatioFixed);
-			heightDiff *= Convert.ToInt32(isAtSide[(int)Side.N] | isAtSide[(int)Side.S] | EnableRatioFixed);
-			
+			widthDiff *= Convert.ToInt32(isAtSide[(int)Side.W] || isAtSide[(int)Side.E] || EnableRatioFixed);
+			heightDiff *= Convert.ToInt32(isAtSide[(int)Side.N] || isAtSide[(int)Side.S] || EnableRatioFixed);
+			FlexDebugLog($"\t--> move({horizontalMove}, {verticalMove}), size({widthDiff}, {heightDiff})");
+
 			// Adjust the size of the resizable block control			
 			// extend size of parent to suit current control
 			//...
@@ -1091,10 +1183,12 @@ namespace PKG
 			control.Width += widthDiff;
 			control.Height += heightDiff;
 			preCursorPoint = new Point(preCursorX, preCursorY);
+			FlexDebugLog($"\t=> to ({control.Location.X}, {control.Location.Y}) with ({control.Width} x {control.Height})\n");
+
 		}
 		protected virtual void CalculateSizeDifference()
 		{
-
+			FlexDebugLog($"mouse move ({horizontalMove}, {verticalMove}) at side {AtSide}");
 			/* border near N or W need get diff by opposite move
 			 * positive move => N/W:shrink,	S/E:grow
 			 * negative move => N/W:grow,	S/E:shrink
@@ -1102,32 +1196,41 @@ namespace PKG
 			heightDiff = isAtSide[(int)Side.N] ? -verticalMove : verticalMove;
 			widthDiff = isAtSide[(int)Side.W] ? -horizontalMove : horizontalMove;
 
-			// check ratio
+			// check ratio and do calibration
 			if (EnableRatioFixed)
-			{	
+			{
+				int calibrated_heighDiff = (int)((float)(preWidth + widthDiff) * SizeRatio - (float)preHeight);
+				int calibrated_widthDiff = (int)((float)(preHeight + heightDiff) / SizeRatio - (float)preWidth);
 				if (isAtCorner) 
 				{
 					// handle the situation of one side diff nearing 0, remember to use absolute value to compare
-					int tmp_heightDiff = (int)((float)(preWidth + widthDiff) * SizeRatio - (float)preHeight);
-					int tmp_widthDiff = (int)((float)(preHeight + heightDiff) / SizeRatio - (float)preWidth);
-					if (Math.Abs(tmp_widthDiff) >= Math.Abs(tmp_heightDiff))
+					
+					if (Math.Abs(calibrated_widthDiff) >= Math.Abs(calibrated_heighDiff))
 					{
-						heightDiff = tmp_heightDiff;
+						heightDiff = calibrated_heighDiff;
 					}
 					else
 					{
-						widthDiff = tmp_widthDiff;
+						widthDiff = calibrated_widthDiff;
+					}
+					if (isAtSide[(int)Side.W])
+					{
+						horizontalMove = -widthDiff;
+					}
+					if (isAtSide[(int)Side.N])
+					{
+						verticalMove = -heightDiff;
 					}
 				}
 				else 
 				{
 					if (isAtSide[(int)Side.N] | isAtSide[(int)Side.S])
 					{
-						widthDiff = (int)((float)(preHeight + heightDiff) / SizeRatio - (float)preWidth);
+						widthDiff = calibrated_widthDiff;
 					}
 					else if (isAtSide[(int)Side.W] | isAtSide[(int)Side.E])
 					{
-						heightDiff = (int)((float)(preWidth + widthDiff) * SizeRatio - (float)preHeight);
+						heightDiff = calibrated_heighDiff;
 					}
 				}
 			}
@@ -1153,8 +1256,8 @@ namespace PKG
 			isAtSide[(int)Side.E] = borderE.Contains(cursorPosition);
 			isAtCorner = (Convert.ToInt32(isAtSide[(int)Side.N])
 					+ Convert.ToInt32(isAtSide[(int)Side.S])
-					+ Convert.ToInt32(isAtSide[(int)Side.N])
-					+ Convert.ToInt32(isAtSide[(int)Side.S])) == 2;
+					+ Convert.ToInt32(isAtSide[(int)Side.W])
+					+ Convert.ToInt32(isAtSide[(int)Side.E])) == 2;
 			
 		}
 		protected void ChangeCursorByRegion()
