@@ -1488,6 +1488,7 @@ namespace PKG
 
 		protected void ClickTimerCallback(object state_)
 		{
+			clickCount = Math.Min(clickCount, maxClickCount);
 			Watch($"CallBack at {clickCount} click");
 			if (clickCount > 0)
 			{
