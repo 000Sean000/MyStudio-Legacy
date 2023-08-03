@@ -1448,35 +1448,57 @@ namespace PKG
 	#region Developing
 	public class MultiClickHandler
 	{
-		private int clickCount = 0;
-		private System.Threading.Timer clickTimer;
+		protected int clickCount = 0;
+		protected System.Threading.Timer clickTimer;
+		public object? state = null; // additional info for Callback function
+		public int dueTime = Timeout.Infinite; // initial delay after creation of timer
+		public int period = Timeout.Infinite; // repeat period
+		public int clickInterval = 300; // mili second
+		public int maxClickCount;
+		public Action[] actions;
 
-		public MultiClickHandler()
+		public void Watch(string msg)
 		{
-			clickTimer = new System.Threading.Timer(ClickTimerCallback, null, Timeout.Infinite, Timeout.Infinite);
+			Debug.WriteLine(msg);
 		}
 
-		private void YourClickEventHandler(object sender, EventArgs e)
+		public MultiClickHandler(int maxClickCount_ = 2)
 		{
+			clickTimer = new System.Threading.Timer(ClickTimerCallback, state, dueTime, period);
+			maxClickCount = maxClickCount_;
+			actions = new Action[maxClickCount];
+		}
+		public void AssignAction(int clickCount_, Action action)
+		{
+			if (clickCount_ <= maxClickCount)
+			{
+				actions[clickCount_ - 1] = action;
+			}
+			else
+			{
+				new Exception("AssignAction over index range");
+			}
+		}
+		protected void AddOneClick(object sender, EventArgs e)
+		{
+			Watch("AddOneClick");
 			clickCount++;
-			clickTimer.Change(300, Timeout.Infinite);
+			clickTimer.Change(clickInterval, period); // change
 		}
 
-		private void ClickTimerCallback(object state)
+		protected void ClickTimerCallback(object state_)
 		{
-			if (clickCount == 1)
+			Watch($"CallBack at {clickCount} click");
+			if (clickCount > 0)
 			{
-				// Single click action
+				if (actions[clickCount - 1] != null)
+				{
+					actions[clickCount - 1]();
+				}
 			}
-			else if (clickCount == 2)
-			{
-				// Double click action
-			}
-
 			// Reset the click count
 			clickCount = 0;
 		}
-
 	}
 	#endregion
 

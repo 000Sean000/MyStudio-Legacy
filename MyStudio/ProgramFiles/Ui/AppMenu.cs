@@ -29,7 +29,12 @@ namespace Ui
 
 		private void button_createVault_Click(object sender, EventArgs e)
 		{
-			AppManager.CreateVault();
+			Vault vault = AppManager.CreateVault();
+			string vaultPath = vault.vaultDir;
+			AppManager.OpenVault(vaultPath);
+			VaultForm appMain = new VaultForm();
+			appMain.Show();
+			this.Hide();
 		}
 
 		private void tableLayoutPanel_vault0_MouseHover(object sender, EventArgs e)

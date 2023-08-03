@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using PKG;
+using Ui;
 ///<summary>
 /// App in Local disk and cloud drive (now can all put in cloud drive)
 /// </summary>
@@ -36,6 +37,7 @@ namespace Module
 		private static List<string> _VaultList { get { return _setting[deviceName][VAULT_ADDR].ToObject<List<string>>(); } }
 		//private static JArray _vaultJArray = new JArray(_vaultList);
 		public static Vault workingVault;
+		public static AppMenu appMenu;
 		static AppManager()
 		{
 			init();
