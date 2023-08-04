@@ -12,6 +12,7 @@ namespace Module
 	{
 		#region Field
 		public Panel canvas;
+		public Form rootForm;
 		protected List<UiNode> _uiNodes = new List<UiNode>();
 
 		#endregion
@@ -34,6 +35,7 @@ namespace Module
 		{
 			protected Vault _vault; // outer class
 			protected Panel _canvas;
+			protected Form _rootForm;
 			protected Node _node;
 
 			#region Ui components
@@ -60,7 +62,7 @@ namespace Module
 			{
 				_vault = vault;
 				_canvas = _vault.canvas;
-
+				_rootForm = _vault.rootForm;
 
 			}
 			public void Show(string id)
@@ -168,13 +170,13 @@ namespace Module
 				#region Control Extension initialization
 
 				UiPKG.ReplaceControl(label_NodeContent, textBox_NodeContent, panel_NodeContentAndTag);
-				exPanel_NodeGroup = new ExControl(panel_NodeGroup) { EnablePaintBorder = true, EnableDrag = true };
-				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody) { GroupRoot = exPanel_NodeGroup};
-				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag) { GroupRoot = exPanel_NodeGroup};
-				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag) { GroupRoot = exPanel_NodeGroup};
-				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage) { EnablePaintBorder = false, GroupRoot = exPanel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
-				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent) { GroupRoot = exPanel_NodeGroup};
-				exLabel_NodeContent = new ExControl(label_NodeContent) { GroupRoot = exPanel_NodeGroup};
+				exPanel_NodeGroup = new ExControl(panel_NodeGroup, _rootForm) { EnablePaintBorder = true, EnableDrag = true };
+				exPanel_NodeInnerBody = new ExControl(panel_NodeInnerBody, _rootForm) { GroupRoot = exPanel_NodeGroup};
+				exFlowLayoutPanel_NodeTags = new ExControl(flowLayoutPanel_NodeTag, _rootForm) { GroupRoot = exPanel_NodeGroup};
+				exPanel_NodeContentAndTag = new ExControl(panel_NodeContentAndTag, _rootForm) { GroupRoot = exPanel_NodeGroup};
+				exPictureBox_NodeImage = new ExPictureBox(pictureBox_NodeImage, _rootForm) { EnablePaintBorder = false, GroupRoot = exPanel_NodeGroup, EnableResize = true, EnableRatioFixed = true };
+				exTextBox_NodeContent = new ExTextBox(textBox_NodeContent, _rootForm) { GroupRoot = exPanel_NodeGroup};
+				exLabel_NodeContent = new ExControl(label_NodeContent, _rootForm) { GroupRoot = exPanel_NodeGroup};
 
 				exPanel_NodeGroup.Watch_FunctionalityEnable();
 
