@@ -1,7 +1,7 @@
 ﻿
 find gitHub package
 
-
+bring image to front when resizing
 
 
 after enter a control, the control always miss the first click signal. i have to click once first additionally before trigger click event or mousedoubleclick event

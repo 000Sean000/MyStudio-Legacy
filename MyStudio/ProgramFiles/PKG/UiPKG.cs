@@ -325,7 +325,7 @@ namespace PKG
 		#region Fields & Accessors
 		public Control control;
 		public Control parent; // parent control
-		public Form rootForm;
+		public Form rootForm; // ready to remove this property
 		public ClickHandler clickHandler;
 		#region Functionality Enable
 		protected bool _enablePaintBorder;
@@ -460,6 +460,26 @@ namespace PKG
 				_enableRatioFixed = value;
 			}
 			get { return _enableRatioFixed; }
+		}
+		#endregion
+		#region Z-Order Extension
+		protected Control originalParent;
+		protected int originalIndex;
+		protected Form _parentForm;
+		public Form ParentForm
+		{
+			set
+			{
+				_parentForm = value;
+			}
+			get
+			{
+				if (_parentForm == null)
+				{
+					_parentForm = control.FindForm();
+				}
+				return _parentForm;
+			}
 		}
 		#endregion
 		#region Appearance Extension
@@ -742,7 +762,40 @@ namespace PKG
 			DefineBorder();
 		}
 		#endregion
+		#region Z-Order Extension
+		public void BringToFrontOfForm()
+		{
+			///return;
+			// Save the original parent and index
+			originalParent = parent;
+			originalIndex = parent.Controls.GetChildIndex(control);
 
+			// Remove the control from its current parent
+			parent.Controls.Remove(control);
+
+			// Add the control to the form's controls collection to bring it to the front
+			if (ParentForm != null)
+			{
+				ParentForm.Controls.Add(control);
+				control.BringToFront();
+			}
+
+			// Optionally, adjust the control's location or perform any other adjustments
+		}
+
+		public void ReturnToOriginalParent()
+		{
+			///return;
+			// Remove the control from the form's controls collection
+			parent.Controls.Remove(control);
+
+			// Add the control back to its original parent at its original index
+			originalParent.Controls.Add(control);
+			originalParent.Controls.SetChildIndex(control, originalIndex);
+
+			// Optionally, adjust the control's location or perform any other adjustments
+		}
+		#endregion
 
 		#region Appearance Extension
 		public void Subscribe_PaintBorder_Handlers()
@@ -1003,6 +1056,7 @@ namespace PKG
 				{
 					isResizing = EnableResize;
 					preCursorPoint = new Point(e.X, e.Y);
+					BringToFrontOfForm();
 				}
 				else
 				{
@@ -1018,6 +1072,10 @@ namespace PKG
 			if (!IsRootOpen) { return; }
 			if (EnableFlex)
 			{
+				if(isResizing)
+				{
+					ReturnToOriginalParent();
+				}
 				isResizing = false;
 				isDragging = false;
 				DefineBorder();
