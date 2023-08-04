@@ -321,7 +321,7 @@ namespace PKG
 		#region Fields & Accessors
 		public Control control;
 		public Control parent; // parent control
-
+		public ClickHandler clickHandler;
 		#region Functionality Enable
 		protected bool _enablePaintBorder;
 		public bool EnablePaintBorder
@@ -479,7 +479,7 @@ namespace PKG
 				{
 					_groupState = value;
 					Refresh_IsRootOpen();
-					control.Capture = captureWhen[(int)GroupState];
+					control.Capture = captureWhen[(int)_groupState];
 					if (_groupState == GroupSt.BeyondGroup)
 					{
 						BorderColor = original_borderColor;
@@ -540,16 +540,6 @@ namespace PKG
 					{ GroupState = GroupSt.BeyondGroup; }
 				Refresh_IsRootOpen();
 				Refresh_EnableGroup();
-				/*
-				if (_isGroupRoot)
-				{
-					Subscribe_Group_Handlers();
-				}
-				else
-				{
-					Unsubscribe_Group_Handlers();
-				}
-				*/
 			}
 			get { return _isGroupRoot; }
 		}
@@ -684,6 +674,10 @@ namespace PKG
 			originalCursor = new Cursor(control.Cursor.Handle);
 			Watch_OriginalCursor();
 			BorderSize = 8;
+
+			clickHandler = new ClickHandler(control, 2);
+			control.MouseDown += clickHandler.MouseDown;
+			control.MouseUp += clickHandler.MouseUp;
 		}
 		public void DefineBasicSize()
 		{
@@ -798,42 +792,53 @@ namespace PKG
 			Unsubscribe_Group_Handlers();// prevent duplicated handler subscription
 			control.MouseEnter += Group_MouseEnter;
 			control.MouseMove += Group_MouseMove;
-			control.MouseClick += Group_Click;
-			control.MouseDoubleClick += Group_DoubleClick;
+			Group_Subscribe_ClickActions();
 			Watch_GroupHandlerSubscription();
 		}
 		public void Unsubscribe_Group_Handlers()
 		{
 			control.MouseEnter -= Group_MouseEnter;
 			control.MouseMove -= Group_MouseMove;
-			control.MouseClick -= Group_Click;
-			control.MouseDoubleClick -= Group_DoubleClick;
+			Group_Unsubscribe_ClickActions();
 			Watch_GroupHanderUnsubscription();
 		}
-		public void Group_MouseEnter(object sender, EventArgs e)
+		public void Group_Subscribe_ClickActions()
 		{
-			Watch_Enter();
-			///control.Focus();
-
-				// the "Enter" event of a control is not being detected when actions are performed too quickl
-			if (GroupRoot != null && GroupRoot.GroupState == GroupSt.BeyondGroup)
+			clickHandler.SubscribeAction(1, Group_SingleClick);
+		}
+		public void Group_Unsubscribe_ClickActions()
+		{
+			clickHandler.UnsubscribeAction(1, Group_SingleClick);
+		}
+		public void Group_SingleClick()
+		{
+			if (IsGroupRoot)
 			{
-				Watch_ForceEnterRoot();
-				GroupRoot.Group_MouseEnter(sender, e);
-				Watch_RootGroupState();
-			}
-			else
-			{
-				if (GroupState == GroupSt.BeyondGroup)
+				if (GroupState == GroupSt.AimingGroup)
+				{
+					GroupState = GroupSt.EditingGroup;
+				}
+				else if (GroupState == GroupSt.EditingGroup)
 				{
 					GroupState = GroupSt.AimingGroup;
 				}
-				Watch_GroupState();
 			}
-			///control.Focus(); // put focus at the end to wait for control stack pop
-			///Watch_ControlFocused();
+			else
+			{
+				if (GroupRoot != null)
+				{
+					if (GroupRoot.GroupState == GroupSt.AimingGroup)
+					{
+						GroupRoot.GroupState = GroupSt.EditingGroup;
+					}
+					else if (GroupRoot.GroupState == GroupSt.EditingGroup)
+					{
+						GroupRoot.GroupState = GroupSt.AimingGroup;
+					}
+				}
+			}
 		}
-		public void old_Group_MouseEnter(object sender, EventArgs e)
+		public void Group_MouseEnter(object sender, EventArgs e)
 		{
 			Watch_Enter();
 			///control.Focus();
@@ -848,7 +853,7 @@ namespace PKG
 			{
 				if (GroupRoot != null)
 				{
-					// the "Enter" event of a control is not being detected when actions are performed too quickl
+					// the "Enter" event of a control is not being detected when actions are performed too quickly
 					if (GroupRoot.GroupState == GroupSt.BeyondGroup)
 					{
 						Watch_ForceEnterRoot();
@@ -901,105 +906,6 @@ namespace PKG
 				}
 			}
 		}
-
-		public void Group_Click(object sender, EventArgs e) // represent a quick click
-		{
-			Watch_Click();
-			if (IsGroupRoot)
-			{
-
-				Watch_ClickOnGroupRoot();
-				if (GroupState == GroupSt.AimingGroup)
-				{
-					GroupState = GroupSt.EditingGroup;
-				}
-			}
-			else // Group Members
-			{
-				if (GroupRoot != null)
-				{
-					Watch_ClickOnGroupMember();
-					if (GroupRoot.GroupState == GroupSt.AimingGroup)
-					{
-						GroupRoot.GroupState = GroupSt.EditingGroup;
-						Watch_RootGroupState();
-					}
-				}
-				
-			}
-			
-		}
-		public void Group_DoubleClick(object sender, EventArgs e) // represent a quick click
-		{
-			Watch_Click();
-			if (IsGroupRoot)
-			{
-
-				Watch_ClickOnGroupRoot();
-				if (GroupState == GroupSt.AimingGroup)
-				{
-					GroupState = GroupSt.EditingGroup;
-				}
-				else if (GroupState == GroupSt.EditingGroup)
-				{
-					GroupState = GroupSt.AimingGroup;
-				}
-			}
-			else // Group Members
-			{
-				if (GroupRoot != null)
-				{
-					Watch_ClickOnGroupMember();
-					if (GroupRoot.GroupState == GroupSt.AimingGroup)
-					{
-						GroupRoot.GroupState = GroupSt.EditingGroup;
-						Watch_RootGroupState();
-					}
-					else if (GroupRoot.GroupState == GroupSt.EditingGroup)
-					{
-						GroupRoot.GroupState = GroupSt.AimingGroup;
-						Watch_RootGroupState();
-					}
-				}
-
-			}
-
-		}
-
-		//public delegate void EventHandler(object sender, EventArgs e);
-		public void ActWhenRootOpen(object sender, EventArgs e, EventHandler action)
-		{
-			if (IsRootOpen)
-			{
-				action(sender, e);
-			}
-			/* calling example
-			ActWhenRootOpen<object>(null, (x) => { });
-			ActWhenRootOpen<int>(0, (x) => { });
-			*/
-		}
-		public void ActWhenRootOpen<T>(T? arg, Action<T?> action)
-		{
-			if (IsRootOpen)
-			{
-				action(arg);
-			}
-			/* calling example
-			ActWhenRootOpen<object>(null, (x) => { });
-			ActWhenRootOpen<int>(0, (x) => { });
-			*/
-		}
-		public void ActWhenRootOpen(Action action)
-		{
-			if (IsRootOpen)
-			{
-				action();
-			}
-			/* calling example
-			ActWhenRootOpen(() => { });
-			*/
-		}
-
 		#endregion
 		#region Flex Extension
 		public void Subscribe_Flex_Handlers()
@@ -1446,15 +1352,20 @@ namespace PKG
 	}
 
 	#region Developing
-	public class MultiClickHandler
+	/*
+		can solve: the first click on a control is treated as "focus" instead of Click
+	*/
+	public class ClickHandler
 	{
+		public Control control;
 		protected int clickCount = 0;
+		protected int maxClickCount;
+		protected bool isCounting;
 		protected System.Threading.Timer clickTimer;
 		public object? state = null; // additional info for Callback function
 		public int dueTime = Timeout.Infinite; // initial delay after creation of timer
 		public int period = Timeout.Infinite; // repeat period
-		public int clickInterval = 300; // mili second
-		public int maxClickCount;
+		public int clickInterval = 200; // mili second , Ui will response after this latency, so don't assign a too big value
 		public Action[] actions;
 
 
@@ -1463,30 +1374,59 @@ namespace PKG
 			Debug.WriteLine(msg);
 		}
 
-		public MultiClickHandler(int maxClickCount_ = 2)
+		public ClickHandler(Control control_, int maxClickCount_ = 2)
 		{
+			control = control_;
 			clickTimer = new System.Threading.Timer(ClickTimerCallback, state, dueTime, period);
 			maxClickCount = maxClickCount_;
 			actions = new Action[maxClickCount];
+			// Initialize each element with an empty Action delegate
+			for (int i = 0; i < actions.Length; i++)
+			{
+				actions[i] = () => { }; // Empty Action delegate
+			}
 		}
-		public void AssignAction(int clickCount_, Action action)
+		public void SubscribeAction(int clickCount_, Action action)
 		{
 			if (clickCount_ <= maxClickCount)
 			{
-				actions[clickCount_ - 1] = action;
+				actions[clickCount_ - 1] -= action;
+				actions[clickCount_ - 1] += action;
 			}
 			else
 			{
-				new Exception("AssignAction over index range");
+				new Exception("over index range of array actions");
 			}
 		}
-		protected void AddOneClick(object sender, EventArgs e)
+		public void UnsubscribeAction(int clickCount_, Action action)
 		{
-			Watch("AddOneClick");
-			clickCount++;
-			clickTimer.Change(clickInterval, period); // change
+			if (clickCount_ <= maxClickCount)
+			{
+				actions[clickCount_ - 1] -= action;
+			}
+			else
+			{
+				new Exception("over index range of array actions");
+			}
 		}
-
+		public void MouseDown(object sender, EventArgs e)
+		{
+			if (!isCounting)
+			{
+				Watch("start counting click");
+				isCounting = true;
+				clickTimer.Change(clickInterval, period); // change
+			}
+		}
+		public void MouseUp(object sender, EventArgs e)
+		{
+			if (isCounting)
+			{
+				Watch("AddOneClick");
+				clickCount++;
+				clickTimer.Change(clickInterval, period); // change
+			}
+		}
 		protected void ClickTimerCallback(object state_)
 		{
 			clickCount = Math.Min(clickCount, maxClickCount);
@@ -1495,11 +1435,13 @@ namespace PKG
 			{
 				if (actions[clickCount - 1] != null)
 				{
-					actions[clickCount - 1]();
+					// Use BeginInvoke to marshal the click event handling code to the main UI thread
+					control.BeginInvoke(actions[clickCount - 1]);
 				}
 			}
 			// Reset the click count
 			clickCount = 0;
+			isCounting = false;
 		}
 	}
 	#endregion
