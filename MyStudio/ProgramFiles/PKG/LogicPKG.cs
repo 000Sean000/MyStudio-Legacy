@@ -33,4 +33,60 @@ namespace PKG
 		}
 	}
 
+	public class StateMachine<S>
+	{
+		
+		protected Dictionary<S, Action<object?>> stateActions = new Dictionary<S, Action<object?>>();
+		protected S state;
+		public object? eventData = null;
+
+		public StateMachine(S defaultState)
+		{
+			// Initialize each action of states to an empty function of Action<T>
+			foreach (S state in Enum.GetValues(typeof(S)))
+			{
+				stateActions[state] = (data) => { };
+			}
+			state = defaultState;
+		}
+
+		public S State
+		{
+			get { return state; }
+			set
+			{
+				if (stateActions.ContainsKey(value))
+				{
+					state = value;
+					TriggerEvent(state, eventData);
+				}
+			}
+		}
+		public void Subscribe_Actions(S state, Action<object?> action)
+		{
+			if (stateActions.ContainsKey(state))
+			{
+				stateActions[state] -= action;
+				stateActions[state] += action;
+			}
+		}
+
+		public void Unsubscribe_Actions(S state, Action<object?> action)
+		{
+			if (stateActions.ContainsKey(state))
+			{
+				stateActions[state] -= action;
+			}
+		}
+
+		protected void TriggerEvent(S state, object? eventData)
+		{
+			if (stateActions.ContainsKey(state))
+			{
+				stateActions[state](eventData);
+			}
+		}
+	}
+
+
 }

@@ -352,9 +352,19 @@ namespace PKG
 			{
 				_enableGroup = value;
 				Refresh_IsRootOpen();
-				if (_enableGroup) { Subscribe_Group_Handlers(); }
-				else { Unsubscribe_Group_Handlers(); }
+				if (_enableGroup)
+				{ 
+					Subscribe_Group_Handlers();
+					stateMachine = new StateMachine<GroupSt>(GroupSt.None);
+				}
+				else 
+				{ 
+					Unsubscribe_Group_Handlers();
+					stateMachine = null;
+				}
 				/// no group hander to subscribe, only root need to subscribe GroupRootHanders
+				/// 
+
 			}
 			get
 			{
@@ -466,6 +476,8 @@ namespace PKG
 		{
 			BeyondGroup, AimingGroup, EditingGroup, None
 		}
+		public StateMachine<GroupSt> groupSM;
+		public Dictionary<GroupSt, Action<object?>> groupStateAction = new Dictionary<GroupSt, Action<object?>>();
 		protected GroupSt _groupState = GroupSt.None;
 		public GroupSt GroupState
 		{
@@ -502,13 +514,17 @@ namespace PKG
 			}
 			get { return _groupState; }
 		}
-		public delegate void StateAction();
-		public StateAction[] stateActions = new StateAction[Enum.GetValues(typeof(GroupSt)).Length];
+		public Action[] stateActions;
 		public static bool[] captureWhen = new bool[Enum.GetValues(typeof(GroupSt)).Length];
 
-		public void SetStateAction(GroupSt groupState, StateAction stateAction)
+		public void SubscribeStateAction(GroupSt groupState, Action stateAction)
 		{
-			stateActions[(int)groupState] = stateAction;
+			stateActions[(int)groupState] -= stateAction;
+			stateActions[(int)groupState] += stateAction;
+		}
+		public void UnsubscribeStateAction(GroupSt groupState, Action stateAction)
+		{
+			stateActions[(int)groupState] -= stateAction;
 		}
 		public ExControl? _groupRoot = null; // GroupRoot control of group container
 		public ExControl? GroupRoot
@@ -678,6 +694,11 @@ namespace PKG
 			clickHandler = new ClickHandler(control, 2);
 			control.MouseDown += clickHandler.MouseDown;
 			control.MouseUp += clickHandler.MouseUp;
+			stateActions = new Action[Enum.GetValues(typeof(GroupSt)).Length];
+			foreach (GroupSt state in  Enum.GetValues(typeof(GroupSt)))
+			{
+				stateActions[(int)state] = () => { };
+			}
 		}
 		public void DefineBasicSize()
 		{
@@ -906,6 +927,8 @@ namespace PKG
 				}
 			}
 		}
+		
+		
 		#endregion
 		#region Flex Extension
 		public void Subscribe_Flex_Handlers()
@@ -1350,8 +1373,6 @@ namespace PKG
 			}
 		}
 	}
-
-	#region Developing
 	/*
 		can solve: the first click on a control is treated as "focus" instead of Click
 	*/
@@ -1444,6 +1465,11 @@ namespace PKG
 			isCounting = false;
 		}
 	}
+
+	#region Developing
+
+	
+
 	#endregion
 
 
