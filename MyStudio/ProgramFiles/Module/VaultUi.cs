@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PKG;
+using System.Diagnostics;
+
 namespace Module
 {
 	partial class Vault
@@ -37,6 +39,7 @@ namespace Module
 			protected Panel _canvas;
 			protected Form _rootForm;
 			protected Node _node;
+			public List<Control> _controls = new List<Control>();
 
 			#region Ui components
 			Panel panel_NodeGroup;
@@ -180,24 +183,33 @@ namespace Module
 
 				exPanel_NodeGroup.Watch_FunctionalityEnable();
 
+
 				AlignControlsInNode();
+
 
 				pictureBox_NodeImage.SizeChanged += AlignControlsInNode_handler;
 				textBox_NodeContent.SizeChanged += AlignControlsInNode_handler;
 				label_NodeContent.SizeChanged += AlignControlsInNode_handler;
 				flowLayoutPanel_NodeTag.SizeChanged += AlignControlsInNode_handler;
+				exPictureBox_NodeImage.ActionAfterFlex += AlignControlsInNode;
+
 				#endregion
 
 				_canvas.Controls.Add(panel_NodeGroup);
 			}
 			public void AlignControlsInNode()
 			{
+				Debug.WriteLine("Alignment");
 				// the order is important
 				ControlAligner.AlignControlsVertically(panel_NodeContentAndTag);
 				ControlAligner.AlignControlsVertically(panel_NodeInnerBody);
 				ControlAligner.AlignControlsHorizontally(panel_NodeGroup, GroupPadding);
 			}
 			public void AlignControlsInNode_handler(object sender,  EventArgs e)
+			{
+				AlignControlsInNode();
+			}
+			public void AlignControlsInNode_handler(object sender, ControlEventArgs e)
 			{
 				AlignControlsInNode();
 			}

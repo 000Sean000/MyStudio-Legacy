@@ -40,13 +40,13 @@ namespace PKG
 		{
 			// Step 1: Find the index of oldControl in the Panel's Controls collection
 			int index = parentControl.Controls.IndexOf(oldControl);
-
+			// Step 3: Remove oldControl from the Controls collection
+			parentControl.Controls.Remove(oldControl);
 			// Step 2: Insert newControl at the same index as oldControl
 			parentControl.Controls.Add(newControl);
 			parentControl.Controls.SetChildIndex(newControl, index);
 
-			// Step 3: Remove oldControl from the Controls collection
-			parentControl.Controls.Remove(oldControl);
+			
 		}
 	}
 
@@ -466,6 +466,10 @@ namespace PKG
 		protected Control originalParent;
 		protected int originalIndex;
 		protected Form _parentForm;
+		protected int originalZOrder;
+		protected Point offset;
+		///protected Control replacingControl = new Control();
+		protected Label replacingControl = new Label();
 		public Form ParentForm
 		{
 			set
@@ -481,6 +485,7 @@ namespace PKG
 				return _parentForm;
 			}
 		}
+		
 		#endregion
 		#region Appearance Extension
 		public Color original_borderColor = Color.Black;
@@ -608,6 +613,7 @@ namespace PKG
 		protected bool _isControlFocused;
 		#endregion
 		#region Flex Extension
+		public Action ActionAfterFlex = () => { }; // Alignment after Flex action
 		public enum Side
 		{
 			N, S, W, E, None
@@ -670,7 +676,6 @@ namespace PKG
 		protected int preWidth, preHeight; // previous W/H
 		protected int widthDiff, heightDiff; // difference
 
-		protected int originalZOrder;
 		#endregion
 
 		#endregion
@@ -769,13 +774,21 @@ namespace PKG
 			// Save the original parent and index
 			originalParent = parent;
 			originalIndex = parent.Controls.GetChildIndex(control);
-
-			// Remove the control from its current parent
-			parent.Controls.Remove(control);
+			offset = control.PointToScreen(Point.Empty) - (Size)ParentForm.PointToScreen(Point.Empty);
+			// Replace the control from its current parent
+			replacingControl.Location = control.Location;
+			replacingControl.Size = control.Size;
+			//* debug view
+			replacingControl.Text = "Replacing Control";
+			replacingControl.BorderStyle = BorderStyle.FixedSingle; 
+			replacingControl.BackColor = Color.Gray;
+			//*/
+			UiPKG.ReplaceControl(control, replacingControl, parent);
 
 			// Add the control to the form's controls collection to bring it to the front
 			if (ParentForm != null)
 			{
+				control.Location = offset;
 				ParentForm.Controls.Add(control);
 				control.BringToFront();
 			}
@@ -786,8 +799,8 @@ namespace PKG
 		public void ReturnToOriginalParent()
 		{
 			///return;
-			// Remove the control from the form's controls collection
-			parent.Controls.Remove(control);
+			// Replace the control from the form's controls collection
+			UiPKG.ReplaceControl(replacingControl, control, parent);
 
 			// Add the control back to its original parent at its original index
 			originalParent.Controls.Add(control);
@@ -1076,6 +1089,7 @@ namespace PKG
 				{
 					ReturnToOriginalParent();
 				}
+				ActionAfterFlex();
 				isResizing = false;
 				isDragging = false;
 				DefineBorder();

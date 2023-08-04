@@ -43,5 +43,10 @@ namespace Ui
 		{
 
 		}
+
+		private void panel_NodeInnerBody_ControlAdded(object sender, ControlEventArgs e)
+		{
+
+		}
 	}
 }
