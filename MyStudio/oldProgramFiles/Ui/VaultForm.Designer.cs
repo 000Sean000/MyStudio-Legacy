@@ -93,7 +93,7 @@ namespace Ui
 			// pictureBox_NodeImage
 			// 
 			pictureBox_NodeImage.BorderStyle = BorderStyle.FixedSingle;
-			pictureBox_NodeImage.Image = MyStudio.Properties.Resources.foxlink_icon;
+			pictureBox_NodeImage.Image = MyStudio.Properties.Resources.kazimierz_RB_Carve;
 			pictureBox_NodeImage.Location = new Point(-1, 12);
 			pictureBox_NodeImage.Margin = new Padding(4, 4, 4, 4);
 			pictureBox_NodeImage.Name = "pictureBox_NodeImage";
@@ -206,7 +206,7 @@ namespace Ui
 			// pictureBox2
 			// 
 			pictureBox2.BorderStyle = BorderStyle.FixedSingle;
-			pictureBox2.Image = MyStudio.Properties.Resources.foxlink_icon;
+			pictureBox2.Image = MyStudio.Properties.Resources.kazimierz_RB_Carve;
 			pictureBox2.Location = new Point(52, 386);
 			pictureBox2.Margin = new Padding(4, 4, 4, 4);
 			pictureBox2.Name = "pictureBox2";
