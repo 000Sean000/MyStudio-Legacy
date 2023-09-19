@@ -33,14 +33,14 @@ namespace PKG
 		}
 	}
 
-	public class StateMachine<S>
+	public class FiniteStateMachine<S>
 	{
 		
 		protected Dictionary<S, Action<object?>> stateActions = new Dictionary<S, Action<object?>>();
 		protected S state;
 		public object? eventData = null;
 
-		public StateMachine(S defaultState)
+		public FiniteStateMachine(S defaultState)
 		{
 			// Initialize each action of states to an empty function of Action<T>
 			foreach (S state in Enum.GetValues(typeof(S)))

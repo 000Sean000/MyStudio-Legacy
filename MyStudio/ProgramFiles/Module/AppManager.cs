@@ -44,7 +44,7 @@ namespace Module
 		}
 		public static void init()
 		{
-			
+
 			//rootDir = PKG.pathPKG.GetDirWithBackstep(backStep);
 			rootDir = pathPKG.GetMainDir();
 			programDataDir = Path.Combine(rootDir, PROGRAM_DATA_FOLDER);

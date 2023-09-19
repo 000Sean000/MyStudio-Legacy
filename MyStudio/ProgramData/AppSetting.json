@@ -1,13 +1,13 @@
 {
-  "SEAN-ROG-STRIX": {
+  "DP-9228-01": {
     "Vault location directories": [
-      "C:\\Users\\Sean_Wu\\OneDrive\\MyNotes\\Main project\\codeTools\\MyStudio\\MyStudio\\ExVault"
+      "C:\\Users\\sean_wu\\OneDrive\\MyNotes\\MainProject\\codeTools\\MyStudio\\MyStudio\\TestVault"
     ],
     "Preference setting": {}
   },
-  "DP-9228-01": {
+  "SEAN-ROG-STRIX": {
     "Vault location directories": [
-      "C:\\Users\\sean_wu\\OneDrive\\MyNotes\\Main project\\codeTools\\MyStudio\\MyStudio\\ExVault"
+      "C:\\Users\\Sean_Wu\\OneDrive\\MyNotes\\Programs\\ComposingToolPrograms\\MyStudio\\MyStudio\\TestVault"
     ],
     "Preference setting": {}
   }

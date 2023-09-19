@@ -362,7 +362,7 @@ namespace PKG
 					Subscribe_Group_Handlers();
 					if (IsGroupRoot)
 					{
-						groupSM = new StateMachine<GroupSt>(GroupSt.None);
+						groupFSM = new FiniteStateMachine<GroupSt>(GroupSt.None);
 						#region Default State Actions
 						groupStateActions = new Dictionary<GroupSt, Action<object?>>();
 						groupStateActions[GroupSt.None] = (obj) => { };
@@ -383,7 +383,7 @@ namespace PKG
 						};
 						foreach (GroupSt state in Enum.GetValues(typeof(GroupSt)).Cast<GroupSt>())
 						{
-							groupSM.Subscribe_Actions(state, groupStateActions[state]);
+							groupFSM.Subscribe_Actions(state, groupStateActions[state]);
 						}
 						#endregion
 					}
@@ -391,7 +391,7 @@ namespace PKG
 				else 
 				{ 
 					Unsubscribe_Group_Handlers();
-					groupSM = null;
+					groupFSM = null;
 				}
 				/// no group hander to subscribe, only root need to subscribe GroupRootHanders
 				/// 
@@ -532,7 +532,7 @@ namespace PKG
 		{
 			BeyondGroup, AimingGroup, EditingGroup, None
 		}
-		public StateMachine<GroupSt> groupSM;
+		public FiniteStateMachine<GroupSt> groupFSM;
 		public Dictionary<GroupSt, Action<object?>> groupStateActions;
 		
 		
@@ -541,11 +541,11 @@ namespace PKG
 		{
 			set
 			{
-				groupSM.State = value;
+				groupFSM.State = value;
 			}
 			get
 			{
-				return groupSM.State;
+				return groupFSM.State;
 			}
 		}
 		///public Action[] stateActions;
