@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace Module
 {
-	public partial class Node
+	public partial class old_Node
 	{
 		#region static fields
 		public static Vault vault; // to use node cache
@@ -72,12 +72,12 @@ namespace Module
 		protected object _infoLock = new object(); // mutex lock for multi-threading
 
 		#region Node Operations
-		public Node() // new node
+		public old_Node() // new node
 		{
 			create();
 			Save();
 		}
-		public Node(string id) // load existent node by id
+		public old_Node(string id) // load existent node by id
 		{
 			_id = id;
 			if (Directory.Exists(path))
@@ -156,7 +156,7 @@ namespace Module
 			{
 				if (keys[0] == CONTENT && _info[NODE_TYPE].ToObject<NodeType>() == NodeType.Citer)
 				{
-					Node cited = new Node(_info[CONTENT][CITE].ToString());
+					old_Node cited = new old_Node(_info[CONTENT][CITE].ToString());
 					return JsonPKG.GetJObject<T>(cited._info, keys);
 				}
 				else
@@ -184,9 +184,9 @@ namespace Module
 		{
 			Simple, WithLinks, WithSubNodes
 		}
-		public Node Clone(CloneType cloneType) // ...
+		public old_Node Clone(CloneType cloneType) // ...
 		{
-			Node clone = new Node();
+			old_Node clone = new old_Node();
 			lock (_infoLock)
 			{
 				clone._info = JToken.FromObject(_info).ToObject<JObject>();
@@ -254,7 +254,7 @@ namespace Module
 					string citedNodeId = ParsingPKG.GetMatchingSubstring(text, regexNodeId);
 					Thread thread = new Thread((index_) => { 
 						int index = (int)index_;
-						Node citedNode = vault.FetchNode(citedNodeId);
+						old_Node citedNode = vault.FetchNode(citedNodeId);
 						string subContent = citedNode.ReadContent();
 						lock (textsLock)
 						{

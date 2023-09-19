@@ -38,7 +38,7 @@ namespace Module
 			protected Vault _vault; // outer class
 			protected Panel _canvas;
 			protected Form _rootForm;
-			protected Node _node;
+			protected old_Node _node;
 			public List<Control> _controls = new List<Control>();
 
 			#region Ui components
@@ -216,7 +216,7 @@ namespace Module
 		}
 		public void CreateUiNode()
 		{
-			Node node = CreateNode();
+			old_Node node = CreateNode();
 			string id = node.id;
 			UiNode uiNode = new UiNode(this);
 			lock (_uiNodesLock)

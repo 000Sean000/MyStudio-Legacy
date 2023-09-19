@@ -29,8 +29,6 @@
 
   <ItemGroup>
     <Folder Include="ProgramData\" />
-    <Folder Include="ProgramFiles\ApplicationCore\ApplicationLayer\DomainLayer\" />
-    <Folder Include="ProgramFiles\ApplicationCore\ApplicationLayer\" />
     <Folder Include="ProgramFiles\Infrastructure\" />
     <Folder Include="ProgramFiles\UserInterface\" />
   </ItemGroup>

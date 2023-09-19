@@ -59,7 +59,7 @@ namespace PKG
 			{
 				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
 				{
-					throw new Exception("Get JObject value failed. (missing key)");
+					throw new Exception("Getting JObject value failed. (missing key)");
 				}
 				else
 				{
@@ -87,7 +87,18 @@ namespace PKG
 			}
 			obj[keys[len - 1]] = JToken.FromObject(value);
 		}
-		
+		public static void SetJObjectByAddElementToList<T>(T element, JObject obj, params string[] keys)
+		{
+			List<T> list = GetJObject<List<T>>(obj, keys);
+			list.Add(element);
+			SetJObject<List<T>>(list, obj, keys);
+		}
+		public static void SetJObjectByRemoveElementFromList<T>(T element, JObject obj, params string[] keys)
+		{
+			List<T> list = GetJObject<List<T>>(obj, keys);
+			list.Remove(element);
+			SetJObject<List<T>>(list, obj, keys);
+		}
 		public static void MaintainJObject(JObject obj, params string[] keys)
 		{
 			int len = keys.Length;

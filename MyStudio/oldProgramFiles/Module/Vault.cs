@@ -38,7 +38,7 @@ namespace Module
 		protected JObject _setting;
 		////protected JObject _cache;
 		protected List<string> _nodeIDs = new List<string>();
-		protected Dictionary<string, Node> _nodes = new Dictionary<string, Node>();
+		protected Dictionary<string, old_Node> _nodes = new Dictionary<string, old_Node>();
 		protected Dictionary<string, bool> _isNodeModified = new Dictionary<string, bool>();
 		#endregion
 
@@ -95,9 +95,9 @@ namespace Module
 					_nodeIDs.Add(property.Name);
 				}
 			}
-			Node.nodesDir = nodesDir;
-			Node.mediaDir = mediaDir;
-			Node.vault = this;
+			old_Node.nodesDir = nodesDir;
+			old_Node.mediaDir = mediaDir;
+			old_Node.vault = this;
 			FirstLoadNodes();
 
 		}
@@ -115,10 +115,10 @@ namespace Module
 			}
 			foreach (string id in clonedNodeIDs)
 			{
-				Node node;
+				old_Node node;
 				Thread thread;
 				thread = new Thread(() => { 
-					node = new Node(id); 
+					node = new old_Node(id); 
 					lock (_nodesLock)
 					{
 						_nodes[id] = node;
@@ -194,9 +194,9 @@ namespace Module
 			}
 			*/
 		}
-		public Node CreateNode()
+		public old_Node CreateNode()
 		{
-			Node node = new Node();
+			old_Node node = new old_Node();
 			string id = node.id;
 			lock (_nodeIDsLock)
 			{
@@ -209,7 +209,7 @@ namespace Module
 			}
 		}
 		
-		public Node FetchNode(string id)
+		public old_Node FetchNode(string id)
 		{
 			bool isIdContained;
 			lock (_nodeIDsLock)
@@ -218,7 +218,7 @@ namespace Module
 			}
 			if (!isIdContained)
 			{
-				Node node = new Node(id);
+				old_Node node = new old_Node(id);
 				lock (_nodeIDsLock)
 				{
 					_nodeIDs.Add(id);
@@ -239,7 +239,7 @@ namespace Module
 
 			if (_nodeIDs.Contains(id))
 			{
-				Node node = new Node(id);
+				old_Node node = new old_Node(id);
 				_nodeIDs.Remove(id);
 				lock (_nodesLock)
 				{
