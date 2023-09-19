@@ -37,7 +37,7 @@ namespace DomainLayer
 		public interface INodeDataManager
 		{
 			JObject CreateNodeData();
-			JObject MaintainNodeData(string nodeId);
+			JObject MaintainNodeData(JObject data);
 			JObject LoadNodeData(string nodeId);
 			void SaveNodeData(string nodeId, JObject data);
 			
