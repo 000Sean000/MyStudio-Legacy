@@ -14,19 +14,29 @@ namespace DomainModel
 	public partial class Node
 	{
 		#region Static Ports
-		static protected INodeDataManager? _dataManager;
+		static protected INodeManager? _nodeManager;
 		static protected INodeContentProcessor? _contentProcessor;
 		#endregion
+		public void init( INodeManager dataManager, INodeContentProcessor contentProcessor)
+		{
+			_nodeManager = dataManager;
+			_contentProcessor = contentProcessor;
+		}
+		static Node()
+		{
+			if (_nodeManager == null || _contentProcessor == null)
+			{
+				throw new InvalidOperationException("Please call Node.init first!");
+			}
+		}
 		public Node()
 		{
-			_id = _dataManager.GenerateNodeId();
-			_data = _dataManager.CreateNodeData();
-			_dataManager.SaveNodeData(_id, _data);
+			Create();
 		}
 		public Node(string id)
 		{
 			_id = id;
-			_data = _dataManager.LoadNodeData(id);
+			_nodeManager.LoadNode(id);
 		}
 
 		protected string _id;
@@ -40,15 +50,16 @@ namespace DomainModel
 		#region Node data operation
 		public void Create() // create a node
 		{
-			_data = _dataManager.CreateNodeData();
+			_nodeManager.CreateNode();
+			_id = Get<string>(METADATA, ID);
 		}
 		public void Load() // load node data from database
 		{
-			_data = _dataManager.LoadNodeData(_id);
+			_nodeManager.LoadNode(_id);
 		}
 		public void Save() // save node data to database
 		{
-			_dataManager.SaveNodeData(_id, _data);
+			_nodeManager.SaveNode(_id);
 		}
 		public void Set<T>(T value, params string[] keys) // set node data key-value
 		{
@@ -90,32 +101,25 @@ namespace DomainModel
 		}
 		#endregion
 
-		public static INodeDataManager DataManager
-		{
-			set
-			{
-				_dataManager = value;
-			}
-		}
 		public string Id
 		{
 			get { return _id; }
 		}
 	}
-	#region Ports to infrastructure
-	public interface INodeDataManager
+	#region Ports 
+	public interface INodeManager
 	{
-		JObject CreateNodeData();
-		JObject MaintainNodeData(JObject data);
-		JObject LoadNodeData(string nodeId);
-		void SaveNodeData(string nodeId, JObject data);
-		public string GenerateNodeId();
+		public void CreateNode();
+		public void MaintainNode(string nodeId);
+		public void DeleteNode(string nodeId);
+		public void LoadNode(string nodeId);
+		public void SaveNode(string nodeId);
 	}
 	public interface INodeContentProcessor
 	{
-		void WriteContentToNode(Node baseNode, string text);
-		string ReadContentFromNode(Node baseNode);
-		void InsertReference(Node baseNode, Node referedNode);
+		public void WriteContentToNode(Node baseNode, string text);
+		public string ReadContentFromNode(Node baseNode);
+		public void InsertReference(Node baseNode, Node referedNode);
 	}
 	#endregion
 }
