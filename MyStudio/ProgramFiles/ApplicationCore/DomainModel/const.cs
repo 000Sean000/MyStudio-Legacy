@@ -5,17 +5,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace DomainLayer.constants
-{
-	
-	public class Const
-	{
-	}
-}
-namespace DomainLayer
+
+namespace DomainModel
 {
 	public partial class Node
 	{
+		public static Type idType = typeof(int);
 		#region Reference parsing
 		public static Regex regexNodeId = new Regex(@"\d{20}");
 		public static Regex regexCitedNode = new Regex(@"\(Node\d{20}\)");
@@ -27,10 +22,11 @@ namespace DomainLayer
 		public const string METADATA = "Metadata";
 		public const string ID = "id";
 		////public const string SUB_PATH = "Relative path to nodesDir";
-		public const string NODE_TYPE = "Type";
-		public const string NODE_CLASS = "Class"; 
+		public const string NODE_TYPE = "Node Type";
+		public const string NODE_CLASS = "Node Class"; 
 		public const string CONTENT = "Content";
 		public const string TEXT = "Text";
+		public const string REF_ID = "Refered node ids";
 		public const string REFERING = "refering to";
 		public const string REFERED = "be refered by";
 		public const string PROPERTY = "Property";
@@ -59,13 +55,10 @@ namespace DomainLayer
 		#region LinkType
 		public enum LinkType
 		{
-			PARENT, COMPONENT, SUB_PART, NEXT, RELATED
+			PARENT, COMPONENT, SUB_PART, NEXT, RELATED, // normal node
+			DB_ITEM, DB_PROPERTY, // database group
 		}
-		public const string PARENT = "Unique Parent";
-		public const string COCMPONENT = "component";
-		public const string SUB_PART = "sub-part";
-		public const string NEXT = "next";
-		public const string RELATED = "related";
+
 		#endregion
 		#endregion
 	}

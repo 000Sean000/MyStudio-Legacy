@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DomainLayer;
+using DomainModel;
 using Newtonsoft.Json.Linq;
 
 namespace ApplicationLayer
 {
-	public class NodeDataManager:Node.INodeDataManager
+	public class NodeDataManager:INodeDataManager
 	{
 		public NodeDataManager()
 		{

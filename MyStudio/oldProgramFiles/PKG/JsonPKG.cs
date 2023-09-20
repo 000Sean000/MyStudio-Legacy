@@ -60,6 +60,7 @@ namespace PKG
 				if (!obj.ContainsKey(keys[i]) || obj[keys[i]] == null)
 				{
 					throw new Exception("Getting JObject value failed. (missing key)");
+					return default(T);
 				}
 				else
 				{
