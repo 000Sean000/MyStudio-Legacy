@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PKG;
 using DomainLayer;
 using DomainModel;
 using Newtonsoft.Json.Linq;
-
+using System.Xml.Linq;
+/*
+ * Give Node required data
+ * Manager Node entities, Nodes are only allow to be instanciated here
+ * All other model only can access Nodes through NodeManager
+ */
 namespace DomainLayer
 {
 	public class NodeManager:INodeManager
@@ -22,29 +28,14 @@ namespace DomainLayer
 			_idManager = idManager;
 			_vaultDatabase = vaultDatabase;
 		}
-		public void InitializeNode(Node node)
+		#region Necessary Implementation
+		public JObject InitNodeData()
 		{
-			node.Id = _idManager.AquireId();
-			MaintainNode(node);
-			node.Set<string>(node.Id, Node.METADATA, Node.ID);
-
-		}
-		public void MaintainNode(Node node)
-		{
-
-		}
-		public void DeleteNode(Node node)
-		{
-
-		}
-		public void LoadNode(Node node)
-		{
-			AddLoadedNode(node);
-			node.Data = _vaultDatabase.LoadNodeData(node.Id);
-		}
-		public void SaveNode(Node node)
-		{
-
+			JObject data = new JObject();
+			data = Node.MaintainData(data);
+			string id = _idManager.AcquireId();
+			JsonPKG.SetJObject<string>(id, data, Node.METADATA, Node.ID); ;
+			return data;
 		}
 		public void AddLoadedNode(Node node)
 		{
@@ -60,14 +51,37 @@ namespace DomainLayer
 				LoadedNodes.Remove(node.Id);
 			}
 		}
+		public void WriteContentToNode(Node baseNode, string plaintext)
+		{
+
+		}
+		public string? ReadContentFromNode(Node baseNode)
+		{
+			string plaintext = "";
+
+			return plaintext;
+		}
+
+		#endregion
+	
+		
+		
 
 	}
-	#region Ports
+	#region Interfaces
 	public interface IIdManager
 	{
-		
-		public string AquireId();
+		public string AcquireId();
 		public void ReleaseId(string id);
+	}
+	public interface INodeContentProcessor
+	{
+		public void WriteContentToNode(Node baseNode, string text);
+		public string ReadContentFromNode(Node baseNode);
+		public string InsertReference(Node baseNode, Node referedNode);
+		public string TextSetToPlaintext(List<string> textSet);
+		public List<string> PlaintextToTextSet(string plaintext);
+
 	}
 	public partial interface IVaultDatabase
 	{

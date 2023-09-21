@@ -38,7 +38,7 @@ namespace DomainLayer
 		{
 			_vaultDatabase.SaveVaultIdBook(_idBoook);
 		}
-		public string AquireId()
+		public string AcquireId()
 		{
 			string id;
 			if (_idBoook.releasedIds.Count > 0)
