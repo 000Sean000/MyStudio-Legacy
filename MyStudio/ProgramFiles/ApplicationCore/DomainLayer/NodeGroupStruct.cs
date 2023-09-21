@@ -28,7 +28,7 @@ namespace DomainLayer
 			List<string> ids = Get<List<string>>(PROPERTY, LINKING, LinkType.DB_ITEM.ToString());
 			foreach (string id in ids)
 			{
-				items.Add(new Node(id));
+				items.Add(_nodeManager.FetchNode(id));
 			}
 		}
 		public void LoadProperties()
@@ -36,7 +36,7 @@ namespace DomainLayer
 			List<string> ids = Get<List<string>>(PROPERTY, LINKING, LinkType.DB_PROPERTY.ToString());
 			foreach (string id in ids)
 			{
-				properties.Add(new Node(id));
+				properties.Add(_nodeManager.FetchNode(id));
 			}
 		}
 		public void AddProperty(Node propertyNode)

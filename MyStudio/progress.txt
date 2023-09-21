@@ -1,4 +1,6 @@
-﻿
+﻿only declare necessary method in interface.
+
+
 find gitHub package
 
 bring image to front when resizing

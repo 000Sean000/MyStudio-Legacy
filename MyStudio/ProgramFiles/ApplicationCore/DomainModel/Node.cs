@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 /*
  * Basic Node data operation
  * Don't create Node instance here, do this in Node Manager!
+ * Use Node as argument instead of using id
  */
 namespace DomainModel
 {
@@ -43,7 +44,6 @@ namespace DomainModel
 		public Node() // Create a new Node
 		{
 			_data = _nodeManager.InitNodeData();
-			_nodeManager.AddLoadedNode(this);
 		}
 		public Node(JObject data) // Encapsulate data to a Node
 		{
@@ -108,10 +108,10 @@ namespace DomainModel
 	public interface INodeManager
 	{
 		public JObject InitNodeData();
-		public void AddLoadedNode(Node node);
-		public void RemoveLoadedNode(Node node);
-		public void WriteContentToNode(Node baseNode, string plaintext);
-		public string? ReadContentFromNode(Node baseNode);
+		public void WriteContentToNode(Node node, string plaintext);
+		public string? ReadContentFromNode(Node node);
+		public Node FetchNode(string id);
+		public Node CreateNode();
 	}
 	
 	#endregion

@@ -19,14 +19,23 @@ namespace DomainLayer
 	{
 		protected IIdManager? _idManager;
 		protected IVaultDatabase _vaultDatabase;
+		protected INoteProcessor _noteProcessor;
 
-		protected JObject Vault = new JObject();
+		protected string _vaultPath;
+		protected JObject _vaultData = new JObject();
 		public Dictionary<string, Node> LoadedNodes = new Dictionary<string, Node>();
 
-		public NodeManager(IIdManager idManager, IVaultDatabase vaultDatabase)
+		public NodeManager(string vaultPath, INoteProcessor noteProcessor, IIdManager idManager, IVaultDatabase vaultDatabase)
 		{
+			_vaultPath = vaultPath;
 			_idManager = idManager;
+			_idManager.BindVault(_vaultPath);
+			_noteProcessor = noteProcessor;
+			_noteProcessor.BindNodeManager(this);
 			_vaultDatabase = vaultDatabase;
+			_vaultData = _vaultDatabase.LoadVaultData(_vaultPath);
+
+
 		}
 		#region Necessary Implementation
 		public JObject InitNodeData()
@@ -37,6 +46,17 @@ namespace DomainLayer
 			JsonPKG.SetJObject<string>(id, data, Node.METADATA, Node.ID); ;
 			return data;
 		}
+		
+		public void WriteContentToNode(Node node, string plaintext)
+		{
+			_noteProcessor.WriteContentToNode(node, plaintext);
+		}
+		public string? ReadContentFromNode(Node node)
+		{
+			return _noteProcessor.ReadContentFromNode(node);
+		}
+
+		#endregion
 		public void AddLoadedNode(Node node)
 		{
 			if (!LoadedNodes.ContainsKey(node.Id))
@@ -51,44 +71,49 @@ namespace DomainLayer
 				LoadedNodes.Remove(node.Id);
 			}
 		}
-		public void WriteContentToNode(Node baseNode, string plaintext)
+
+		public Node FetchNode(string id)
 		{
-
+			Node node;
+			if (LoadedNodes.ContainsKey(id)) {
+				node =  LoadedNodes[id];
+			}
+			else
+			{
+				JObject data = _vaultDatabase.LoadNodeData(id);
+				node = new Node(data);
+				AddLoadedNode(node);
+			}
+			return node;
 		}
-		public string? ReadContentFromNode(Node baseNode)
+		public Node CreateNode()
 		{
-			string plaintext = "";
-
-			return plaintext;
+			Node node = new Node();
+			AddLoadedNode(node);
+			return node;
 		}
-
-		#endregion
-	
-		
-		
 
 	}
 	#region Interfaces
 	public interface IIdManager
 	{
+		public void BindVault(string vaultPath);
 		public string AcquireId();
 		public void ReleaseId(string id);
 	}
-	public interface INodeContentProcessor
+	public interface INoteProcessor // Node content parsing
 	{
-		public void WriteContentToNode(Node baseNode, string text);
-		public string ReadContentFromNode(Node baseNode);
-		public string InsertReference(Node baseNode, Node referedNode);
-		public string TextSetToPlaintext(List<string> textSet);
-		public List<string> PlaintextToTextSet(string plaintext);
+		public void BindNodeManager(NodeManager nodeManager);
+		public string GetReferenceForm(Node node);
+
+		public void WriteContentToNode(Node node, string plaintext);
+		public string? ReadContentFromNode(Node node);
 
 	}
 	public partial interface IVaultDatabase
 	{
-		public void LoadVault();
-		public void SaveVault();
-		public void LoadVaultNodes();
-		public void SaveVaultNodes();
+		public JObject LoadVaultData(string vaultPath);
+		public void SaveVaultData(string vaultPath, JObject vaultData);
 		public JObject LoadNodeData(string id);
 		public void SaveNodeData(string id, JObject nodeData);
 		public void DeleteNode(string id);

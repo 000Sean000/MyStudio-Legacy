@@ -1,4 +1,4 @@
-﻿using ApplicationLayer;
+﻿///using ApplicationLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +10,9 @@ namespace DomainLayer
 {
 	public class IdManager:IIdManager
 	{
-		#region Reference parsing {refer to Node231}
-		public static Regex regexNodeId = new Regex(@"\d+");
-		public static Regex regexReference = new Regex(@"{Refer to Node\d+}");
+		
 
-		#endregion
-
+		protected string? _vaultPath;
 		protected IVaultDatabase _vaultDatabase;
 		public IVaultDatabase VaultDatabase
 		{
@@ -23,20 +20,12 @@ namespace DomainLayer
 			get { return _vaultDatabase; }
 		}
 		protected IdBook? _idBoook;
-		public class IdBook // a kind of value object
-		{
-			// ulong: unsigned int64
-			public List<ulong> releasedIds = new List<ulong>();
-			public ulong currentMaxId;
-		}
 		
-		public void LoadVaultIdBook()
+		
+		#region Necessary Implementation
+		public void BindVault(string vaultPath)
 		{
-			_idBoook =  _vaultDatabase.LoadVaultIdBook();
-		}
-		public void SaveVaultIdBook()
-		{
-			_vaultDatabase.SaveVaultIdBook(_idBoook);
+			_vaultPath = vaultPath;
 		}
 		public string AcquireId()
 		{
@@ -66,11 +55,26 @@ namespace DomainLayer
 				_idBoook.releasedIds.Add(intId);
 			}
 		}
+		#endregion
 
+		public void LoadVaultIdBook()
+		{
+			_idBoook = _vaultDatabase.LoadVaultIdBook(_vaultPath);
+		}
+		public void SaveVaultIdBook()
+		{
+			_vaultDatabase.SaveVaultIdBook(_vaultPath, _idBoook);
+		}
+	}
+	public class IdBook //  value object for port transfer
+	{
+		// ulong: unsigned int64
+		public List<ulong> releasedIds = new List<ulong>();
+		public ulong currentMaxId;
 	}
 	public partial interface IVaultDatabase
 	{
-		public IdManager.IdBook LoadVaultIdBook();
-		public void SaveVaultIdBook(IdManager.IdBook idBook);
+		public IdBook LoadVaultIdBook(string valutPath);
+		public void SaveVaultIdBook(string vaultPath, IdBook idBook);
 	}
 }

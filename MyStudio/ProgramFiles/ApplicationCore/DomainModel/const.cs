@@ -25,7 +25,7 @@ namespace DomainModel
 		public const string NODE_TYPE = "Node Type";
 		public const string NODE_CLASS = "Node Class"; 
 		public const string CONTENT = "Content";
-		public const string TEXT = "Text";
+		///public const string TEXT = "Text";
 		public const string TEXT_SET = "TextSet";
 		public const string REF_ID = "Refered node ids";
 		public const string REFERING = "refering to";

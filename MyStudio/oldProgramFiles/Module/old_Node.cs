@@ -213,17 +213,17 @@ namespace Module
 		}
 		public void WriteContent(string content)
 		{
-			List<string> texts = ParsingPKG.ParseWithPattern(content, regexCitation);
+			List<string> texts = ParsingPKG.SplitByPattern(content, regexCitation);
 			List<string> citedNodeIds = new List<string>();
 			int index = 0;
 			foreach (string text in texts)
 			{
 				if (regexCitation.IsMatch(text))
 				{
-					string citedNode = ParsingPKG.GetMatchingSubstring(text, regexCitedNode);
+					string citedNode = ParsingPKG.GetFirstMatchedSubstring(text, regexCitedNode);
 					if (citedNode != null)
 					{
-						string citedNodeId = ParsingPKG.GetMatchingSubstring(citedNode, regexNodeId);
+						string citedNodeId = ParsingPKG.GetFirstMatchedSubstring(citedNode, regexNodeId);
 						if (citedNodeId != null)
 						{
 							texts[index] = $"[[{citedNode}]]"; // to match regexCiteForm
@@ -251,7 +251,7 @@ namespace Module
 				}
 				if (regexCiteForm.IsMatch(text))
 				{
-					string citedNodeId = ParsingPKG.GetMatchingSubstring(text, regexNodeId);
+					string citedNodeId = ParsingPKG.GetFirstMatchedSubstring(text, regexNodeId);
 					Thread thread = new Thread((index_) => { 
 						int index = (int)index_;
 						old_Node citedNode = vault.FetchNode(citedNodeId);
