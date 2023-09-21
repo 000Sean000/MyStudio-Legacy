@@ -7,38 +7,58 @@ using DomainLayer;
 using DomainModel;
 using Newtonsoft.Json.Linq;
 
-namespace ApplicationLayer
+namespace DomainLayer
 {
 	public class NodeManager:INodeManager
 	{
 		protected IIdManager? _idManager;
 		protected IVaultDatabase _vaultDatabase;
-		public Dictionary<string, Node> NodeDictionary = new Dictionary<string, Node>();
+
+		protected JObject Vault = new JObject();
+		public Dictionary<string, Node> LoadedNodes = new Dictionary<string, Node>();
 
 		public NodeManager(IIdManager idManager, IVaultDatabase vaultDatabase)
 		{
 			_idManager = idManager;
 			_vaultDatabase = vaultDatabase;
 		}
-		public void CreateNode()
+		public void InitializeNode(Node node)
 		{
-			string id = _idManager.AquireId();
+			node.Id = _idManager.AquireId();
+			MaintainNode(node);
+			node.Set<string>(node.Id, Node.METADATA, Node.ID);
+
 		}
-		public void MaintainNode(string nodeId)
+		public void MaintainNode(Node node)
 		{
 
 		}
-		public void DeleteNode(string nodeId)
+		public void DeleteNode(Node node)
 		{
 
 		}
-		public void LoadNode(string nodeId)
+		public void LoadNode(Node node)
+		{
+			AddLoadedNode(node);
+			node.Data = _vaultDatabase.LoadNodeData(node.Id);
+		}
+		public void SaveNode(Node node)
 		{
 
 		}
-		public void SaveNode(string nodeId)
+		public void AddLoadedNode(Node node)
 		{
-
+			if (!LoadedNodes.ContainsKey(node.Id))
+			{
+				LoadedNodes.Add(node.Id, node);
+			}
+		}
+		public void RemoveLoadedNode(Node node)
+		{
+			if (LoadedNodes.ContainsKey(node.Id))
+			{
+				LoadedNodes.Remove(node.Id);
+			}
 		}
 
 	}
@@ -51,8 +71,13 @@ namespace ApplicationLayer
 	}
 	public partial interface IVaultDatabase
 	{
+		public void LoadVault();
+		public void SaveVault();
 		public void LoadVaultNodes();
 		public void SaveVaultNodes();
+		public JObject LoadNodeData(string id);
+		public void SaveNodeData(string id, JObject nodeData);
+		public void DeleteNode(string id);
 	}
 	#endregion
 }

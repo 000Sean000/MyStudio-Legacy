@@ -8,7 +8,9 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-
+/*
+ * Basic Node operation
+ */
 namespace DomainModel
 {
 	public partial class Node
@@ -36,11 +38,11 @@ namespace DomainModel
 		public Node(string id)
 		{
 			_id = id;
-			_nodeManager.LoadNode(id);
+			Load();
 		}
 
 		protected string _id;
-		protected JObject _data;
+		protected JObject _data = new JObject();
 
 		protected object _dataLock = new object();
 
@@ -50,16 +52,15 @@ namespace DomainModel
 		#region Node data operation
 		public void Create() // create a node
 		{
-			_nodeManager.CreateNode();
-			_id = Get<string>(METADATA, ID);
+			_nodeManager.InitializeNode(this);
 		}
 		public void Load() // load node data from database
 		{
-			_nodeManager.LoadNode(_id);
+			_nodeManager.LoadNode(this);
 		}
 		public void Save() // save node data to database
 		{
-			_nodeManager.SaveNode(_id);
+			_nodeManager.SaveNode(this);
 		}
 		public void Set<T>(T value, params string[] keys) // set node data key-value
 		{
@@ -104,16 +105,22 @@ namespace DomainModel
 		public string Id
 		{
 			get { return _id; }
+			set { _id = value; }
+		}
+		public JObject Data
+		{
+			set { _data = value; }
+			get { return _data; }
 		}
 	}
 	#region Ports 
 	public interface INodeManager
 	{
-		public void CreateNode();
-		public void MaintainNode(string nodeId);
-		public void DeleteNode(string nodeId);
-		public void LoadNode(string nodeId);
-		public void SaveNode(string nodeId);
+		public void InitializeNode(Node node);
+		public void MaintainNode(Node node);
+		public void DeleteNode(Node node);
+		public void LoadNode(Node node);
+		public void SaveNode(Node node);
 	}
 	public interface INodeContentProcessor
 	{

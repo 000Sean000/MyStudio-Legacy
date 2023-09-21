@@ -10,12 +10,10 @@ namespace DomainLayer
 {
 	public class IdManager:IIdManager
 	{
-		#region Reference parsing
-		public static Regex regexNodeId = new Regex(@"\d{20}");
-		public static Regex regexCitedNode = new Regex(@"\(Node\d{20}\)");
-		public static Regex regexCitation = new Regex(@"\[\[\(Node\d{20}\)([\s\S]*?)\]\]");
-		public static Regex regexCiteForm = new Regex(@"^\[\[\(Node\d{20}\)\]\]$");
-		// regular expression of citations, it matches "[[citation]]", where citation can be any character or newline or no character.
+		#region Reference parsing {refer to Node231}
+		public static Regex regexNodeId = new Regex(@"\d+");
+		public static Regex regexReference = new Regex(@"{Refer to Node\d+}");
+
 		#endregion
 
 		protected IVaultDatabase _vaultDatabase;
@@ -27,6 +25,7 @@ namespace DomainLayer
 		protected IdBook? _idBoook;
 		public class IdBook // a kind of value object
 		{
+			// ulong: unsigned int64
 			public List<ulong> releasedIds = new List<ulong>();
 			public ulong currentMaxId;
 		}
@@ -37,21 +36,35 @@ namespace DomainLayer
 		}
 		public void SaveVaultIdBook()
 		{
-
+			_vaultDatabase.SaveVaultIdBook(_idBoook);
 		}
 		public string AquireId()
 		{
-			string id = "";
+			string id;
 			if (_idBoook.releasedIds.Count > 0)
 			{
-
+				ulong minId = _idBoook.releasedIds.Min();
+				_idBoook.releasedIds.Remove(minId);
+				id = minId.ToString();
+			}
+			else
+			{
+				id = (++_idBoook.currentMaxId).ToString();
 			}
 
 			return id;
 		}
 		public void ReleaseId(string id)
 		{
-
+			ulong intId = ulong.Parse(id);
+			if (intId == _idBoook.currentMaxId)
+			{
+				_idBoook.currentMaxId--;
+			}
+			else
+			{
+				_idBoook.releasedIds.Add(intId);
+			}
 		}
 
 	}
