@@ -19,7 +19,7 @@ namespace DomainLayer
 
 		public void LoadMembers()
 		{
-			List<string> ids = Get<List<string>>(PROPERTY, LINKING, LinkType.Member.ToString());
+			List<string> ids = Get<List<string>>(PROPERTY, LINKING, EnumLinkType.Member.ToString());
 			foreach (string id in ids)
 			{
 				members.Add(_nodeManager.FetchNode(id));
@@ -28,19 +28,28 @@ namespace DomainLayer
 	}
 	public class Template:Node
 	{
+		// deal linkage effect
+		// maintain module structure
 		public Template(JObject data):base(data)
 		{
 
 		}
-		public void AddLabelNode(string label)
+		public void AddLabelNode(string labelContent, EnumLinkType linkType)
 		{
 			Node labelNode = _nodeManager.CreateNode();
-			labelNode.Set<string>(Node.ContentType.Label.ToString(), METADATA, CONTENT_TYPE);
+			labelNode.ContentType = EnumContentType.Label;
+			labelNode.Content = labelContent;
+			AddLink(labelNode, linkType);
 		}
 		public void AddDataNode()
 		{
 			Node dataNode = _nodeManager.CreateNode();
-			dataNode.Set<string>(Node.ContentType.Data.ToString(), METADATA, CONTENT_TYPE);
+			dataNode.ContentType = EnumContentType.Data;
+		
+		}
+		public Node GetModuleFromTemplate()
+		{
+			return new Node();
 		}
 	}
 	public class DatabaseNode:Node
@@ -56,7 +65,7 @@ namespace DomainLayer
 		public List<Node> properties = new List<Node>();
 		public void LoadItems()
 		{
-			List<string> ids = Get<List<string>>(PROPERTY, LINKING, LinkType.DB_Item.ToString());
+			List<string> ids = Get<List<string>>(PROPERTY, LINKING, EnumLinkType.DB_Item.ToString());
 			foreach (string id in ids)
 			{
 				items.Add(_nodeManager.FetchNode(id));
@@ -64,7 +73,7 @@ namespace DomainLayer
 		}
 		public void LoadProperties()
 		{
-			List<string> ids = Get<List<string>>(PROPERTY, LINKING, LinkType.DB_Property.ToString());
+			List<string> ids = Get<List<string>>(PROPERTY, LINKING, EnumLinkType.DB_Property.ToString());
 			foreach (string id in ids)
 			{
 				properties.Add(_nodeManager.FetchNode(id));
@@ -72,7 +81,7 @@ namespace DomainLayer
 		}
 		public void AddProperty(Node propertyNode)
 		{
-			SetByAdd<string>(propertyNode.Id, PROPERTY, LINKING, LinkType.DB_Property.ToString());
+			SetByAdd<string>(propertyNode.Id, PROPERTY, LINKING, EnumLinkType.DB_Property.ToString());
 			properties.Add(propertyNode);
 			foreach(Node item in items)
 			{

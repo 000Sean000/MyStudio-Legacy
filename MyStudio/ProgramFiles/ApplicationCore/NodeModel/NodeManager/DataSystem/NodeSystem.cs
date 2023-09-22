@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,16 +9,12 @@ using System.Threading.Tasks;
 
 namespace DomainModel
 {
+	/*
+	 * Using Json Object saving Node data
+	 */
 	public partial class Node
 	{
-		public static Type idType = typeof(int);
-		#region Reference parsing
-		public static Regex regexNodeId = new Regex(@"\d{20}");
-		public static Regex regexCitedNode = new Regex(@"\(Node\d{20}\)");
-		public static Regex regexCitation = new Regex(@"\[\[\(Node\d{20}\)([\s\S]*?)\]\]");
-		public static Regex regexCiteForm = new Regex(@"^\[\[\(Node\d{20}\)\]\]$");
-		// regular expression of citations, it matches "[[citation]]", where citation can be any character or newline or no character.
-		#endregion
+
 		#region Json keys
 		public const string METADATA = "Metadata";
 		public const string ID = "id";
@@ -25,7 +22,6 @@ namespace DomainModel
 		public const string NODE_TYPE = "Node Type";
 		public const string NODE_CLASS = "Node Class"; 
 		public const string CONTENT = "Content";
-		///public const string TEXT = "Text";
 		public const string TEXT_SET = "TextSet";
 		public const string REF_ID = "Refered node ids";
 		public const string REFERING = "refering to";
@@ -45,32 +41,60 @@ namespace DomainModel
 		public const string VISUAL = "Visual Format";
 		// ...
 
-		#region NodeType
 		public const string CONTENT_TYPE = "Content Type";
-		public enum ContentType
+		public enum EnumContentType
 		{
 			Data, Label
 		}
-		public enum NodeType
+		public enum EnumNodeType
 		{
 			Normal, Citer
 		}
-		#endregion
-		#region NodeClass
-		public enum NodeClass
+		public enum EnumNodeClass
 		{
 			Template, Module, Group, Database, View, Tag, Layout, Appearance,
 		}
-		#endregion
-		#region LinkType
-		public enum LinkType
+		public enum EnumLinkType
 		{
 			Parent, Component, SubPart, Next, Related, // normal node
+
 			Member, // Group
-			DB_Item, DB_Property // database group
+			DB_Item, DB_Property, // database group
+
 		}
 
 		#endregion
+		#region Accessor
+		public string Id
+		{
+			get
+			{
+				return Get<string>(METADATA, ID);
+			}
+			set
+			{
+				Set<string>(value, METADATA, ID);
+			}
+		}
+		public EnumContentType ContentType
+		{
+			set { Set<string>(value.ToString(), METADATA, CONTENT_TYPE); }
+			get { return Get<EnumContentType>(METADATA, CONTENT_TYPE); }
+		}
+		public string Content
+		{
+			set { WriteContent(value); }
+			get { return ReadContent(); }
+		}
+		public List<string> ContentTextSet
+		{
+			set { Set<List<string>>(value, CONTENT, TEXT_SET); }
+			get { return Get<List<string>>(CONTENT, TEXT_SET); }
+		}
+
+		public JObject Data { get { return _data; } }
 		#endregion
+
 	}
+	
 }

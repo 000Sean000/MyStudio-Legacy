@@ -52,60 +52,47 @@ namespace DomainModel
 
 		#region Node data operation
 
-		public void Set<T>(T value, params string[] keys) // set node data key-value
+		protected void Set<T>(T value, params string[] keys) // set node data key-value
 		{
 				JsonPKG.SetJObject<T>(value, _data, keys);
 		}
-		public T Get<T>(params string[] keys) // get node data key-value
+		protected T Get<T>(params string[] keys) // get node data key-value
 		{
 				return JsonPKG.GetJObject<T>(_data, keys);
 		}
-		public void SetByAdd<T>(T element, params string[] keys) // set node data key-value
+		protected void SetByAdd<T>(T element, params string[] keys) // set node data key-value
 		{
 			JsonPKG.SetJObjectByAddElementToList<T>(element, _data, keys);
 		}
-		public void SetByRemove<T>(T element, params string[] keys) // set node data key-value
+		protected void SetByRemove<T>(T element, params string[] keys) // set node data key-value
 		{
 			JsonPKG.SetJObjectByRemoveElementFromList<T>(element, _data, keys);
 		}
-		public void WriteContent(string plaintext) // write text to node content
+		protected void WriteContent(string plaintext) // write text to node content
 		{
 			_nodeManager.WriteContentToNode(this, plaintext);
-			return;
 		}
-		public string ReadContent() // read text from node content
+		protected string ReadContent() // read text from node content
 		{
 			return _nodeManager.ReadContentFromNode(this);
 		}
 		#endregion
 		#region Node relation management
-		public void AddLink(Node targetNode, LinkType linkType)
+		public void AddLink(Node targetNode, EnumLinkType linkType)
 		{
 			SetByAdd<string>(targetNode.Id, PROPERTY, LINKING, linkType.ToString());
 			targetNode.SetByAdd<string>(Id, PROPERTY, LINKED, linkType.ToString());
 		}
-		public void RemoveLink(Node targetNode, LinkType linkType)
+		public void RemoveLink(Node targetNode, EnumLinkType linkType)
 		{
 			SetByRemove<string>(targetNode.Id, PROPERTY, LINKING, linkType.ToString());
 			targetNode.SetByRemove<string>(Id, PROPERTY, LINKED, linkType.ToString());
 		}
 		#endregion
-
-		public string Id
-		{
-			get
-			{
-				return Get<string>(METADATA, ID);
-			}
-			set 
-			{ 
-				Set<string>(value, METADATA, ID); 
-			}
-		}
-		public JObject Data { get { return _data; } }
+		
 	}
-	#region Interface for inverse control
-	public interface INodeManager
+	#region Interface
+	public interface INodeManager // Driving & Driven
 	{
 		public JObject InitNodeData();
 		public void WriteContentToNode(Node node, string plaintext);
@@ -113,6 +100,6 @@ namespace DomainModel
 		public Node FetchNode(string id);
 		public Node CreateNode();
 	}
-	
+
 	#endregion
 }

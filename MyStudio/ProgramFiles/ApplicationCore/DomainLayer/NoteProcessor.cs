@@ -35,7 +35,7 @@ namespace DomainLayer
 			{
 				visitedNodeId.Add(visitingNodeId);
 				Node visitingNode = _nodeManager.FetchNode(visitingNodeId);
-				List<string> textSet = visitingNode.Get<List<string>>(Node.CONTENT, Node.TEXT_SET);
+				List<string> textSet = visitingNode.ContentTextSet;
 
 				foreach (string text in textSet)
 				{
@@ -60,7 +60,7 @@ namespace DomainLayer
 		{
 			List<string> textSet;
 			textSet = GetTextSet(plaintext);
-			node.Set<List<string>>(textSet, Node.CONTENT, Node.TEXT_SET);
+			node.ContentTextSet = textSet;
 		}
 		public string ReadContentFromNode(Node node)
 		{
