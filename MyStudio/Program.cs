@@ -17,7 +17,7 @@ namespace MyStudio
 			ApplicationConfiguration.Initialize();
 			///Application.Run(new AppMenu());
 			///Test.test();
-			ParsingPKG.Test();
+			JsonPKG.DemoJson("C:\\Users\\Sean_Wu\\OneDrive\\MyNotes\\Programs\\ComposingToolPrograms\\MyStudio\\MyStudio\\data.json");
 		}
     }
 }

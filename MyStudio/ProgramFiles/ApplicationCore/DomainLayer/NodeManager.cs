@@ -55,7 +55,21 @@ namespace DomainLayer
 		{
 			return _noteProcessor.ReadContentFromNode(node);
 		}
-
+		public Node FetchNode(string id)
+		{
+			Node node;
+			if (LoadedNodes.ContainsKey(id))
+			{
+				node = LoadedNodes[id];
+			}
+			else
+			{
+				JObject data = _vaultDatabase.LoadNodeData(id);
+				node = new Node(data);
+				AddLoadedNode(node);
+			}
+			return node;
+		}
 		#endregion
 		public void AddLoadedNode(Node node)
 		{
@@ -72,20 +86,7 @@ namespace DomainLayer
 			}
 		}
 
-		public Node FetchNode(string id)
-		{
-			Node node;
-			if (LoadedNodes.ContainsKey(id)) {
-				node =  LoadedNodes[id];
-			}
-			else
-			{
-				JObject data = _vaultDatabase.LoadNodeData(id);
-				node = new Node(data);
-				AddLoadedNode(node);
-			}
-			return node;
-		}
+		
 		public Node CreateNode()
 		{
 			Node node = new Node();

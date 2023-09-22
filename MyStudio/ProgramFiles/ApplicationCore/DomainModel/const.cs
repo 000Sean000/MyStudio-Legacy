@@ -46,18 +46,28 @@ namespace DomainModel
 		// ...
 
 		#region NodeType
+		public const string CONTENT_TYPE = "Content Type";
+		public enum ContentType
+		{
+			Data, Label
+		}
 		public enum NodeType
 		{
-			Data, Citer
+			Normal, Citer
 		}
 		#endregion
 		#region NodeClass
+		public enum NodeClass
+		{
+			Template, Module, Group, Database, View, Tag, Layout, Appearance,
+		}
 		#endregion
 		#region LinkType
 		public enum LinkType
 		{
-			PARENT, COMPONENT, SUB_PART, NEXT, RELATED, // normal node
-			DB_ITEM, DB_PROPERTY, // database group
+			Parent, Component, SubPart, Next, Related, // normal node
+			Member, // Group
+			DB_Item, DB_Property // database group
 		}
 
 		#endregion

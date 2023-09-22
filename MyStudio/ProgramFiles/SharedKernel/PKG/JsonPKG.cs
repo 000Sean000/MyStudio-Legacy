@@ -3,6 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace PKG
 {
@@ -155,13 +156,18 @@ namespace PKG
 			// remove a key-value pair
 			jsonObject.Remove("age");
 		}
-		public static void DemoJson_(string filePath = "data.json")
+		public enum TestEnum
 		{
+			Data, Label
+		}
+		public static void DemoJson(string filePath = "data.json")
+		{
+			
 			// creat a new JObject
 			JObject jsonObject = new JObject();
 			jsonObject["name"] = "John";
 			jsonObject["age"] = 30;
-
+			SetJObject(TestEnum.Label.ToString(), jsonObject,"test enum value");
 			// Save json object to json file
 			SaveJsonObjectToFile(jsonObject, filePath);
 
@@ -180,4 +186,8 @@ namespace PKG
 
 
 }
-
+/*
+ * enum will be turned to string of integer when saving to json file
+ * 
+ * 
+ */
