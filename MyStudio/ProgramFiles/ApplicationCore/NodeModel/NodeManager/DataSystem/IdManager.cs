@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-namespace DomainLayer
+using NodeSupporter;
+namespace NodeDataSystem
 {
 	public class IdManager:IIdManager
 	{

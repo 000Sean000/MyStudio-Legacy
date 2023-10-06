@@ -8,14 +8,25 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static NodeModel.Node;
 /*
  * Basic Node data operation
  * Don't create Node instance here, do this in Node Manager!
  * Use Node as argument instead of using id
  */
-namespace DomainModel
+namespace NodeModel
 {
-	public partial class Node
+	public interface NodeDataAccessor
+	{
+		#region Data Accessors
+		public string Id { get; set; }
+		#endregion
+		#region 
+		public void AddLink(Node targetNode, EnumLinkType linkType);
+		public void RemoveLink(Node targetNode, EnumLinkType linkType);
+		#endregion
+	}
+	public partial class Node0
 	{
 		#region Outer Models
 		static protected INodeManager? _nodeManager;
@@ -24,9 +35,9 @@ namespace DomainModel
 		protected JObject _data;
 
 		#region Static Members
-		public static void init(INodeManager dataManager)
+		public static void BindNodeManager(INodeManager nodeManager)
 		{
-			_nodeManager = dataManager;
+			_nodeManager = nodeManager;
 		}
 		public static JObject MaintainData(JObject data) // maintain keys and default value
 		{

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PKG;
-using DomainLayer;
-using DomainModel;
+using NodeSupporter;
+using NodeModel;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
 /*
@@ -13,7 +13,7 @@ using System.Xml.Linq;
  * Manager Node entities, Nodes are only allow to be instanciated here
  * All other model only can access Nodes through NodeManager
  */
-namespace DomainLayer
+namespace NodeSupporter
 {
 	public class NodeManager:INodeManager
 	{

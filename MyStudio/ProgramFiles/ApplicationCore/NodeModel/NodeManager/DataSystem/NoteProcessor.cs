@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DomainModel;
+using NodeModel;
+using NodeSupporter;
 using PKG;
-namespace DomainLayer
+namespace NodeDataSystem
 {
 	// deal with reference
-	public class NoteProcessor : INoteProcessor
+	public class ContentParser : INoteProcessor
 	{
 		#region Reference parsing {refer to Node231}
 		public static Regex regexNodeId = new Regex(@"\d+");
