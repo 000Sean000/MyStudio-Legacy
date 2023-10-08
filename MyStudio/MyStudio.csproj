@@ -9,9 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ProgramFiles\NodeManagement\Node\NewFolder\**" />
-    <EmbeddedResource Remove="ProgramFiles\NodeManagement\Node\NewFolder\**" />
-    <None Remove="ProgramFiles\NodeManagement\Node\NewFolder\**" />
+    <Compile Remove="old\**" />
+    <Compile Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\NewFolder\**" />
+    <Compile Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Application\**" />
+    <Compile Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Infrastructure\**" />
+    <EmbeddedResource Remove="old\**" />
+    <EmbeddedResource Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\NewFolder\**" />
+    <EmbeddedResource Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Application\**" />
+    <EmbeddedResource Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Infrastructure\**" />
+    <None Remove="old\**" />
+    <None Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\NewFolder\**" />
+    <None Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Application\**" />
+    <None Remove="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Infrastructure\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Application\INoteService.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +48,8 @@
 
   <ItemGroup>
     <Folder Include="ProgramData\" />
-    <Folder Include="old\ProgramFiles2\ApplicationCore\DomainLayer\" />
-    <Folder Include="old\ProgramFiles2\ApplicationCore\DomainModel\" />
-    <Folder Include="old\ProgramFiles2\Infrastructure\" />
-    <Folder Include="old\ProgramFiles2\UserInterface\" />
+    <Folder Include="ProgramFiles\SysImplementation\" />
+    <Folder Include="ProgramFiles\SysInterfaces\ViewManagement\" />
   </ItemGroup>
 
 </Project>

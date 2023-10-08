@@ -1,6 +1,4 @@
-using PKG;
-using Module;
-using Ui;
+
 
 namespace MyStudio
 {
@@ -14,10 +12,6 @@ namespace MyStudio
         {
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
-			ApplicationConfiguration.Initialize();
-			///Application.Run(new AppMenu());
-			///Test.test();
-			JsonPKG.DemoJson("C:\\Users\\Sean_Wu\\OneDrive\\MyNotes\\Programs\\ComposingToolPrograms\\MyStudio\\MyStudio\\data.json");
 		}
     }
 }

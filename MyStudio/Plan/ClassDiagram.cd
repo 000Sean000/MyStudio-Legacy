@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="SysInterface.INoteService">
+    <Position X="1" Y="1.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Application\INoteService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.INoteDTO" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAAAAAAAAIACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INoteDTO.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.ILinkDTO" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQACAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILinkDTO.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SysInterface.ELinkInfoType" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAwAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILinkDTO.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

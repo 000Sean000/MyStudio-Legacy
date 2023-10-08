@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NodeSupporter;
-namespace ApplicationLayer
+
+namespace SysImplementation;
+
+public class NodeVer1
 {
-	public class VaultDatabase
-	{
-	}
 }

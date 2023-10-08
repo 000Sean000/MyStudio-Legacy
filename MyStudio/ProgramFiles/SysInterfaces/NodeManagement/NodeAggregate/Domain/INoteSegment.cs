@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SysInterface
+{
+	public interface INoteSegment
+	{
+		public string? Text { get; set; }
+		public Guid? ReferenceNodeId { get; set; }
+	}
+}
