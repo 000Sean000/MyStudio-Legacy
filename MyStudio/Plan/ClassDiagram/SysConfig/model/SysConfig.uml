@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_AD_W4WTrEe6vZq_QFlXchA" name="SysConfig">
+  <packagedElement xmi:type="uml:Class" xmi:id="_zi1G8GTrEe6vZq_QFlXchA" name="ClassWrapper">
+    <ownedAttribute xmi:id="_Da1hcGTsEe6vZq_QFlXchA" name="NewProperty1">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Da1hcWTsEe6vZq_QFlXchA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Da2IgGTsEe6vZq_QFlXchA" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_YnwLIGTsEe6vZq_QFlXchA" name="ParameterClass" type="_EoUBMGTsEe6vZq_QFlXchA" association="_YnsgwGTsEe6vZq_QFlXchA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_YnwLIWTsEe6vZq_QFlXchA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_YnwLImTsEe6vZq_QFlXchA" value="1"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_DjwM4GTsEe6vZq_QFlXchA" name="NewOperation1"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_EoUBMGTsEe6vZq_QFlXchA" name="ParameterClass">
+    <ownedAttribute xmi:id="_YnxZQGTsEe6vZq_QFlXchA" name="ClassWrapper" type="_zi1G8GTrEe6vZq_QFlXchA" aggregation="composite" association="_YnsgwGTsEe6vZq_QFlXchA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_YnxZQWTsEe6vZq_QFlXchA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_YnxZQmTsEe6vZq_QFlXchA" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_PNDyUGTsEe6vZq_QFlXchA" name="ArgumetClass">
+    <generalization xmi:id="_qCXn4GTsEe6vZq_QFlXchA" general="_EoUBMGTsEe6vZq_QFlXchA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_YnsgwGTsEe6vZq_QFlXchA" name="" memberEnd="_YnwLIGTsEe6vZq_QFlXchA _YnxZQGTsEe6vZq_QFlXchA"/>
+</uml:Model>

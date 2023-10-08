@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ProgramFiles\NodeManagement\Node\NewFolder\**" />
+    <EmbeddedResource Remove="ProgramFiles\NodeManagement\Node\NewFolder\**" />
+    <None Remove="ProgramFiles\NodeManagement\Node\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
@@ -29,10 +35,10 @@
 
   <ItemGroup>
     <Folder Include="ProgramData\" />
-    <Folder Include="ProgramFiles\ApplicationCore\DomainLayer\" />
-    <Folder Include="ProgramFiles\ApplicationCore\DomainModel\" />
-    <Folder Include="ProgramFiles\Infrastructure\" />
-    <Folder Include="ProgramFiles\UserInterface\" />
+    <Folder Include="old\ProgramFiles2\ApplicationCore\DomainLayer\" />
+    <Folder Include="old\ProgramFiles2\ApplicationCore\DomainModel\" />
+    <Folder Include="old\ProgramFiles2\Infrastructure\" />
+    <Folder Include="old\ProgramFiles2\UserInterface\" />
   </ItemGroup>
 
 </Project>
