@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SysInterface
+namespace SysAbstractModules
 {
 	public enum ENoteComposition
 	{
@@ -14,8 +14,10 @@ namespace SysInterface
 	{
 		ContextualLabel, EssentialData
 	}
-	public interface INote: INoteDTO
+	public interface INoteData
 	{
-
+		public ENoteComposition? Composition { get; set; }
+		public ENoteImportance? Importance { get; set; }
+		public List<INoteSegment>? Segments { get; set; }
 	}
 }

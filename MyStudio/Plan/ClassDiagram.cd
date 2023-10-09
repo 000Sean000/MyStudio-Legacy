@@ -1,31 +1,101 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Interface Name="SysInterface.INoteService">
-    <Position X="1" Y="1.5" Width="2" />
+    <Position X="6.5" Y="1.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAgAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Application\INoteService.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="SysInterface.INoteDTO" Collapsed="true">
-    <Position X="3" Y="0.5" Width="1.5" />
+  <Interface Name="SysInterface.INoteData" Collapsed="true">
+    <Position X="8.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAACAAAAAAAAAAIACAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INoteDTO.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INoteData.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="SysInterface.ILinkDTO" Collapsed="true">
+  <Interface Name="SysInterface.ILinkData" Collapsed="true">
+    <Position X="6" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILinkData.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.INodeService" Collapsed="true">
+    <Position X="2.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeContext\Node\Application\INodeService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.INodeFactory" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeContext\NodeAggregate\Application\INodeFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.INodeData" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INodeData.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.INode" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.ILink" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQACAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAIAAAAAA=</HashCode>
-      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILinkDTO.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILink.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysInterface.INote" Collapsed="true">
+    <Position X="4" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INote.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="SysInterface.ELinkInfoType" Collapsed="true">
-    <Position X="0.5" Y="2.75" Width="1.5" />
+    <Position X="6" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAEAAAAwAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILinkDTO.cs</FileName>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILinkData.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SysInterface.ELinkType" Collapsed="true">
+    <Position X="6.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAEEAAAEAAAAAAAAEAAAAAAAAAAAACAAAAAgAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\ILink.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SysInterface.ENodeClass" Collapsed="true">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAEAAAAAAAAAAACAAAAAAAAAAQAAAAADAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SysInterface.ENoteComposition" Collapsed="true">
+    <Position X="4.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAACABAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INote.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SysInterface.ENoteImportance" Collapsed="true">
+    <Position X="5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysInterfaces\NodeManagement\NodeAggregate\Domain\INote.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Microsoft JhengHei UI" Size="9" />
