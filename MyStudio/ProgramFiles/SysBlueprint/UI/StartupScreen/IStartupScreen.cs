@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace SysBlueprint
 {
-	public interface INodeService
+	public interface IStartupScreen
 	{
+		
 	}
+	
 }

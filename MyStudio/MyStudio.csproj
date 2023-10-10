@@ -10,14 +10,14 @@
 
   <ItemGroup>
     <Compile Remove="old\**" />
-    <Compile Remove="ProgramFiles\NewFolder\**" />
-    <Compile Remove="ProgramFiles\SysBlueprint\NodeContext\NodeAggregate\**" />
+    <Compile Remove="ProgramFiles\jjj\**" />
+    <Compile Remove="ProgramFiles\SysBlueprint\NodeManagement\NodeAggregate\**" />
     <EmbeddedResource Remove="old\**" />
-    <EmbeddedResource Remove="ProgramFiles\NewFolder\**" />
-    <EmbeddedResource Remove="ProgramFiles\SysBlueprint\NodeContext\NodeAggregate\**" />
+    <EmbeddedResource Remove="ProgramFiles\jjj\**" />
+    <EmbeddedResource Remove="ProgramFiles\SysBlueprint\NodeManagement\NodeAggregate\**" />
     <None Remove="old\**" />
-    <None Remove="ProgramFiles\NewFolder\**" />
-    <None Remove="ProgramFiles\SysBlueprint\NodeContext\NodeAggregate\**" />
+    <None Remove="ProgramFiles\jjj\**" />
+    <None Remove="ProgramFiles\SysBlueprint\NodeManagement\NodeAggregate\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,15 +41,21 @@
 
   <ItemGroup>
     <Folder Include="ProgramData\" />
-    <Folder Include="ProgramFiles\BoundedContext\Feature\Application\" />
-    <Folder Include="ProgramFiles\BoundedContext\Feature\Domain\" />
-    <Folder Include="ProgramFiles\BoundedContext\Feature\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Link\Application\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Link\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Node\UserInterface\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Note\Application\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Note\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysBlueprint\ViewContext\" />
+    <Folder Include="ProgramFiles\Packages\" />
+    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\AppService\" />
+    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\Vault\" />
+    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\User\" />
+    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\Language\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Link\Application\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Link\Infrastructure\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Node\UserInterface\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Note\Application\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Note\Infrastructure\" />
+    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\NavigationBar\" />
+    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\AttributeBar\" />
+    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\PageTab\" />
+    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\ToolBar\" />
+    <Folder Include="ProgramFiles\SysBlueprint\ViewManagement\" />
   </ItemGroup>
 
 </Project>
