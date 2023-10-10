@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SysAbstractModules
+namespace SysBlueprint
 {
 	public enum ELinkType
 	{
@@ -16,6 +16,5 @@ namespace SysAbstractModules
 		public void InputData(ILinkData data);
 		public ILinkData OutputData();
 
-		public bool ValidateLinkInfoLength();
 	}
 }

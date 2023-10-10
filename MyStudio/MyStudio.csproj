@@ -11,16 +11,13 @@
   <ItemGroup>
     <Compile Remove="old\**" />
     <Compile Remove="ProgramFiles\NewFolder\**" />
-    <Compile Remove="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\NewFolder\**" />
-    <Compile Remove="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\Application\**" />
+    <Compile Remove="ProgramFiles\SysBlueprint\NodeContext\NodeAggregate\**" />
     <EmbeddedResource Remove="old\**" />
     <EmbeddedResource Remove="ProgramFiles\NewFolder\**" />
-    <EmbeddedResource Remove="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\NewFolder\**" />
-    <EmbeddedResource Remove="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\Application\**" />
+    <EmbeddedResource Remove="ProgramFiles\SysBlueprint\NodeContext\NodeAggregate\**" />
     <None Remove="old\**" />
     <None Remove="ProgramFiles\NewFolder\**" />
-    <None Remove="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\NewFolder\**" />
-    <None Remove="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\Application\**" />
+    <None Remove="ProgramFiles\SysBlueprint\NodeContext\NodeAggregate\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,14 +44,12 @@
     <Folder Include="ProgramFiles\BoundedContext\Feature\Application\" />
     <Folder Include="ProgramFiles\BoundedContext\Feature\Domain\" />
     <Folder Include="ProgramFiles\BoundedContext\Feature\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\Application\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\Domain\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\NodeContext\NodeAggregate\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\NodeContext\Node\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\NodeContext\Link\Application\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\NodeContext\Link\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\NodeContext\Note\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysAbstractModules\ViewContext\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Link\Application\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Link\Infrastructure\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Node\UserInterface\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Note\Application\" />
+    <Folder Include="ProgramFiles\SysBlueprint\NodeContext\Note\Infrastructure\" />
+    <Folder Include="ProgramFiles\SysBlueprint\ViewContext\" />
   </ItemGroup>
 
 </Project>

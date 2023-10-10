@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using SysConfig;
 using Node = SysConfig.ImplementationConfig.Node;
 
-namespace SysAbstractModules
+namespace SysBlueprint
 {
 	public abstract class SomeModule
 	{
@@ -15,7 +15,8 @@ namespace SysAbstractModules
 		protected Node node {  get; set; }
 		public void SomeMethod()
 		{
-			Node node2 = new Node();
+			INode node2 = new Node();
+			node2.ImagePath = "";
 		}
 	}
 }

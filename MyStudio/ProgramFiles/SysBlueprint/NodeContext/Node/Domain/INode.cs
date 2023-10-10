@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace SysAbstractModules
+namespace SysBlueprint
 {
 	
 
@@ -14,8 +14,6 @@ namespace SysAbstractModules
 	{
 		public void InputData(INoteData data);
 		public INoteData OutputData();
-		///public INode Clone();
-		///public void Delete();
 
 	}
 	public interface IGroupNode: INode

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SysAbstractModules
+namespace SysBlueprint
 {
 	public enum ENoteComposition
 	{
@@ -14,10 +14,17 @@ namespace SysAbstractModules
 	{
 		ContextualLabel, EssentialData
 	}
+	public interface IReadOnlyNoteData
+	{
+		public ENoteComposition? Composition { get;}
+		public ENoteImportance? Importance { get; }
+		public List<INoteSegment>? Segments { get; }
+	}
 	public interface INoteData
 	{
 		public ENoteComposition? Composition { get; set; }
 		public ENoteImportance? Importance { get; set; }
 		public List<INoteSegment>? Segments { get; set; }
+		public IReadOnlyNoteData ReadOnlyClone();
 	}
 }

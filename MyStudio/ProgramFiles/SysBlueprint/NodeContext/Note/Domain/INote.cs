@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace SysAbstractModules
+namespace SysBlueprint
 {
 	
 	public interface INote: INoteData
