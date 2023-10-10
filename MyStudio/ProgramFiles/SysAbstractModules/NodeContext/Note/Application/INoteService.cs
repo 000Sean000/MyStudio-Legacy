@@ -9,7 +9,7 @@ namespace SysAbstractModules
 	public interface INoteService
 	{
 
-		public string SegmentToString(INoteSegment segment);
-		public INoteSegment ReferenceToSegment(Guid targetNodeId);
+		public string SegmentToString(AbstractNoteSegment segment);
+		public AbstractNoteSegment ReferenceToSegment(Guid targetNodeId);
 	}
 }

@@ -5,17 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LinkData = SysConfig.ImplementationConfig.LinkData;
+
 namespace SysAbstractModules
 {
 	public enum ELinkType
 	{
 		RelateTo, RootIn, Aggregate, ComposedOf, Implement, NextIs, ReferTo
 	}
-	public interface ILink: ILinkData
+	public abstract class AbstractLink: LinkData
 	{
-		public void InputData(ILinkData data);
-		public ILinkData OutputData();
+		public abstract void InputData(AbstractLinkData data);
+		public abstract AbstractLinkData OutputData();
 
-		public bool ValidateLinkInfoLength();
+		public abstract bool ValidateLinkInfoLength();
 	}
 }

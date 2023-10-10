@@ -10,16 +10,11 @@ namespace SysAbstractModules
 	
 
 	//implementation: public class Node:NodeAggregate, INode {}
-	public interface INode:INodeData, INodeAggregate
+	public abstract class AbstractNode: AbstractNodeAggregate
 	{
-		public void InputData(INoteData data);
-		public INoteData OutputData();
-		///public INode Clone();
-		///public void Delete();
+		public abstract void InputData(AbstractNoteData data);
+		public abstract AbstractNoteData OutputData();
 
 	}
-	public interface IGroupNode: INode
-	{
 
-	}
 }

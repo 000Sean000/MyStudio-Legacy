@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace SysAbstractModules
 {
-	public interface INoteSegment
+	public abstract class AbstractNoteSegment
 	{
-		public string? Text { get; set; }
-		public Guid? ReferenceNodeId { get; set; }
+		public virtual string? Text { get; set; }
+		public virtual Guid? ReferenceNodeId { get; set; }
 	}
+
 }

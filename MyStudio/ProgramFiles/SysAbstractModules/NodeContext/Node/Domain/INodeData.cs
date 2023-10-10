@@ -10,17 +10,25 @@ namespace SysAbstractModules
 	{
 		Basic, Group, Template, Instance, Database, Options, Selections
 	}
-	public interface INodeData // DTO: Data Transfer Object
+	public interface IReadOnlyNodeData // DTO: Data Transfer Object
 	{
-		public Guid? Id { set; get; }
-		public ENodeClass? NodeClass { set; get; }
-		public string? ImagePath { set; get; }
+		public Guid? Id { get; }
+		public ENodeClass? NodeClass { get; }
+		public string? ImagePath { get; }
 
-		public INoteData? NoteData { set; get; }
-		public Dictionary<Guid, ILinkData>? OutLinks { set; get; }
-		public Dictionary<Guid, ILinkData>? InLinks { set; get; }
-		
+		public AbstractNoteData? NoteData { get; }
+		public Dictionary<Guid, AbstractLinkData>? OutLinks { get; }
+		public Dictionary<Guid, AbstractLinkData>? InLinks { get; }
+	}
+	public abstract class AbstractNodeData // DTO: Data Transfer Object
+	{
+		public virtual Guid? Id { set; get; }
+		public virtual ENodeClass? NodeClass { set; get; }
+		public virtual string? ImagePath { set; get; }
 
-
+		public virtual AbstractNoteData? NoteData { set; get; }
+		public virtual Dictionary<Guid, AbstractLinkData>? OutLinks { set; get; }
+		public virtual Dictionary<Guid, AbstractLinkData>? InLinks { set; get; }
+		public abstract IReadOnlyNoteData ReadOnlyClone();
 	}
 }

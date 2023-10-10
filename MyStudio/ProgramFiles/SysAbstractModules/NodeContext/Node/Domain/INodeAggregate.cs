@@ -6,31 +6,32 @@ using System.Threading.Tasks;
 
 namespace SysAbstractModules
 {
-	public interface INodeAggregate
+	public abstract class AbstractNodeAggregate: AbstractNodeData
 	{
 		#region
 		#endregion
 		#region Holding References
-		protected INote Note { get; set; }
-		protected Dictionary<Guid, ILinkData> OutLinks { set; get; }
-		protected Dictionary<Guid, ILinkData> InLinks { set; get; }
+		protected virtual AbstractNote Note { get; set; }
+		protected virtual Dictionary<Guid, AbstractLinkData> OutLinks { set; get; }
+		protected virtual Dictionary<Guid, AbstractLinkData> InLinks { set; get; }
 
 		#endregion
 
 		#region Note Value Object
-		public void WriteNoteData(INoteData data);
-		public INoteData ReadNoteData();
-
-		public List<INoteSegment> NoteSegments { get; set; }
+		public abstract void WriteNoteData(AbstractNoteData data);
+		public abstract IReadOnlyNoteData ReadNoteData();
+		/*
+		public List<AbstractNoteSegment> NoteSegments { get; set; }
 		public ENoteComposition NoteComposition { get; set; }
 		public ENoteImportance NoteImportance { get; set; }
+		*/
 		#endregion
 
 		#region Link Entities
-		public Guid AddLink(ILinkData linkData);
-		public void RemoveLink(Guid linkId);
-		public void WriteLinkData(Guid linkId,ILinkData linkData);
-		public ILinkData ReadLinkData(Guid linkId);
+		public abstract Guid AddLink(AbstractLinkData linkData);
+		public abstract void RemoveLink(Guid linkId);
+		public abstract void WriteLinkData(Guid linkId, AbstractLinkData linkData);
+		public abstract IReadOnlyLinkData ReadLinkData(Guid linkId);
 		/*
 		public void WriteLinkType(Guid linkId, ELinkType linkType);
 		public ELinkType ReadLinkType(Guid linkId);

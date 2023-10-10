@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace SysAbstractModules
 {
 	
-	public interface INote: INoteData
+	public abstract class AbstractNote: AbstractNoteData
 	{
-		public void InputData(INoteData data);
-		public INoteData OutputData();
+		public abstract void InputData(AbstractNoteData data);
+		public abstract AbstractNoteData OutputData();
 	}
 }
