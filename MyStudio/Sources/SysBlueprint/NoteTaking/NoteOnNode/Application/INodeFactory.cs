@@ -9,7 +9,7 @@ namespace SysBlueprint
 	public interface INodeFactory
 	{
 		INode CreateNode(Guid nodeId);
-		INode ReconstituteNode(INodeData nodeData);
+		INode ReconstituteNode(INodeDTO nodeData);
 		IGroupNode CreateGroupNode(Guid nodeId, List<INode>? memberNodes = null);
 		
 		

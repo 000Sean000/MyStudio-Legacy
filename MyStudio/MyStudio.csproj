@@ -9,15 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove=".vscode\**" />
     <Compile Remove="old\**" />
-    <Compile Remove="ProgramFiles\jjj\**" />
-    <Compile Remove="ProgramFiles\SysBlueprint\NodeManagement\NodeAggregate\**" />
+    <Compile Remove="ProgramFiles\**" />
+    <EmbeddedResource Remove=".vscode\**" />
     <EmbeddedResource Remove="old\**" />
-    <EmbeddedResource Remove="ProgramFiles\jjj\**" />
-    <EmbeddedResource Remove="ProgramFiles\SysBlueprint\NodeManagement\NodeAggregate\**" />
+    <EmbeddedResource Remove="ProgramFiles\**" />
+    <None Remove=".vscode\**" />
     <None Remove="old\**" />
-    <None Remove="ProgramFiles\jjj\**" />
-    <None Remove="ProgramFiles\SysBlueprint\NodeManagement\NodeAggregate\**" />
+    <None Remove="ProgramFiles\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,21 +40,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Packages\" />
     <Folder Include="ProgramData\" />
-    <Folder Include="ProgramFiles\Packages\" />
-    <Folder Include="ProgramFiles\SysBlueprint\Architecture\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysBlueprint\SettingManagement\Vault\" />
-    <Folder Include="ProgramFiles\SysBlueprint\SettingManagement\User\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Link\Application\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Link\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Node\UserInterface\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Note\Application\" />
-    <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Note\Infrastructure\" />
-    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\NavigationBar\" />
-    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\AttributeBar\" />
-    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\PageTab\" />
-    <Folder Include="ProgramFiles\SysBlueprint\UI\MainWindow\ToolBar\" />
-    <Folder Include="ProgramFiles\SysBlueprint\ViewManagement\" />
+    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\Application\" />
+    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\Domain\" />
+    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint\NoteVault\Preference\Application\" />
+    <Folder Include="Sources\SysBlueprint\NoteVault\Preference\Domain\" />
+    <Folder Include="Sources\SysBlueprint\NoteVault\Preference\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint\User\Account\Application\" />
+    <Folder Include="Sources\SysBlueprint\User\Account\Domain\" />
+    <Folder Include="Sources\SysBlueprint\User\Account\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint\User\Preference\Application\" />
+    <Folder Include="Sources\SysBlueprint\User\Preference\Domain\" />
+    <Folder Include="Sources\SysBlueprint\User\Preference\Infrastructure\" />
   </ItemGroup>
 
 </Project>

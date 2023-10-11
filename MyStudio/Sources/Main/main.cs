@@ -1,5 +1,5 @@
 
-
+using SysBlueprint;
 namespace MyStudio
 {
     internal static class Program
@@ -12,6 +12,8 @@ namespace MyStudio
         {
 			// To customize application configuration such as set high DPI settings or default font,
 			// see https://aka.ms/applicationconfiguration.
+			ApplicationConfiguration.Initialize();
+			Application.Run(new StartupScreen());
 		}
     }
 }

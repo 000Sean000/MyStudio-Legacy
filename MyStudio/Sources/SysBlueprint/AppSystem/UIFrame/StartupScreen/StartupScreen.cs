@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MyStudio.ProgramFiles.SysBlueprint.UI.StartupScreen
+namespace SysBlueprint
 {
 	public partial class StartupScreen : Form
 	{
