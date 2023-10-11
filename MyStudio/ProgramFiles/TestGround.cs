@@ -23,4 +23,15 @@ namespace TestGround
 
 		}
 	}
+	public interface INestedClass
+	{
+		public interface IInnerClass
+		{
+			public string Name { get; set; }
+		}
+	}
+	public class NestedClass : INestedClass
+	{
+		
+	}
 }

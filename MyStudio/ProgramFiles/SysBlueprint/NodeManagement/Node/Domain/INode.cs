@@ -12,6 +12,7 @@ namespace SysBlueprint
 	//implementation: public class Node:NodeAggregate, INode {}
 	public interface INode:INodeData, INodeAggregate
 	{
+		public IReadOnlyNodeData ReadData { get; }
 		public void InputData(INoteData data);
 		public INoteData OutputData();
 

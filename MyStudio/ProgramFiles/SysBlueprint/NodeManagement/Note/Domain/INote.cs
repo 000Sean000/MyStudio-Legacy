@@ -10,6 +10,7 @@ namespace SysBlueprint
 	
 	public interface INote: INoteData
 	{
+		public IReadOnlyNoteData ReadData { get; }
 		public void InputData(INoteData data);
 		public INoteData OutputData();
 	}

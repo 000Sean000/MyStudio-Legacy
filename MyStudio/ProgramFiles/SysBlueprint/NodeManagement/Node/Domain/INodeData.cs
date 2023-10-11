@@ -10,15 +10,15 @@ namespace SysBlueprint
 	{
 		Basic, Group, Template, Instance, Database, Options, Selections
 	}
-	public interface IReadOnlyNodeData // DTO: Data Transfer Object
+	public interface IReadOnlyNodeData 
 	{
-		public Guid? Id { set; }
-		public ENodeClass? NodeClass { set; }
-		public string? ImagePath { set; }
+		public Guid? Id { get; }
+		public ENodeClass? NodeClass { get; }
+		public string? ImagePath { get; }
 
-		public INoteData? NoteData { set; }
-		public Dictionary<Guid, ILinkData>? OutLinks { set; }
-		public Dictionary<Guid, ILinkData>? InLinks { set; }
+		public INoteData? NoteData { get; }
+		public Dictionary<Guid, ILinkData>? OutLinks { get; }
+		public Dictionary<Guid, ILinkData>? InLinks { get; }
 	}
 	public interface INodeData
 	{
@@ -29,6 +29,6 @@ namespace SysBlueprint
 		public INoteData? NoteData { set; get; }
 		public Dictionary<Guid, ILinkData>? OutLinkData { set; get; }
 		public Dictionary<Guid, ILinkData>? InLinkData { set; get; }
-		public IReadOnlyNodeData ReadOnlyClone();
+		
 	}
 }

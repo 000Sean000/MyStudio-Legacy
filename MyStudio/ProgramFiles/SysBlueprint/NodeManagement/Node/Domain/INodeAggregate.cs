@@ -18,14 +18,14 @@ namespace SysBlueprint
 		#endregion
 
 		#region Note Value Object
-		public void WriteNoteData(INoteData data);
+		public void WriteNoteData(IReadOnlyNoteData data);
 		public IReadOnlyNoteData ReadNoteData();
 		#endregion
 
 		#region Link Entities
 		public Guid AddLink(ILinkData linkData);
 		public void RemoveLink(Guid linkId);
-		public void WriteLinkData(Guid linkId,ILinkData linkData);
+		public void WriteLinkData(Guid linkId, IReadOnlyLinkData linkData);
 		public IReadOnlyLinkData ReadLinkData(Guid linkId);
 		#endregion
 		

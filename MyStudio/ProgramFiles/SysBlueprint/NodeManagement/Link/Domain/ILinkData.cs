@@ -24,6 +24,6 @@ namespace SysBlueprint
 		public Guid? TargetNodeId { get; set; }
 		public ELinkType? LinkType { get; set; }
 		public Dictionary<ELinkInfoIndex, string>? LinkInfo {  get; set; }
-		public IReadOnlyLinkData ReadOnlyClone();
+		
 	}
 }

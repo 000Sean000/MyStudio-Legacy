@@ -42,10 +42,9 @@
   <ItemGroup>
     <Folder Include="ProgramData\" />
     <Folder Include="ProgramFiles\Packages\" />
-    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\AppService\" />
-    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\Vault\" />
-    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\User\" />
-    <Folder Include="ProgramFiles\SysBlueprint\AppManagement\Language\" />
+    <Folder Include="ProgramFiles\SysBlueprint\Architecture\Infrastructure\" />
+    <Folder Include="ProgramFiles\SysBlueprint\SettingManagement\Vault\" />
+    <Folder Include="ProgramFiles\SysBlueprint\SettingManagement\User\" />
     <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Link\Application\" />
     <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Link\Infrastructure\" />
     <Folder Include="ProgramFiles\SysBlueprint\NodeManagement\Node\UserInterface\" />

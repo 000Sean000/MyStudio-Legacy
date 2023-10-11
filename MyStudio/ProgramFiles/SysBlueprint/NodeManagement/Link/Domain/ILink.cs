@@ -13,6 +13,7 @@ namespace SysBlueprint
 	}
 	public interface ILink: ILinkData
 	{
+		public IReadOnlyLinkData ReadData {  get; }
 		public void InputData(ILinkData data);
 		public ILinkData OutputData();
 

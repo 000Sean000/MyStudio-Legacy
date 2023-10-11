@@ -25,6 +25,5 @@ namespace SysBlueprint
 		public ENoteComposition? Composition { get; set; }
 		public ENoteImportance? Importance { get; set; }
 		public List<INoteSegment>? Segments { get; set; }
-		public IReadOnlyNoteData ReadOnlyClone();
 	}
 }

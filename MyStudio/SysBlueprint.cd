@@ -3,34 +3,26 @@
   <Class Name="SysBlueprint.SomeModule" Collapsed="true">
     <Position X="6" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysImplementation\SomeModule.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SysConfig.ImplementationConfig" Collapsed="true">
-    <Position X="7.75" Y="0.5" Width="1.5" />
+  <Interface Name="SysBlueprint.IUIManager" Collapsed="true">
+    <Position X="11.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ProgramFiles\SysConfig\SysConfig.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysBlueprint\Architecture\UserInterface\IUIManager.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="SysImplementation.NodeVer1" Collapsed="true">
-    <Position X="9.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ProgramFiles\SysImplementation\NodeVer1.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
+  </Interface>
   <Interface Name="SysBlueprint.ILink" Collapsed="true">
     <Position X="0.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Link\Domain\ILink.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="SysBlueprint.IReadOnlyLinkData" Collapsed="true">
-    <Position X="9.5" Y="2.5" Width="1.5" />
+    <Position X="11.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQACAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAIAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Link\Domain\ILinkData.cs</FileName>
@@ -39,28 +31,28 @@
   <Interface Name="SysBlueprint.ILinkData" Collapsed="true">
     <Position X="0.5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQACAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAIAAACAA=</HashCode>
+      <HashCode>AQACAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAIAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Link\Domain\ILinkData.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="SysBlueprint.INodeAppService" Collapsed="true">
+    <Position X="9.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysBlueprint\NodeManagement\Node\Application\INodeAppService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Interface Name="SysBlueprint.INodeFactory" Collapsed="true">
-    <Position X="6" Y="1.75" Width="1.5" />
+    <Position X="11.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAQAAAAAAAAAAAACEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Node\Application\INodeFactory.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="SysBlueprint.INodeService" Collapsed="true">
-    <Position X="9.5" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ProgramFiles\SysBlueprint\NodeManagement\Node\Application\INodeService.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="SysBlueprint.INode" Collapsed="true">
     <Position X="0.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Node\Domain\INode.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -88,12 +80,12 @@
   <Interface Name="SysBlueprint.INodeData" Collapsed="true">
     <Position X="3.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAACAAAAAAAAAIAAAAIAQAAAAAAAAAAAAACAACAA=</HashCode>
+      <HashCode>AAACAACAAAAAAAAAIAAAAIAQAAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Node\Domain\INodeData.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="SysBlueprint.INodeRepository" Collapsed="true">
-    <Position X="7.75" Y="1.75" Width="1.5" />
+    <Position X="6" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Node\Infrastructure\INodeRepository.cs</FileName>
@@ -102,7 +94,7 @@
   <Interface Name="SysBlueprint.INote" Collapsed="true">
     <Position X="3.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Note\Domain\INote.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -116,22 +108,36 @@
   <Interface Name="SysBlueprint.INoteData" Collapsed="true">
     <Position X="3.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAACAAAAAAAAAAIACAAAAAAAAAAAAAACAA=</HashCode>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAIACAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Note\Domain\INoteData.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="SysBlueprint.INoteSegment" Collapsed="true">
-    <Position X="6" Y="2.5" Width="1.5" />
+    <Position X="7.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Note\Domain\INoteSegment.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="SysBlueprint.INoteService" Collapsed="true">
-    <Position X="7.75" Y="2.5" Width="1.5" />
+    <Position X="9.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAgAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Note\Domain\INoteService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysBlueprint.IMainWindow" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysBlueprint\UI\MainWindow\IMainWindow.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SysBlueprint.IStartupScreen" Collapsed="true">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramFiles\SysBlueprint\UI\StartupScreen\IStartupScreen.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="SysBlueprint.ELinkType" Collapsed="true">
@@ -156,14 +162,14 @@
     </TypeIdentifier>
   </Enum>
   <Enum Name="SysBlueprint.ENoteComposition" Collapsed="true">
-    <Position X="6" Y="5" Width="1.5" />
+    <Position X="11.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAACABAAAAAAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Note\Domain\INoteData.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="SysBlueprint.ENoteImportance" Collapsed="true">
-    <Position X="7.75" Y="5" Width="1.5" />
+    <Position X="6" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAAA=</HashCode>
       <FileName>ProgramFiles\SysBlueprint\NodeManagement\Note\Domain\INoteData.cs</FileName>
