@@ -1,5 +1,5 @@
 
-using SysBlueprint;
+using IAppSystem;
 namespace MyStudio
 {
     internal static class Program

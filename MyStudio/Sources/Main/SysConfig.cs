@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SysBlueprint;
+using INoteTaking;
 /* 
  * Configure class version to use by alias
  * Then transfer this configuration by a class wrapper

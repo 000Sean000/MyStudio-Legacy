@@ -11,12 +11,15 @@
   <ItemGroup>
     <Compile Remove=".vscode\**" />
     <Compile Remove="old\**" />
+    <Compile Remove="ProgramData\**" />
     <Compile Remove="ProgramFiles\**" />
     <EmbeddedResource Remove=".vscode\**" />
     <EmbeddedResource Remove="old\**" />
+    <EmbeddedResource Remove="ProgramData\**" />
     <EmbeddedResource Remove="ProgramFiles\**" />
     <None Remove=".vscode\**" />
     <None Remove="old\**" />
+    <None Remove="ProgramData\**" />
     <None Remove="ProgramFiles\**" />
   </ItemGroup>
 
@@ -41,20 +44,63 @@
 
   <ItemGroup>
     <Folder Include="Packages\" />
-    <Folder Include="ProgramData\" />
-    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\Application\" />
-    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\Domain\" />
-    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\Infrastructure\" />
-    <Folder Include="Sources\SysBlueprint\BoundedContext\Feature\UserInterface\" />
-    <Folder Include="Sources\SysBlueprint\NoteVault\Preference\Application\" />
-    <Folder Include="Sources\SysBlueprint\NoteVault\Preference\Domain\" />
-    <Folder Include="Sources\SysBlueprint\NoteVault\Preference\Infrastructure\" />
-    <Folder Include="Sources\SysBlueprint\User\Account\Application\" />
-    <Folder Include="Sources\SysBlueprint\User\Account\Domain\" />
-    <Folder Include="Sources\SysBlueprint\User\Account\Infrastructure\" />
-    <Folder Include="Sources\SysBlueprint\User\Preference\Application\" />
-    <Folder Include="Sources\SysBlueprint\User\Preference\Domain\" />
-    <Folder Include="Sources\SysBlueprint\User\Preference\Infrastructure\" />
+    <Folder Include="Sources\ArchitecturePortion\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\Community\ShareTemplate\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\Community\ShareTemplate\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\Community\ShareTemplate\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\Community\ShareTemplate\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\ViewAdjuster\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\ViewAdjuster\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\ViewAdjuster\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\ViewAdjuster\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Knowledge\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Knowledge\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Knowledge\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Knowledge\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Project\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Project\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Project\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Project\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\NodeBrowser\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\NodeBrowser\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\NodeBrowser\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\NodeBrowser\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\AIPrompter\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\AIPrompter\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\AIPrompter\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\AIPrompter\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\TacticSuggester\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\TacticSuggester\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\TacticSuggester\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\TacticSuggester\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\StrategyGuider\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\StrategyGuider\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\StrategyGuider\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\StrategyGuider\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\WorkflowNavigator\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\WorkflowNavigator\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\WorkflowNavigator\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\WorkflowNavigator\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\ProgressTracer\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\ProgressTracer\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\ProgressTracer\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\TaskAssisting\ProgressTracer\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Vault%28NoteScope%29\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Vault%28NoteScope%29\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteTaking\Vault%28NoteScope%29\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\UIDesigner\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\UIDesigner\Domain\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\UIDesigner\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\UIDesigner\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\LayoutDisplayer\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\LayoutDisplayer\Infrastructure\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\NoteViewing\LayoutDisplayer\UserInterface\" />
+    <Folder Include="Sources\ArchitecturePortion\BoundedContext\Feature\Application\" />
+    <Folder Include="Sources\ArchitecturePortion\BoundedContext\Feature\Domain\" />
+    <Folder Include="Sources\ArchitecturePortion\BoundedContext\Feature\Infrastructure\" />
+    <Folder Include="Sources\ArchitecturePortion\BoundedContext\Feature\UserInterface\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\UserManaging\AccountRegistrar\Application\" />
+    <Folder Include="Sources\SysBlueprint%28ClassDiagram%29\UserManaging\AccountRegistrar\Infrastructure\" />
   </ItemGroup>
 
 </Project>

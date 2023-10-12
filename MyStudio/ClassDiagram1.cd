@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="INoteTaking.SomeModule" Collapsed="true">
+    <Position X="24.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysImplementation\SomeModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IAppSystem.StartupScreen" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAACAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\AppSystem\UIFrame\StartupScreen\StartupScreen.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SysConfig.ImplementationConfig" Collapsed="true">
+    <Position X="8.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\Main\SysConfig.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SysImplementation.NodeVer1" Collapsed="true">
+    <Position X="6.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysImplementation\NodeVer1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="INoteTaking.IUIManager" Collapsed="true">
+    <Position X="28" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\AppSystem\UIInteraction\Application\IUIManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INodeAppService" Collapsed="true">
+    <Position X="28" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Application\INodeAppService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INodeFactory" Collapsed="true">
+    <Position X="24.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAAACEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Application\INodeFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.ILinkDTO" Collapsed="true">
+    <Position X="26.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQACAAAAAAAAAAAAAAAAAEAEAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\ILink.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.ILink" Collapsed="true">
+    <Position X="24.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQACAAAACAABAAAAAAAAAEAEAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\ILink.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INodeDTO" Collapsed="true">
+    <Position X="29.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIACAACAAAAAAACAIAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INodeAggregate" Collapsed="true">
+    <Position X="22" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAAEAAAAAAADMAAAAAAAAAACAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INode" Collapsed="true">
+    <Position X="22" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAACACAABAAAAIAAAAIAQAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.IGroupNode" Collapsed="true">
+    <Position X="22" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INoteDTO" Collapsed="true">
+    <Position X="29.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAIACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INote.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INoteSegment" Collapsed="true">
+    <Position X="24.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INote.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INote" Collapsed="true">
+    <Position X="28" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAACAABCAAAAAAAAAAIACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INote.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INoteService" Collapsed="true">
+    <Position X="26.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INoteService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteTaking.INodeRepository" Collapsed="true">
+    <Position X="26.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Infrastructure\INodeRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IAppSystem.AppMain" Collapsed="true">
+    <Position X="16" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\AppSystem\AppMain.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IAppSystem.ILanguage" Collapsed="true">
+    <Position X="17.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\AppSystem\Language\Domain\ILanguage.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IAppSystem.IMainWindow" Collapsed="true">
+    <Position X="16" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\AppSystem\UIFrame\MainWindow\IMainWindow.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IAppSystem.IStartupScreen" Collapsed="true">
+    <Position X="17.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\AppSystem\UIFrame\StartupScreen\IStartupScreen.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteViewing.ILink" Collapsed="true">
+    <Position X="15" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteViewing\ShowNodes\Domain\ILink.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteViewing.INode" Collapsed="true">
+    <Position X="16.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteViewing\ShowNodes\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="INoteViewing.IView" Collapsed="true">
+    <Position X="15" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteViewing\ShowNodes\Domain\IView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="INoteTaking.ELinkInfoIndex" Collapsed="true">
+    <Position X="24.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAwAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\ILink.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="INoteTaking.ELinkType" Collapsed="true">
+    <Position X="26.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAEEAAAEAAAAAAAAEAAAAAAAAAAAACAAAAAgAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\ILink.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="INoteTaking.ENodeClass" Collapsed="true">
+    <Position X="28" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAEAAAAAAAAAAACAAAAAAAAAAQAAAAADAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="INoteTaking.ENoteComposition" Collapsed="true">
+    <Position X="29.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAACABAAAAAAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INote.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="INoteTaking.ENoteImportance" Collapsed="true">
+    <Position X="24.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAAA=</HashCode>
+      <FileName>Sources\SysBlueprint\NoteTaking\NoteOnNode\Domain\INote.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>
