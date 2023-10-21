@@ -1,6 +1,6 @@
 ﻿namespace MyStudio
 {
-    partial class Form1
+    partial class StartupScreen
     {
         /// <summary>
         ///  Required designer variable.

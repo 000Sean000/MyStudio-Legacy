@@ -9,7 +9,64 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Source\BasicService\PKG\" />
+    <Folder Include="Source\ServiceOrchestrating\ServiceAssembly\Application\" />
+    <Folder Include="Source\ServiceOrchestrating\ServiceAssembly\Domain\" />
+    <Folder Include="Source\ServiceOrchestrating\ServiceAssembly\Infrastructure\" />
+    <Folder Include="Source\ServiceOrchestrating\ServiceAssembly\UserInterface\" />
+    <Folder Include="Source\ServiceOrchestrating\MainAppService\Application\" />
+    <Folder Include="Source\ServiceOrchestrating\MainAppService\Domain\" />
+    <Folder Include="Source\ServiceOrchestrating\MainAppService\Infrastructure\" />
+    <Folder Include="Source\ServiceOrchestrating\MainAppService\UserInterface\" />
+    <Folder Include="Source\IdentityManaging\NoteKeeper\Application\" />
+    <Folder Include="Source\IdentityManaging\NoteKeeper\Domain\" />
+    <Folder Include="Source\IdentityManaging\NoteKeeper\Infrastructure\" />
+    <Folder Include="Source\IdentityManaging\NoteKeeper\UserInterface\" />
+    <Folder Include="Source\IdentityManaging\AccountRegistrar\Application\" />
+    <Folder Include="Source\IdentityManaging\AccountRegistrar\Domain\" />
+    <Folder Include="Source\IdentityManaging\AccountRegistrar\Infrastructure\" />
+    <Folder Include="Source\IdentityManaging\AccountRegistrar\UserInterface\" />
+    <Folder Include="Source\NoteViewing\Feature\Application\" />
+    <Folder Include="Source\NoteViewing\Feature\Domain\" />
+    <Folder Include="Source\NoteViewing\Feature\Infrastructure\" />
+    <Folder Include="Source\NoteViewing\Feature\UserInterface\" />
+    <Folder Include="Source\WindowFounding\MainWindow\Application\" />
+    <Folder Include="Source\WindowFounding\MainWindow\Domain\" />
+    <Folder Include="Source\WindowFounding\MainWindow\Infrastructure\" />
+    <Folder Include="Source\WindowFounding\MainWindow\UserInterface\" />
+    <Folder Include="Source\WindowFounding\StartupScreen\Application\" />
+    <Folder Include="Source\WindowFounding\StartupScreen\Domain\" />
+    <Folder Include="Source\WindowFounding\StartupScreen\Infrastructure\" />
+    <Folder Include="Source\WindowFounding\ConfigurationDialog\Application\" />
+    <Folder Include="Source\WindowFounding\ConfigurationDialog\Domain\" />
+    <Folder Include="Source\WindowFounding\ConfigurationDialog\Infrastructure\" />
+    <Folder Include="Source\WindowFounding\ConfigurationDialog\UserInterface\" />
+    <Folder Include="Source\InteractionManaging\UndoRedoActions\Domain\" />
+    <Folder Include="Source\InteractionManaging\UndoRedoActions\Infrastructure\" />
+    <Folder Include="Source\InteractionManaging\UndoRedoActions\UserInterface\" />
+    <Folder Include="Source\InteractionManaging\CommandQueryBus\Domain\" />
+    <Folder Include="Source\InteractionManaging\CommandQueryBus\Infrastructure\" />
+    <Folder Include="Source\InteractionManaging\CommandQueryBus\UserInterface\" />
+    <Folder Include="Source\InteractionManaging\EventBus\Domain\" />
+    <Folder Include="Source\InteractionManaging\EventBus\Infrastructure\" />
+    <Folder Include="Source\InteractionManaging\EventBus\UserInterface\" />
+    <Folder Include="Source\NoteTaking\Field Coordinator\Application\" />
+    <Folder Include="Source\NoteTaking\Field Coordinator\Domain\" />
+    <Folder Include="Source\NoteTaking\Field Coordinator\Infrastructure\" />
+    <Folder Include="Source\NoteTaking\Field Coordinator\UserInterface\" />
+    <Folder Include="Source\NoteTaking\NodeEditor\Application\" />
+    <Folder Include="Source\NoteTaking\NodeEditor\Domain\" />
+    <Folder Include="Source\NoteTaking\NodeEditor\Infrastructure\" />
+    <Folder Include="Source\NoteTaking\NodeEditor\UserInterface\" />
+    <Folder Include="Source\BoundedContext\Feature\Application\" />
+    <Folder Include="Source\BoundedContext\Feature\Domain\" />
+    <Folder Include="Source\BoundedContext\Feature\Infrastructure\" />
+    <Folder Include="Source\BoundedContext\Feature\UserInterface\" />
   </ItemGroup>
 
 </Project>
