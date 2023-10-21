@@ -41,4 +41,10 @@ namespace INoteTaking
 		public void InputData(INoteDTO data);
 		public INoteDTO OutputData();
 	}
+	public interface INoteService
+	{
+
+		public string SegmentToString(INoteSegment segment);
+		public INoteSegment ReferenceToSegment(Guid targetNodeId);
+	}
 }
