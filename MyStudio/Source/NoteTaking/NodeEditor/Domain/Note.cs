@@ -8,40 +8,91 @@ namespace NoteTaking.Domain
 {
 	public enum ENoteComposition
 	{
-		OnlyText, OnlySingleRef, Mixed
+		Mixed, OnlyText, OnlySingleRef 
 	}
 	public enum ENoteImportance
 	{
-		ContextualLabel, EssentialData
+		EssentialData, ContextualLabel
 	}
-	public class NoteDTO
+	public class NoteData
 	{
-		public ENoteComposition Composition;
-		public ENoteImportance Importance;
-		public List<NoteSegment> Segments;
-
-		public NoteDTO() { }
-		public NoteDTO(NoteDTO noteDTO)
+		public ENoteComposition? Composition { get; set; }
+		public ENoteImportance? Importance { get; set; }
+		public List<NoteSegment>? Segments { get; set; }
+		public void EnsurePropertyNotNull()
 		{
-			noteDTO = noteDTO.DeepCopy(); // pure data transfer
-			Composition = noteDTO.Composition;
-			Importance = noteDTO.Importance;
-			Segments = noteDTO.Segments;
-		}
-		public NoteDTO(ENoteComposition composition, ENoteImportance importance, List<NoteSegment>? segments)
-		{
-			Composition = composition;
-			Importance = importance;
-			Segments = segments;
-		}
-		public NoteDTO DeepCopy()
-		{
-			List<NoteSegment> segments = new List<NoteSegment>();
-			foreach (var segment in Segments)
+			if (Composition == null)
 			{
-				Segments.Add(segment.DeepCopy());
+				Composition = default(ENoteComposition);
 			}
-			return new NoteDTO(Composition, Importance, segments);
+			if (Importance == null)
+			{
+				Importance = default(ENoteImportance);
+			}
+			if (Segments == null)
+			{
+				Segments = new List<NoteSegment>();
+				Segments.Add(new NoteSegment(""));
+			}
+		}
+		public NoteData() { } 
+		public NoteData(NoteData? noteData)
+		{
+			if (noteData != null)
+			{
+				Write(noteData);
+			}
+		}
+		public void PartiaWrite(NoteData noteData)
+		{
+			noteData = noteData.DeepCopy(); 
+			if (noteData.Composition != null)
+			{
+				Composition = noteData.Composition;
+			}
+			if (noteData.Importance != null)
+			{
+				Importance = noteData.Importance;
+			}
+			if (noteData.Segments != null)
+			{
+				Segments = noteData.Segments;
+			}
+		}
+		public void Write(NoteData noteData)
+		{
+
+			noteData = noteData.DeepCopy();
+			Composition = noteData.Composition;
+			Importance = noteData.Importance;
+			Segments = noteData.Segments;
+
+			
+		}
+
+		public NoteData Read()
+		{
+			return DeepCopy();
+		}
+		public NoteData DeepCopy()
+		{
+			NoteData noteData = new NoteData();
+
+			noteData.Composition = Composition;
+			noteData.Importance = Importance;
+			if (Segments == null)
+			{
+				noteData.Segments = null;
+			}
+			else
+			{
+				noteData.Segments = new List<NoteSegment>();
+				foreach (var segment in Segments)
+				{
+					noteData.Segments.Add(segment.DeepCopy());
+				}
+			}
+			return noteData;
 		}
 		
 	}
@@ -78,21 +129,15 @@ namespace NoteTaking.Domain
 		}
 		
 	}
-	public class Note: NoteDTO
+	public class Note: NoteData
 	{
-		public Note(NoteDTO noteDTO):base(noteDTO)
+		public Note() : base()
 		{
-			
+			EnsurePropertyNotNull();
 		}
-		public NoteDTO ReadData { get; }
-		public void InputData(NoteDTO data)
+		public Note(NoteData? noteData):base(noteData)
 		{
-
-		}
-		public NoteDTO OutputData()
-		{
-			NoteDTO data = new NoteDTO(Composition, Importance, Segments);
-			return data.DeepCopy();////
+			EnsurePropertyNotNull();
 		}
 	}
 	public class NoteService
@@ -101,12 +146,6 @@ namespace NoteTaking.Domain
 		public string SegmentToString(NoteSegment segment)
 		{
 			return "";////
-		}
-		public NoteSegment ReferenceToSegment(Guid targetNodeId)
-		{
-			
-			
-			return new NoteSegment("");////
 		}
 	}
 }

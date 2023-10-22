@@ -6,62 +6,138 @@ using System.Threading.Tasks;
 
 namespace NoteTaking.Domain
 {
-	public enum ELinkInfoIndex
-	{
-		ArrowTail, ArrowBody, ArrowHead, UserDefLinkType
-	}
-	public class LinkDTO
-	{
-		public Guid Id;
-		public Guid SourceNodeId;
-		public Guid TargetNodeId;
-		public ELinkType LinkType;
-		public Dictionary<ELinkInfoIndex, string> LinkInfo;
-		public LinkDTO() { }
-
-		public LinkDTO(LinkDTO linkDTO)
-		{
-			linkDTO = linkDTO.DeepCopy();
-			Id = linkDTO.Id;
-			SourceNodeId = linkDTO.SourceNodeId;
-			TargetNodeId = linkDTO.TargetNodeId;
-			LinkType = linkDTO.LinkType;
-			LinkInfo = linkDTO.LinkInfo;
-
-		}
-
-		public LinkDTO(Guid id, Guid sourceNodeId, Guid targetNodeId, ELinkType linkType, Dictionary<ELinkInfoIndex, string> linkInfo)
-		{
-			Id = id;
-			SourceNodeId = sourceNodeId;
-			TargetNodeId = targetNodeId;
-			LinkType = linkType;
-			LinkInfo = linkInfo;
-		}
-
-		public LinkDTO DeepCopy()
-		{
-			return new LinkDTO(Id, SourceNodeId, TargetNodeId, LinkType, new Dictionary<ELinkInfoIndex, string>(LinkInfo));
-		}
-	}
-
 	public enum ELinkType
 	{
 		RelateTo, RootIn, Aggregate, ComposedOf, Implement, NextIs, ReferTo
 	}
-	public class Link:LinkDTO
+	public enum ELinkInfoIndex
 	{
+		ArrowTail, ArrowBody, ArrowHead, UserDefLinkType
+	}
+	public class LinkData
+	{
+		public Guid? Id { get; set; }
+		public Guid? SourceNodeId { get; set; }
+		public Guid? TargetNodeId { get; set; }
+		public ELinkType? LinkType { get; set; }
+		public Dictionary<ELinkInfoIndex, string>? LinkInfo { get; set; }
 
-
-		public LinkDTO ReadData { get; }
-		public void InputData(LinkDTO data)
+		public void EnsurePropertyNotNull()
 		{
+			if (Id == null)
+			{
+				Id = default(Guid);
+			}
+			if (SourceNodeId == null)
+			{
+				SourceNodeId = default(Guid);
+			}
+			if (TargetNodeId == null)
+			{
+				TargetNodeId = default(Guid);
+			}
+			if (LinkType == null)
+			{
+				LinkType = default(ELinkType);
+			}
+			if (LinkInfo == null)
+			{
+				LinkInfo = new Dictionary<ELinkInfoIndex, string>();
+				foreach(ELinkInfoIndex index in Enum.GetValues(typeof(ELinkInfoIndex)))
+				{
+					LinkInfo[index] = "";
+				}
+			}
+		}
+		public LinkData() { } 
+
+		public LinkData(LinkData? linkData)
+		{
+			if (linkData != null)
+			{
+				Write(linkData);
+			}
+		}
+
+		public void PartialWrite(LinkData linkData)
+		{
+			linkData = linkData.DeepCopy();
+
+			if (linkData.Id != null )
+			{
+				Id = linkData.Id;
+			}
+			if (linkData.SourceNodeId != null )
+			{
+				SourceNodeId = linkData.SourceNodeId;
+			}
+			if (linkData.TargetNodeId != null ) 
+			{  
+				TargetNodeId = linkData.TargetNodeId; 
+			}
+			if (linkData.LinkType != null ) 
+			{  
+				LinkType = linkData.LinkType; 
+			}
+			if (linkData.LinkInfo != null )
+			{
+				LinkInfo = linkData.LinkInfo;
+			}
+		}
+		public void Write(LinkData linkData)
+		{
+			linkData = linkData.DeepCopy();
+			
+			Id = linkData.Id;
+			SourceNodeId = linkData.SourceNodeId;
+			TargetNodeId = linkData.TargetNodeId;
+			LinkType = linkData.LinkType;
+			LinkInfo = linkData.LinkInfo;
 
 		}
-		public LinkDTO OutputData()
+
+
+		public LinkData Read()
 		{
-			return new LinkDTO();////
+			return DeepCopy();
 		}
+		public LinkData DeepCopy()
+		{
+			LinkData linkData = new LinkData();
+
+			linkData.Id = Id;
+			linkData.SourceNodeId = SourceNodeId;
+			linkData.TargetNodeId = TargetNodeId;
+			linkData.LinkType = LinkType;
+			if (LinkInfo == null)
+			{
+				linkData.LinkInfo = null;
+			}
+			else
+			{
+				linkData.LinkInfo = new Dictionary<ELinkInfoIndex, string>(LinkInfo);
+				foreach(var kvp in  LinkInfo)
+				{
+					linkData.LinkInfo[kvp.Key] = kvp.Value; // shallow copy of immutable type is enough for deep copy
+				}
+			}
+			return linkData;
+		}
+	}
+
+
+	public class Link:LinkData
+	{
+		public Link() : base()
+		{
+			EnsurePropertyNotNull();
+		}
+		public Link(LinkData? linkData) : base(linkData)
+		{
+			EnsurePropertyNotNull();
+		}
+		
+
 
 	}
 }

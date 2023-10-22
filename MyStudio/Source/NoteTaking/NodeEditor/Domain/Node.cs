@@ -10,21 +10,129 @@ namespace NoteTaking.Domain
 	{
 		Basic, Group, Template, Instance, Database, Options, Selections
 	}
-	public class NodeDTO
+	public class NodeData
 	{
-		public NodeDTO()
-		{
-
-		}
+		
 		public Guid? Id { get; set; }
 		public ENodeClass? NodeClass { get; set; }
 		public string? ImagePath { get; set; }
 
 		#region Aggregate Members
-		public NoteDTO? NoteData { get; set; }
-		public Dictionary<Guid, LinkDTO>? OutLinks { get; set; }
-		public Dictionary<Guid, LinkDTO>? InLinks { get; set; }
+		public NoteData? NoteData { get; set; }
+		public Dictionary<Guid, LinkData>? OutLinkData { get; set; }
+		public List<Guid>? InLinkIds { get; set; }
 		#endregion
+
+		public virtual void EnsurePropertyNotNull()
+		{
+			if (Id == null)
+			{
+				Id = default(Guid);
+			}
+			if (NodeClass == null)
+			{
+				NodeClass = default(ENodeClass);
+			}
+			if (ImagePath == null)
+			{
+				ImagePath = "";
+			}
+			if (NoteData == null)
+			{
+				NoteData = new NoteData();
+				NoteData.EnsurePropertyNotNull();
+			}
+			if (OutLinkData == null)
+			{
+				OutLinkData = new Dictionary<Guid, LinkData>();
+			}
+			if (InLinkIds == null)
+			{
+				InLinkIds = new List<Guid>();
+			}
+
+		}
+
+		public NodeData() { }
+		public NodeData(NodeData nodeData)
+		{
+			Write(nodeData);
+		}
+
+		public void PartialWrite(NodeData nodeData)
+		{
+			if (nodeData.Id != null)
+			{
+				Id = nodeData.Id;
+			}
+			if (nodeData.NodeClass != null)
+			{
+				NodeClass = nodeData.NodeClass;
+			}
+			if (nodeData.ImagePath != null)
+			{
+				ImagePath = nodeData.ImagePath;
+			}
+
+			if (nodeData.NoteData != null)
+			{
+				NoteData = nodeData.NoteData;
+			}
+			if (nodeData.OutLinkData != null)
+			{
+				OutLinkData = nodeData.OutLinkData;
+			}
+			if (nodeData.InLinkIds != null)
+			{
+				InLinkIds = nodeData.InLinkIds;
+			}
+		}
+		public void Write(NodeData nodeData)
+		{
+			nodeData = nodeData.DeepCopy();
+			Id = nodeData.Id;
+			NodeClass = nodeData.NodeClass;
+			ImagePath = nodeData.ImagePath;
+
+			NoteData = nodeData.NoteData;
+			OutLinkData = nodeData.OutLinkData;
+			InLinkIds = nodeData.InLinkIds;
+		}
+		public NodeData Read()
+		{
+			return DeepCopy();
+		}
+		public NodeData DeepCopy()
+		{
+			NodeData nodeData = new NodeData();
+
+			nodeData.Id = Id;
+			nodeData.NodeClass = NodeClass;
+			nodeData.ImagePath = ImagePath;
+			nodeData.NoteData = NoteData?.DeepCopy();
+			if (OutLinkData ==  null)
+			{
+				nodeData.OutLinkData = null;
+			}
+			else
+			{
+				nodeData.OutLinkData = new Dictionary<Guid, LinkData>();
+				foreach (var kvp in OutLinkData)
+				{
+					nodeData.OutLinkData[kvp.Key] = kvp.Value.DeepCopy();
+				}
+			}
+			if (InLinkIds == null)
+			{
+				nodeData.InLinkIds = null;
+			}
+			else
+			{
+				nodeData.InLinkIds = new List<Guid>(InLinkIds);
+			}
+
+			return nodeData;
+		}
 	}
 
 	public interface INodeAggregate
@@ -33,74 +141,94 @@ namespace NoteTaking.Domain
 		#endregion
 
 		#region Note Value Object
-		public void WriteNote(NoteDTO data);
-		public NoteDTO ReadNote();
+		public void WriteNote(NoteData data);
+		public NoteData ReadNote();
 		#endregion
 
 		#region Link Entities
-		public Guid AddLink(LinkDTO linkData);
+		public void AddLink(Guid linkId, Node targetNode);
 		public void RemoveLink(Guid linkId);
-		public void WriteLink(Guid linkId, LinkDTO linkData);
-		public LinkDTO ReadLink(Guid linkId);
+		public void WriteLink(Guid linkId, LinkData linkData);
+		public LinkData ReadLink(Guid linkId);
 		#endregion
 
 	}
 	//implementation: public class Node:NodeAggregate, INode {}
-	public class Node : INodeAggregate
+	public class Node : NodeData, INodeAggregate
 	{
-		public Guid? Id { set; get; }
-		public ENodeClass? NodeClass { set; get; }
-		public string? ImagePath { set; get; }
 
-		public NoteDTO? NoteData { set; get; }
-		public Dictionary<Guid, LinkDTO>? OutLinkData { set; get; }
-		public Dictionary<Guid, LinkDTO>? InLinkData { set; get; }
-
-
-		public NodeDTO ReadData { get; }
-		public void InputData(NoteDTO data)
-		{
-
-		}
-		public NoteDTO OutputData()
-		{
-			return new NoteDTO();////
-		}
 		#region Node Aggregate
 		#region Holding References
-		protected Note Note { get; set; }
-		protected Dictionary<Guid, Link> OutLinks { set; get; }
-		protected Dictionary<Guid, Link> InLinks { set; get; }
+		protected Note? Note { get; set; }
+		protected Dictionary<Guid, Link>? OutLinks { set; get; }
 
 		#endregion
-
-		#region Note Value Object
-		public void WriteNote(NoteDTO data)
+		public Node(NodeData nodeData):base(nodeData) 
 		{
+			EnsurePropertyNotNull();
+			
+		}
+		public override void EnsurePropertyNotNull()
+		{
+			base.EnsurePropertyNotNull();
+			InstantiateAggregateMembers();
 
 		}
-		public NoteDTO ReadNote()
+		protected void InstantiateAggregateMembers()
 		{
-			return new NoteDTO();////
+            if (Note == null)
+            {
+				Note = new Note(NoteData);
+			}
+			if (OutLinks == null)
+			{
+				OutLinks = new Dictionary<Guid, Link>();
+			}
+			if (OutLinkData != null)
+			{
+				foreach (var kvp in OutLinkData)
+				{
+					OutLinks[kvp.Key] = new Link(kvp.Value);
+				}
+			}
+			
+		}
+
+		#region Note Value Object
+		public void WriteNote(NoteData data)
+		{
+			Note.PartiaWrite(data);
+		}
+		public NoteData ReadNote()
+		{
+			return Note.Read();
 		}
 		#endregion
 
 		#region Link Entities
-		public Guid AddLink(LinkDTO linkData)
+		public void AddLink(Guid linkId, Node targetNode)
 		{
-			return new Guid();////
+			OutLinks[linkId] = new Link()
+			{
+				Id = linkId,
+				SourceNodeId = Id, 
+				TargetNodeId = targetNode.Id
+			};
+			targetNode.InLinkIds.Add(linkId);
 		}
-		public void RemoveLink(Guid linkId)
+		public void RemoveLink(Guid linkId, Node targetNode)
+		{
+			targetNode.InLinkIds.Remove(linkId);
+			OutLinks.Remove(linkId);
+
+		}
+		public void WriteLink(Guid linkId, LinkData linkData)
 		{
 
 		}
-		public void WriteLink(Guid linkId, LinkDTO linkData)
+		public LinkData ReadLink(Guid linkId)
 		{
-
-		}
-		public LinkDTO ReadLink(Guid linkId)
-		{
-			return new LinkDTO();////
+			return new LinkData();////
 		}
 		#endregion
 		#endregion
