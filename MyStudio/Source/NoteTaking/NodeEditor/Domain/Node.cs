@@ -147,7 +147,7 @@ namespace NoteTaking.Domain
 
 		#region Link Entities
 		public void AddLink(Guid linkId, Node targetNode);
-		public void RemoveLink(Guid linkId);
+		public void RemoveLink(Guid linkId, Node targetNode);
 		public void WriteLink(Guid linkId, LinkData linkData);
 		public LinkData ReadLink(Guid linkId);
 		#endregion
@@ -197,7 +197,7 @@ namespace NoteTaking.Domain
 		#region Note Value Object
 		public void WriteNote(NoteData data)
 		{
-			Note.PartiaWrite(data);
+			Note.PartialWrite(data);
 		}
 		public NoteData ReadNote()
 		{
@@ -218,17 +218,18 @@ namespace NoteTaking.Domain
 		}
 		public void RemoveLink(Guid linkId, Node targetNode)
 		{
+			
 			targetNode.InLinkIds.Remove(linkId);
 			OutLinks.Remove(linkId);
 
 		}
 		public void WriteLink(Guid linkId, LinkData linkData)
 		{
-
+			OutLinks[linkId].PartialWrite(linkData);
 		}
 		public LinkData ReadLink(Guid linkId)
 		{
-			return new LinkData();////
+			return OutLinks[linkId].Read();
 		}
 		#endregion
 		#endregion

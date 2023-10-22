@@ -14,16 +14,17 @@ namespace InteractionManaging
 	// Open Host Service
 	public static class OHS 
 	{
-		
+		public static EventBus EBus {  get; set; }
+		public static CommandQueryBus CQBus {  get; set; }
+		public static ActionDirector Director {  get; set; }
+
 		static OHS()
 		{
 			EBus = new EventBus();
 			CQBus = new CommandQueryBus(BasicService.OHS.ServiceProvider);
 			Director = new ActionDirector();
 		}
-		public static EventBus EBus;
-		public static CommandQueryBus CQBus;
-		public static ActionDirector Director;
+		
 
 	}
 	#region CQRS

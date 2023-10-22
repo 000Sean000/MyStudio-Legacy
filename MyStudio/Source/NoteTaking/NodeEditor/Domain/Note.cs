@@ -18,7 +18,32 @@ namespace NoteTaking.Domain
 	{
 		public ENoteComposition? Composition { get; set; }
 		public ENoteImportance? Importance { get; set; }
-		public List<NoteSegment>? Segments { get; set; }
+		protected List<NoteSegment>? _segments;
+		public List<NoteSegment>? Segments 
+		{	
+			get
+			{
+				return _segments;
+			}
+			set
+			{
+				_segments = value;
+				/// use event bus to update ReferedByNodeIds & expire dereference
+				List<Guid>? referringToNodeIds = new List<Guid>();
+				foreach (var seg in _segments)
+				{
+					Guid? referenceNodeId = seg.ReferenceNodeId;
+					if (referenceNodeId != null)
+					{
+						referringToNodeIds.Add((Guid)referenceNodeId);
+					}
+				}
+				ReferringToNodeIds = referringToNodeIds;
+			}
+		}
+		public List<Guid>? ReferringToNodeIds { get; set; }
+		public List<Guid>? ReferredByNodeIds { get; set; }
+
 		public void EnsurePropertyNotNull()
 		{
 			if (Composition == null)
@@ -34,6 +59,14 @@ namespace NoteTaking.Domain
 				Segments = new List<NoteSegment>();
 				Segments.Add(new NoteSegment(""));
 			}
+			if (ReferringToNodeIds == null)
+			{
+				ReferringToNodeIds = new List<Guid>();
+			}
+			if (ReferredByNodeIds == null)
+			{
+				ReferredByNodeIds = new List<Guid>();
+			}
 		}
 		public NoteData() { } 
 		public NoteData(NoteData? noteData)
@@ -43,7 +76,18 @@ namespace NoteTaking.Domain
 				Write(noteData);
 			}
 		}
-		public void PartiaWrite(NoteData noteData)
+		// Dereference need to be done in application service
+		public void ExpireDereference()
+		{
+			foreach (var seg in Segments)
+			{
+				if (seg.ReferenceNodeId != null)
+				{
+					seg.Text = string.Empty;
+				}
+			}
+		}
+		public void PartialWrite(NoteData noteData)
 		{
 			noteData = noteData.DeepCopy(); 
 			if (noteData.Composition != null)
@@ -99,8 +143,12 @@ namespace NoteTaking.Domain
 
 	public class NoteSegment
 	{
-		public string? Text;
-		public Guid? ReferenceNodeId;
+		public string? Text {  get; set; }
+		public Guid? ReferenceNodeId {  get; set; }
+		public NoteSegment()
+		{
+
+		}
 		public NoteSegment(Guid referenceNodeId)
 		{
 			ReferenceNodeId = referenceNodeId;
@@ -109,22 +157,19 @@ namespace NoteTaking.Domain
 		{
 			Text = text;
 		}
+		public NoteSegment(NoteSegment segment)
+		{
+			Text = segment.Text;
+			ReferenceNodeId = segment.ReferenceNodeId;
+		}
 		
 		public NoteSegment DeepCopy()
 		{
-			NoteSegment segment;
-			if (ReferenceNodeId != null)
+			NoteSegment segment = new NoteSegment()
 			{
-				segment =  new NoteSegment((Guid)ReferenceNodeId);
-			}
-			else if (Text != null)
-			{
-				segment =  new NoteSegment(Text);
-			}
-			else // this will not happen
-			{
-				segment =  new NoteSegment("[Impossible Condition]");
-			}
+				Text = this.Text,
+				ReferenceNodeId = this.ReferenceNodeId
+			};
 			return segment;
 		}
 		

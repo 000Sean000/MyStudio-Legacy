@@ -59,8 +59,6 @@
     <Folder Include="Source\NoteTaking\Field Coordinator\Domain\" />
     <Folder Include="Source\NoteTaking\Field Coordinator\Infrastructure\" />
     <Folder Include="Source\NoteTaking\Field Coordinator\UserInterface\" />
-    <Folder Include="Source\NoteTaking\NodeEditor\Application\" />
-    <Folder Include="Source\NoteTaking\NodeEditor\Infrastructure\" />
     <Folder Include="Source\NoteTaking\NodeEditor\UserInterface\" />
     <Folder Include="Source\BoundedContext\Feature\Application\" />
     <Folder Include="Source\BoundedContext\Feature\Domain\" />
