@@ -23,35 +23,7 @@ namespace NoteTaking.Domain
 		public List<Guid>? InLinkIds { get; set; }
 		#endregion
 
-		public virtual void EnsurePropertyNotNull()
-		{
-			if (Id == null)
-			{
-				Id = default(Guid);
-			}
-			if (NodeClass == null)
-			{
-				NodeClass = default(ENodeClass);
-			}
-			if (ImagePath == null)
-			{
-				ImagePath = "";
-			}
-			if (NoteData == null)
-			{
-				NoteData = new NoteData();
-				NoteData.EnsurePropertyNotNull();
-			}
-			if (OutLinkData == null)
-			{
-				OutLinkData = new Dictionary<Guid, LinkData>();
-			}
-			if (InLinkIds == null)
-			{
-				InLinkIds = new List<Guid>();
-			}
-
-		}
+		
 
 		public NodeData() { }
 		public NodeData(NodeData nodeData)
@@ -140,18 +112,31 @@ namespace NoteTaking.Domain
 		#region
 		#endregion
 
-		#region Note Value Object
+		#region Note
 		public void WriteNote(NoteData data);
 		public NoteData ReadNote();
+		public void WriteNoteSegments(List<NoteSegment> segments);
+		public void ExpireNoteDereference(Guid referenceNodeId); // convenient method, not necessary solution
 		#endregion
 
-		#region Link Entities
-		public void AddLink(Guid linkId, Node targetNode);
-		public void RemoveLink(Guid linkId, Node targetNode);
-		public void WriteLink(Guid linkId, LinkData linkData);
+		#region Link
+		public void WriteLink(Guid linkId, LinkData data);
 		public LinkData ReadLink(Guid linkId);
+		public void AddLink(Guid linkId, LinkData linkData);
+		public void RemoveLink(Guid linkId);
 		#endregion
 
+	}
+	public interface INodeDomainService
+	{
+		#region Note 
+		public string UpdateNoteDereference(List<Guid> branchVisitedNodeIds);
+		#endregion
+
+		#region Link
+		public void AddLink(Guid linkId, LinkData linkData, Node targetNode);
+		public void RemoveLink(Guid linkId, Node targetNode);
+		#endregion
 	}
 	//implementation: public class Node:NodeAggregate, INode {}
 	public class Node : NodeData, INodeAggregate
@@ -168,33 +153,54 @@ namespace NoteTaking.Domain
 			EnsurePropertyNotNull();
 			
 		}
-		public override void EnsurePropertyNotNull()
+		public virtual void EnsurePropertyNotNull()
 		{
-			base.EnsurePropertyNotNull();
+			if (Id == null)
+			{
+				Id = default(Guid);
+			}
+			if (NodeClass == null)
+			{
+				NodeClass = default(ENodeClass);
+			}
+			if (ImagePath == null)
+			{
+				ImagePath = "";
+			}
+
 			InstantiateAggregateMembers();
 
 		}
 		protected void InstantiateAggregateMembers()
 		{
-            if (Note == null)
-            {
+			if (Note == null)
+			{
 				Note = new Note(NoteData);
+				Note.EnsurePropertyNotNull();
 			}
 			if (OutLinks == null)
 			{
 				OutLinks = new Dictionary<Guid, Link>();
-			}
-			if (OutLinkData != null)
-			{
 				foreach (var kvp in OutLinkData)
 				{
 					OutLinks[kvp.Key] = new Link(kvp.Value);
+					OutLinks[kvp.Key].EnsurePropertyNotNull();
 				}
 			}
 			
+
+			
 		}
 
-		#region Note Value Object
+		#region Note 
+		public void ExpireNoteDereference(Guid referenceNodeId)
+		{
+			Note.ExpireDereference(referenceNodeId);
+		}
+		public void WriteNoteSegments(List<NoteSegment> segments)
+		{
+			Note.WriteSegments(segments);
+		}
 		public void WriteNote(NoteData data)
 		{
 			Note.PartialWrite(data);
@@ -205,16 +211,21 @@ namespace NoteTaking.Domain
 		}
 		#endregion
 
-		#region Link Entities
-		public void AddLink(Guid linkId, Node targetNode)
+		#region Link
+		public void WriteLink(Guid linkId, LinkData data)
 		{
-			OutLinks[linkId] = new Link()
-			{
-				Id = linkId,
-				SourceNodeId = Id, 
-				TargetNodeId = targetNode.Id
-			};
-			targetNode.InLinkIds.Add(linkId);
+			OutLinks[linkId].PartialWrite(data);
+		}
+		public LinkData ReadLink(Guid linkId)
+		{
+			return OutLinks[linkId].Read();
+		}
+		public void AddLink(Guid linkId, LinkData linkData)
+		{
+			Link link = new Link((Guid)Id, (Guid)linkData.Id);
+			link.PartialWrite(linkData);
+			OutLinks[linkId] = link;
+			
 		}
 		public void RemoveLink(Guid linkId, Node targetNode)
 		{

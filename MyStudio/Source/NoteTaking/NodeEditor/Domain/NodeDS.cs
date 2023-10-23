@@ -4,32 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using BasicService;
 using Microsoft.Extensions.DependencyInjection;
 
 
-using NoteTaking.Domain;
 
-namespace NoteTaking.Application
+namespace NoteTaking.Domain
 {
 	public interface INodeRepository
 	{
-		public Guid CreateNode();
+		public Node CreateNode();
 		public Node FetchNode(Guid nodeId);
 		public void DeleteNode(Guid nodeId);
 	}
-	public class NodeService
+	public class NodeDomainService
 	{
 		public INodeRepository NodeRepo { get; set; }
 
-		public NodeService(IServiceProvider serviceProvider)
+		public NodeDomainService(INodeRepository nodeRepo)
 		{
-			NodeRepo = serviceProvider.GetRequiredService<INodeRepository>();
+			NodeRepo = nodeRepo;
 		}
-		public Guid CreateNewNode()
+		public Node CreateNewNode()
 		{
-			Guid nodeId = NodeRepo.CreateNode();
-			return nodeId;
+			Node node = NodeRepo.CreateNode();
+			return node;
 		}
 		public void DeleteNode(Guid nodeId)
 		{
@@ -63,12 +61,13 @@ namespace NoteTaking.Application
 				}
 				dereference += seg.Text;
 			}
-			node.WriteNote(new NoteData() { Segments = segments}); // update Node.Note.Segments
+			node.WriteNoteSegments(segments);
 			return dereference;
 		}
-		public void ExpireNoteDereference(Guid nodeId)
+		public void ExpireNoteDereference(Guid nodeId, Guid referenceNodeId)
 		{
-
+			Node node = NodeRepo.FetchNode(nodeId);
+			node.ExpireNoteDereference(referenceNodeId);			
 		}
 		#endregion
 

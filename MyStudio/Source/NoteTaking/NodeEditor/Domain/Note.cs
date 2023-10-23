@@ -20,90 +20,25 @@ namespace NoteTaking.Domain
 		public ENoteImportance? Importance { get; set; }
 		public List<Guid>? ReferringToNodeIds { get; set; }
 		public List<Guid>? ReferredByNodeIds { get; set; }
-		protected List<NoteSegment>? _segments;
-		public List<NoteSegment>? Segments 
-		{	
-			get
-			{
-				return _segments;
-			}
-			set
-			{
-				_segments = value;
-				/// use event bus to update ReferedByNodeIds & expire dereference
-				List<Guid>? referringToNodeIds = new List<Guid>();
-				foreach (var seg in _segments)
-				{
-					Guid? referenceNodeId = seg.ReferenceNodeId;
-					if (referenceNodeId != null)
-					{
-						referringToNodeIds.Add((Guid)referenceNodeId);
-					}
-				}
-				ReferringToNodeIds = referringToNodeIds;
-			}
-		}
+		public List<NoteSegment>? Segments { get; protected set; }
 
-		public void EnsurePropertyNotNull()
-		{
-			if (Composition == null)
-			{
-				Composition = default(ENoteComposition);
-			}
-			if (Importance == null)
-			{
-				Importance = default(ENoteImportance);
-			}
-			if (Segments == null)
-			{
-				Segments = new List<NoteSegment>();
-				Segments.Add(new NoteSegment(""));
-			}
-			if (ReferringToNodeIds == null)
-			{
-				ReferringToNodeIds = new List<Guid>();
-			}
-			if (ReferredByNodeIds == null)
-			{
-				ReferredByNodeIds = new List<Guid>();
-			}
-		}
+		
 		public NoteData() { } 
 		public NoteData(NoteData? noteData)
 		{
 			if (noteData != null)
 			{
 				Write(noteData);
+				Segments = noteData.Segments;
 			}
 		}
-		// Dereference need to be done in application service
-		public void ExpireDereference()
+		public NoteData(List<NoteSegment> segments)
 		{
-			foreach (var seg in Segments)
-			{
-				if (seg.ReferenceNodeId != null)
-				{
-					seg.Text = string.Empty;
-				}
-			}
+			Segments = segments;
 		}
-		public void UpdateSegments(List<NoteSegment> segments)
+		public void WriteSegments(List<NoteSegment> segments)
 		{
-			List<Guid>? referringToNodeIds = new List<Guid>();
-			foreach (var seg in _segments)
-			{
-				Guid? referenceNodeId = seg.ReferenceNodeId;
-				if (referenceNodeId != null)
-				{
-					referringToNodeIds.Add((Guid)referenceNodeId);
-				}
-			}
-			ReferringToNodeIds = referringToNodeIds;
-
-
-
-
-			_segments = segments;
+			Segments = segments;
 		}
 		public void PartialWrite(NoteData noteData)
 		{
@@ -116,20 +51,15 @@ namespace NoteTaking.Domain
 			{
 				Importance = noteData.Importance;
 			}
-			if (noteData.Segments != null)
-			{
-				UpdateSegments(noteData.Segments);
-			}
+			// don't write segments here
 		}
-		public void Write(NoteData noteData)
+		protected void Write(NoteData noteData)
 		{
 
 			noteData = noteData.DeepCopy();
 			Composition = noteData.Composition;
 			Importance = noteData.Importance;
-			Segments = noteData.Segments;
-
-			
+			// don't write segments here
 		}
 
 		public NoteData Read()
@@ -202,13 +132,75 @@ namespace NoteTaking.Domain
 		{
 			EnsurePropertyNotNull();
 		}
-	}
-	public class NoteService
-	{
-
-		public string SegmentToString(NoteSegment segment)
+		public Note(List<NoteSegment> segments) : base(segments)
 		{
-			return "";////
+			EnsurePropertyNotNull();
 		}
+		public void EnsurePropertyNotNull()
+		{
+			if (Composition == null)
+			{
+				Composition = default(ENoteComposition);
+			}
+			if (Importance == null)
+			{
+				Importance = default(ENoteImportance);
+			}
+			if (Segments == null)
+			{
+				Segments = new List<NoteSegment>();
+				Segments.Add(new NoteSegment(""));
+			}
+			if (ReferringToNodeIds == null)
+			{
+				ReferringToNodeIds = new List<Guid>();
+			}
+			if (ReferredByNodeIds == null)
+			{
+				ReferredByNodeIds = new List<Guid>();
+			}
+		}
+		
+		// Dereference need to be done in application service
+		public void ExpireAllDereference()
+		{
+			foreach (var seg in Segments)
+			{
+				if (seg.ReferenceNodeId != null)
+				{
+					seg.Text = null;
+				}
+			}
+		}
+		public void ExpireDereference(Guid referenceNodeId)
+		{
+			foreach (var seg in Segments)
+			{
+				if (seg.ReferenceNodeId == referenceNodeId)
+				{
+					seg.Text = null;
+					return;
+				}
+			}
+		}
+		public void UpdateSegments(List<NoteSegment> segments)
+		{
+			UpdateReferringNodeIds(segments);
+			Segments = segments;
+		}
+		public void UpdateReferringNodeIds(List<NoteSegment> segments)
+		{
+			List<Guid>? referringToNodeIds = new List<Guid>();
+			foreach (var seg in segments)
+			{
+				Guid? referenceNodeId = seg.ReferenceNodeId;
+				if (referenceNodeId != null)
+				{
+					referringToNodeIds.Add((Guid)referenceNodeId);
+				}
+			}
+			ReferringToNodeIds = referringToNodeIds;
+		}
+
 	}
 }

@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="Source\BasicService\PKG\" />
+    <Folder Include="Source\NoteTaking\NodeEditor\Application\" />
     <Folder Include="Source\ServiceOrchestrating\ServiceAssembly\Domain\" />
     <Folder Include="Source\ServiceOrchestrating\ServiceAssembly\Infrastructure\" />
     <Folder Include="Source\ServiceOrchestrating\ServiceAssembly\UserInterface\" />
