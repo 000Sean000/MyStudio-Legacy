@@ -6,12 +6,12 @@ namespace InteractionManaging.Application
 	/// <summary>
 	/// Record commands in Stacks for Redo & Undo
 	/// </summary>
-	public class ActionDirector
+	public class UndoRedoDirector
 	{
-		protected Stack<IAction> _undoStack = new Stack<IAction>();
-		protected Stack<IAction> _redoStack = new Stack<IAction>();
+		protected Stack<ICommandWithUndo> _undoStack = new Stack<ICommandWithUndo>();
+		protected Stack<ICommandWithUndo> _redoStack = new Stack<ICommandWithUndo>();
 
-		public void Execute(IAction command)
+		public void Execute(ICommandWithUndo command)
 		{
 			command.Execute();
 			_undoStack.Push(command);
@@ -22,7 +22,7 @@ namespace InteractionManaging.Application
 		{
 			if (_undoStack.Count > 0)
 			{
-				IAction command = _undoStack.Pop();
+				ICommandWithUndo command = _undoStack.Pop();
 				command.Undo();
 				_redoStack.Push(command);
 			}
@@ -32,7 +32,7 @@ namespace InteractionManaging.Application
 		{
 			if (_redoStack.Count > 0)
 			{
-				IAction command = _redoStack.Pop();
+				ICommandWithUndo command = _redoStack.Pop();
 				command.Execute();
 				_undoStack.Push(command);
 			}

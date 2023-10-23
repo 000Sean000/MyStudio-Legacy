@@ -18,6 +18,8 @@ namespace NoteTaking.Domain
 	{
 		public ENoteComposition? Composition { get; set; }
 		public ENoteImportance? Importance { get; set; }
+		public List<Guid>? ReferringToNodeIds { get; set; }
+		public List<Guid>? ReferredByNodeIds { get; set; }
 		protected List<NoteSegment>? _segments;
 		public List<NoteSegment>? Segments 
 		{	
@@ -41,8 +43,6 @@ namespace NoteTaking.Domain
 				ReferringToNodeIds = referringToNodeIds;
 			}
 		}
-		public List<Guid>? ReferringToNodeIds { get; set; }
-		public List<Guid>? ReferredByNodeIds { get; set; }
 
 		public void EnsurePropertyNotNull()
 		{
@@ -87,6 +87,24 @@ namespace NoteTaking.Domain
 				}
 			}
 		}
+		public void UpdateSegments(List<NoteSegment> segments)
+		{
+			List<Guid>? referringToNodeIds = new List<Guid>();
+			foreach (var seg in _segments)
+			{
+				Guid? referenceNodeId = seg.ReferenceNodeId;
+				if (referenceNodeId != null)
+				{
+					referringToNodeIds.Add((Guid)referenceNodeId);
+				}
+			}
+			ReferringToNodeIds = referringToNodeIds;
+
+
+
+
+			_segments = segments;
+		}
 		public void PartialWrite(NoteData noteData)
 		{
 			noteData = noteData.DeepCopy(); 
@@ -100,7 +118,7 @@ namespace NoteTaking.Domain
 			}
 			if (noteData.Segments != null)
 			{
-				Segments = noteData.Segments;
+				UpdateSegments(noteData.Segments);
 			}
 		}
 		public void Write(NoteData noteData)

@@ -8,23 +8,64 @@ using BasicService;
 
 
 using InteractionManaging.Application;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InteractionManaging
 {
 	// Open Host Service
-	public static class OHS 
+	public class OHS 
 	{
-		public static EventBus EBus {  get; set; }
-		public static CommandQueryBus CQBus {  get; set; }
-		public static ActionDirector Director {  get; set; }
+		protected EventBus EBus {  get; set; }
+		protected CommandQueryBus CQBus {  get; set; }
+		protected UndoRedoDirector Director {  get; set; }
 
-		static OHS()
+		public OHS()
 		{
-			EBus = new EventBus();
-			CQBus = new CommandQueryBus(BasicService.OHS.ServiceProvider);
-			Director = new ActionDirector();
+			BasicService.OHS.Services.AddSingleton<EventBus>();
+			BasicService.OHS.Services.AddSingleton<CommandQueryBus>();
+			BasicService.OHS.Services.AddSingleton<UndoRedoDirector>();
+
+			EBus = (EventBus)BasicService.OHS.ServiceProvider.GetServices<EventBus>();
+			CQBus = (CommandQueryBus)BasicService.OHS.ServiceProvider.GetServices<CommandQueryBus>(); ;
+			Director = (UndoRedoDirector)BasicService.OHS.ServiceProvider.GetServices<UndoRedoDirector>(); ;
+
+
+			
 		}
-		
+		#region Event Bus
+		public void EBusSubscribe<TEvent>(Action<TEvent> handler)
+		{
+			EBus.Subscribe<TEvent>(handler);
+		}
+		public void EBusUnsubscribe<TEvent>(Action<TEvent> handler)
+		{
+			EBus.Unsubscribe<TEvent>(handler);
+		}
+		public void EBusPublish<TEvent>(TEvent eventToPublish)
+		{
+			EBus.Publish<TEvent>(eventToPublish);
+		}
+		#endregion
+		#region CQRS
+
+		#endregion
+		#region Undo-Redo-Director
+		public void NoteExecute(ICommandWithUndo command)
+		{
+			Director.Execute(command);
+		}
+		public void NoteUndo()
+		{
+			Director.Undo();
+		}
+		public void NoteRedo()
+		{
+			Director.Redo();
+		}
+		#endregion
+		#region
+		#endregion
+
 
 	}
 	#region CQRS
@@ -43,7 +84,7 @@ namespace InteractionManaging
 	}
 	#endregion
 	#region Action Director
-	public interface IAction // Undo-able Action
+	public interface ICommandWithUndo // Undo-able Action
 	{
 		void Execute();
 		void Undo();

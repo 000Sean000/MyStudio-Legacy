@@ -17,7 +17,7 @@ namespace InteractionManaging.Application
 			_serviceProvider = serviceProvider;
 		}
 
-		public void Send<TCommand>(TCommand command) where TCommand : IAction
+		public void Send<TCommand>(TCommand command) where TCommand : ICommandWithUndo
 		{
 			var handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
 			var handler = _serviceProvider.GetService(handlerType);

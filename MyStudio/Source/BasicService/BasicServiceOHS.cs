@@ -9,7 +9,8 @@ namespace BasicService
 {
 	public static class OHS
 	{
-		public static IServiceProvider ServiceProvider = new ServiceCollection().BuildServiceProvider();
+		public static IServiceCollection Services = new ServiceCollection();
+		public static IServiceProvider ServiceProvider = Services.BuildServiceProvider();
 	 
 	}
 }
