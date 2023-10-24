@@ -16,13 +16,13 @@ namespace NoteTaking.Domain
 		public Guid? Id { get; set; }
 		public ENodeClass? NodeClass { get; set; }
 		public string? ImagePath { get; set; }
-		public List<Guid>? ReferringToNodeIds { get; protected set; }
-		public List<Guid>? ReferredByNodeIds { get; protected set; }
 
 		#region Aggregate Members
 		public NoteData? NoteData { get; protected set; }
-		public Dictionary<Guid, LinkData>? OutLinkData { get; protected set; }
-		public List<Guid>? InLinkIds { get; protected set; }
+		public Dictionary<Guid, LinkData>? OutLinkData { get; set; }
+		public List<Guid>? InLinkIds { get; set; }
+		public Dictionary<Guid, ReferenceData>? OutReferenceData { get; set; }
+		public List<Guid>? InReferenceIds { get; set; }
 		#endregion
 
 		
@@ -48,19 +48,7 @@ namespace NoteTaking.Domain
 			{
 				ImagePath = nodeData.ImagePath;
 			}
-
-			if (nodeData.NoteData != null)
-			{
-				NoteData = nodeData.NoteData;
-			}
-			if (nodeData.OutLinkData != null)
-			{
-				OutLinkData = nodeData.OutLinkData;
-			}
-			if (nodeData.InLinkIds != null)
-			{
-				InLinkIds = nodeData.InLinkIds;
-			}
+			// don't write member object here
 		}
 		protected void Write(NodeData nodeData)
 		{
@@ -72,6 +60,8 @@ namespace NoteTaking.Domain
 			NoteData = nodeData.NoteData;
 			OutLinkData = nodeData.OutLinkData;
 			InLinkIds = nodeData.InLinkIds;
+			OutReferenceData = nodeData.OutReferenceData;
+			InReferenceIds = nodeData.InReferenceIds;
 		}
 		public NodeData Read()
 		{
@@ -105,7 +95,26 @@ namespace NoteTaking.Domain
 			{
 				nodeData.InLinkIds = new List<Guid>(InLinkIds);
 			}
-
+			if (OutReferenceData == null)
+			{
+				nodeData.OutReferenceData = null;
+			}
+			else
+			{
+				nodeData.OutReferenceData = new Dictionary<Guid, ReferenceData>();
+				foreach (var kvp in OutReferenceData)
+				{
+					nodeData.OutReferenceData[kvp.Key] = kvp.Value.DeepCopy();
+				}
+			}
+			if (InReferenceIds == null)
+			{
+				nodeData.InReferenceIds = null;
+			}
+			else
+			{
+				nodeData.InReferenceIds = new List<Guid>(InReferenceIds);
+			}
 			return nodeData;
 		}
 	}
@@ -126,6 +135,13 @@ namespace NoteTaking.Domain
 		public LinkData ReadLink(Guid linkId);
 		public void AddLink(Guid linkId, LinkData linkData);
 		public void RemoveLink(Guid linkId);
+		#endregion
+
+		#region Reference
+		public void WriteReference(Guid referenceId, ReferenceData referenceData);
+		public ReferenceData ReadReference(Guid referenceId);
+		public void AddReference(Guid referenceId, ReferenceData referenceData);
+		public void RemoveReference(Guid referenceId);
 		#endregion
 
 	}
@@ -149,6 +165,13 @@ namespace NoteTaking.Domain
 		public void AddLinkToNode(Guid nodeId, Guid linkId, LinkData linkData);
 		public void RemoveLinkToNode(Guid nodeId, Guid linkId);
 		#endregion
+
+		#region Reference
+		public void WriteReferenceOfNode(Guid nodeId, Guid referenceId, ReferenceData referenceData);
+		public ReferenceData ReadReferenceOfNode(Guid nodeId, Guid referenceId);
+		public void AddReferenceToNode(Guid nodeId, Guid referenceId, ReferenceData referenceData);
+		public void RemoveReferenceToNode(Guid nodeId, Guid referenceId);
+		#endregion
 	}
 	//implementation: public class Node:NodeAggregate, INode {}
 	public class Node : NodeData, INodeAggregate
@@ -158,6 +181,7 @@ namespace NoteTaking.Domain
 		#region Holding References
 		protected Note? Note { get; set; }
 		protected Dictionary<Guid, Link>? OutLinks { set; get; }
+		protected Dictionary<Guid, Reference>? OutReferences { set; get; }
 
 		#endregion
 		public Node(NodeData nodeData):base(nodeData) 
@@ -179,15 +203,7 @@ namespace NoteTaking.Domain
 			{
 				ImagePath = "";
 			}
-			if (ReferringToNodeIds == null)
-			{
-				ReferringToNodeIds = new List<Guid>();
-			}
-			if (ReferredByNodeIds == null)
-			{
-				ReferredByNodeIds = new List<Guid>();
-			}
-
+			// ... others later, there should not be error if repository work well
 			InstantiateAggregateMembers();
 
 		}
@@ -207,9 +223,18 @@ namespace NoteTaking.Domain
 					OutLinks[kvp.Key].EnsurePropertyNotNull();
 				}
 			}
-			
+			if (OutReferences == null)
+			{
+				OutReferences = new Dictionary<Guid, Reference>();
+				foreach (var kvp in OutReferenceData)
+				{
+					OutReferences[kvp.Key] = new Reference(kvp.Value);
+					OutReferences[kvp.Key].EnsurePropertyNotNull();
+				}
+			}
 
-			
+
+
 		}
 
 		#region Note 
@@ -249,6 +274,30 @@ namespace NoteTaking.Domain
 		{
 			OutLinks.Remove(linkId);
 			OutLinkData.Remove(linkId);
+		}
+
+		#endregion
+
+		#region Ref
+		public void WriteReference(Guid referenceId, ReferenceData referenceData)
+		{
+			OutReferences[referenceId].PartialWrite(referenceData);
+			OutReferenceData[referenceId] = OutReferences[referenceId].Read(); // get updated Reference Data by .Read() due to partial write mechanism
+		}
+		public ReferenceData ReadReference(Guid referenceId)
+		{
+			return OutReferences[referenceId].Read();
+		}
+		public void AddReference(Guid referenceId, ReferenceData referenceData)
+		{
+			Reference reference = new Reference(referenceData);
+			OutReferences[referenceId] = reference;
+			OutReferenceData[referenceId] = referenceData;
+		}
+		public void RemoveReference(Guid referenceId)
+		{
+			OutReferences.Remove(referenceId);
+			OutReferenceData.Remove(referenceId);
 		}
 
 		#endregion

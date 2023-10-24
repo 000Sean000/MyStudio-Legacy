@@ -66,7 +66,7 @@ namespace NoteTaking.Domain
 			{
 				if (seg.Text == null)
 				{
-					Guid referenceNodeId = (Guid)seg.ReferenceNodeId;
+					Guid referenceNodeId = (Guid)seg.ReferenceId;
 					if (referenceNodeId != null && seg.Text == null)
 					{
 						if (branchVisitedNodeIds.Contains((Guid)referenceNodeId))
@@ -88,7 +88,7 @@ namespace NoteTaking.Domain
 		}
 		public bool DoesReferencenRecurseInNode(Guid nodeId, Guid referenceNodeId)
 		{
-
+			return true;
 		}
 		#endregion
 
@@ -106,6 +106,25 @@ namespace NoteTaking.Domain
 
 		}
 		public void RemoveLinkToNode(Guid nodeId, Guid linkId)
+		{
+
+		}
+		#endregion
+
+		#region Reference
+		public void WriteReferenceOfNode(Guid nodeId, Guid linkId, ReferenceData linkData)
+		{
+
+		}
+		public ReferenceData ReadReferenceOfNode(Guid nodeId, Guid linkId)
+		{
+			return NodeRepo.FetchNode(nodeId).ReadReference(linkId);
+		}
+		public void AddReferenceToNode(Guid nodeId, Guid linkId, ReferenceData linkData)
+		{
+
+		}
+		public void RemoveReferenceToNode(Guid nodeId, Guid linkId)
 		{
 
 		}

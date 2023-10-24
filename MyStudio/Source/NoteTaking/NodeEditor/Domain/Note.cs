@@ -18,7 +18,7 @@ namespace NoteTaking.Domain
 	{
 		public ENoteComposition? Composition { get; set; }
 		public ENoteImportance? Importance { get; set; }
-		public List<NoteSegment>? Segments { get; protected set; }
+		public List<NoteSegment>? Segments { get; set; }
 
 		
 		public NoteData() { } 
@@ -84,14 +84,14 @@ namespace NoteTaking.Domain
 	public class NoteSegment
 	{
 		public string? Text {  get; set; }
-		public Guid? ReferenceNodeId {  get; set; }
+		public Guid? ReferenceId {  get; set; }
 		public NoteSegment()
 		{
 
 		}
-		public NoteSegment(Guid referenceNodeId)
+		public NoteSegment(Guid referenceId)
 		{
-			ReferenceNodeId = referenceNodeId;
+			ReferenceId = referenceId;
 		}
 		public NoteSegment(string text)
 		{
@@ -100,7 +100,7 @@ namespace NoteTaking.Domain
 		public NoteSegment(NoteSegment segment)
 		{
 			Text = segment.Text;
-			ReferenceNodeId = segment.ReferenceNodeId;
+			ReferenceId = segment.ReferenceId;
 		}
 		
 		public NoteSegment DeepCopy()
@@ -108,7 +108,7 @@ namespace NoteTaking.Domain
 			NoteSegment segment = new NoteSegment()
 			{
 				Text = this.Text,
-				ReferenceNodeId = this.ReferenceNodeId
+				ReferenceId = this.ReferenceId
 			};
 			return segment;
 		}
@@ -146,40 +146,22 @@ namespace NoteTaking.Domain
 		{
 			foreach (var seg in Segments)
 			{
-				if (seg.ReferenceNodeId != null)
+				if (seg.ReferenceId != null)
 				{
 					seg.Text = null;
 				}
 			}
 		}
-		public void ExpireDereference(Guid referenceNodeId)
+		public void ExpireDereference(Guid referenceId)
 		{
 			foreach (var seg in Segments)
 			{
-				if (seg.ReferenceNodeId == referenceNodeId)
+				if (seg.ReferenceId == referenceId)
 				{
 					seg.Text = null;
 					return;
 				}
 			}
-		}
-		public void UpdateSegments(List<NoteSegment> segments)
-		{
-			UpdateReferringNodeIds(segments);
-			Segments = segments;
-		}
-		public void UpdateReferringNodeIds(List<NoteSegment> segments)
-		{
-			List<Guid>? referringToNodeIds = new List<Guid>();
-			foreach (var seg in segments)
-			{
-				Guid? referenceNodeId = seg.ReferenceNodeId;
-				if (referenceNodeId != null)
-				{
-					referringToNodeIds.Add((Guid)referenceNodeId);
-				}
-			}
-			ReferringToNodeIds = referringToNodeIds;
 		}
 
 	}
