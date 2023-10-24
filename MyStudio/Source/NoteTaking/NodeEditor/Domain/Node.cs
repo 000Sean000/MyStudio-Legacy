@@ -16,11 +16,13 @@ namespace NoteTaking.Domain
 		public Guid? Id { get; set; }
 		public ENodeClass? NodeClass { get; set; }
 		public string? ImagePath { get; set; }
+		public List<Guid>? ReferringToNodeIds { get; protected set; }
+		public List<Guid>? ReferredByNodeIds { get; protected set; }
 
 		#region Aggregate Members
-		public NoteData? NoteData { get; set; }
-		public Dictionary<Guid, LinkData>? OutLinkData { get; set; }
-		public List<Guid>? InLinkIds { get; set; }
+		public NoteData? NoteData { get; protected set; }
+		public Dictionary<Guid, LinkData>? OutLinkData { get; protected set; }
+		public List<Guid>? InLinkIds { get; protected set; }
 		#endregion
 
 		
@@ -33,6 +35,7 @@ namespace NoteTaking.Domain
 
 		public void PartialWrite(NodeData nodeData)
 		{
+			///nodeData = nodeData.DeepCopy();
 			if (nodeData.Id != null)
 			{
 				Id = nodeData.Id;
@@ -59,9 +62,9 @@ namespace NoteTaking.Domain
 				InLinkIds = nodeData.InLinkIds;
 			}
 		}
-		public void Write(NodeData nodeData)
+		protected void Write(NodeData nodeData)
 		{
-			nodeData = nodeData.DeepCopy();
+			///nodeData = nodeData.DeepCopy();
 			Id = nodeData.Id;
 			NodeClass = nodeData.NodeClass;
 			ImagePath = nodeData.ImagePath;
@@ -115,12 +118,11 @@ namespace NoteTaking.Domain
 		#region Note
 		public void WriteNote(NoteData data);
 		public NoteData ReadNote();
-		public void WriteNoteSegments(List<NoteSegment> segments);
 		public void ExpireNoteDereference(Guid referenceNodeId); // convenient method, not necessary solution
 		#endregion
 
 		#region Link
-		public void WriteLink(Guid linkId, LinkData data);
+		public void WriteLink(Guid linkId, LinkData linkData);
 		public LinkData ReadLink(Guid linkId);
 		public void AddLink(Guid linkId, LinkData linkData);
 		public void RemoveLink(Guid linkId);
@@ -129,13 +131,23 @@ namespace NoteTaking.Domain
 	}
 	public interface INodeDomainService
 	{
+		#region Node
+		public Node CreateNewNode();
+		public void DeleteNode(Guid nodeId);
+		#endregion
 		#region Note 
-		public string UpdateNoteDereference(List<Guid> branchVisitedNodeIds);
+		public void WriteNoteOfNode(Guid nodeId, NoteData data);
+		public NoteData ReadNoteOfNode(Guid nodeId);
+		public void ExpireNoteDereferenceOfNode(Guid nodeId, Guid referenceNodeId);
+		public void UpdateNoteDereferenceOfNode(Guid nodeId);
+		public bool DoesReferencenRecurseInNode(Guid nodeId, Guid referenceNodeId);
 		#endregion
 
 		#region Link
-		public void AddLink(Guid linkId, LinkData linkData, Node targetNode);
-		public void RemoveLink(Guid linkId, Node targetNode);
+		public void WriteLinkOfNode(Guid nodeId, Guid linkId, LinkData linkData);
+		public LinkData ReadLinkOfNode(Guid nodeId, Guid linkId);
+		public void AddLinkToNode(Guid nodeId, Guid linkId, LinkData linkData);
+		public void RemoveLinkToNode(Guid nodeId, Guid linkId);
 		#endregion
 	}
 	//implementation: public class Node:NodeAggregate, INode {}
@@ -167,6 +179,14 @@ namespace NoteTaking.Domain
 			{
 				ImagePath = "";
 			}
+			if (ReferringToNodeIds == null)
+			{
+				ReferringToNodeIds = new List<Guid>();
+			}
+			if (ReferredByNodeIds == null)
+			{
+				ReferredByNodeIds = new List<Guid>();
+			}
 
 			InstantiateAggregateMembers();
 
@@ -197,12 +217,10 @@ namespace NoteTaking.Domain
 		{
 			Note.ExpireDereference(referenceNodeId);
 		}
-		public void WriteNoteSegments(List<NoteSegment> segments)
-		{
-			Note.WriteSegments(segments);
-		}
+
 		public void WriteNote(NoteData data)
 		{
+			NoteData = data;
 			Note.PartialWrite(data);
 		}
 		public NoteData ReadNote()
@@ -212,9 +230,10 @@ namespace NoteTaking.Domain
 		#endregion
 
 		#region Link
-		public void WriteLink(Guid linkId, LinkData data)
+		public void WriteLink(Guid linkId, LinkData linkData)
 		{
-			OutLinks[linkId].PartialWrite(data);
+			OutLinks[linkId].PartialWrite(linkData);
+			OutLinkData[linkId] = OutLinks[linkId].Read(); // get updated Link Data by .Read() due to partial write mechanism
 		}
 		public LinkData ReadLink(Guid linkId)
 		{
@@ -222,26 +241,16 @@ namespace NoteTaking.Domain
 		}
 		public void AddLink(Guid linkId, LinkData linkData)
 		{
-			Link link = new Link((Guid)Id, (Guid)linkData.Id);
-			link.PartialWrite(linkData);
+			Link link = new Link(linkData);
 			OutLinks[linkId] = link;
-			
+			OutLinkData[linkId] = linkData;
 		}
-		public void RemoveLink(Guid linkId, Node targetNode)
+		public void RemoveLink(Guid linkId)
 		{
-			
-			targetNode.InLinkIds.Remove(linkId);
 			OutLinks.Remove(linkId);
+			OutLinkData.Remove(linkId);
+		}
 
-		}
-		public void WriteLink(Guid linkId, LinkData linkData)
-		{
-			OutLinks[linkId].PartialWrite(linkData);
-		}
-		public LinkData ReadLink(Guid linkId)
-		{
-			return OutLinks[linkId].Read();
-		}
 		#endregion
 		#endregion
 	}

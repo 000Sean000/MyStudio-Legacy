@@ -17,8 +17,8 @@ namespace NoteTaking.Domain
 	public class LinkData
 	{
 		public Guid? Id { get; set; }
-		public Guid? SourceNodeId { get; protected set; }
-		public Guid? TargetNodeId { get;  protected set; }
+		public Guid? SourceNodeId { get; set; } // will be used by target node to check back
+		public Guid? TargetNodeId { get; set; }
 		public ELinkType? LinkType { get; set; }
 		public Dictionary<ELinkInfoIndex, string>? LinkInfo { get; set; }
 
@@ -31,19 +31,22 @@ namespace NoteTaking.Domain
 				Write(linkData);
 			}
 		}
-		public LinkData(Guid sourceNodeId, Guid targetNodeId)
-		{
-			SourceNodeId = sourceNodeId;
-			TargetNodeId = targetNodeId;
-		}
 
 		public void PartialWrite(LinkData linkData)
 		{
-			linkData = linkData.DeepCopy();
+			///linkData = linkData.DeepCopy();
 
 			if (linkData.Id != null )
 			{
 				Id = linkData.Id;
+			}
+			if (linkData.SourceNodeId != null)
+			{
+				SourceNodeId = linkData.SourceNodeId;
+			}
+			if (linkData.TargetNodeId != null)
+			{
+				TargetNodeId = linkData.TargetNodeId;
 			}
 			if (linkData.LinkType != null ) 
 			{  
@@ -56,7 +59,7 @@ namespace NoteTaking.Domain
 		}
 		protected void Write(LinkData linkData)
 		{
-			linkData = linkData.DeepCopy();
+			///linkData = linkData.DeepCopy();
 			
 			Id = linkData.Id;
 			LinkType = linkData.LinkType;
@@ -101,10 +104,6 @@ namespace NoteTaking.Domain
 			EnsurePropertyNotNull();
 		}
 		public Link(LinkData? linkData) : base(linkData)
-		{
-			EnsurePropertyNotNull();
-		}
-		public Link(Guid sourceNodeId, Guid targetNodeId):base(sourceNodeId, targetNodeId)
 		{
 			EnsurePropertyNotNull();
 		}

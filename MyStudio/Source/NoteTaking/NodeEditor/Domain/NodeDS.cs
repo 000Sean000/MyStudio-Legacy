@@ -16,7 +16,7 @@ namespace NoteTaking.Domain
 		public Node FetchNode(Guid nodeId);
 		public void DeleteNode(Guid nodeId);
 	}
-	public class NodeDomainService
+	public class NodeDomainService: INodeDomainService
 	{
 		public INodeRepository NodeRepo { get; set; }
 
@@ -24,6 +24,7 @@ namespace NoteTaking.Domain
 		{
 			NodeRepo = nodeRepo;
 		}
+		#region Node
 		public Node CreateNewNode()
 		{
 			Node node = NodeRepo.CreateNode();
@@ -33,9 +34,27 @@ namespace NoteTaking.Domain
 		{
 			NodeRepo.DeleteNode(nodeId);
 		}
+		#endregion
+
 		#region Note
-		// usage: method(new List<Guid>(){currentNodeId};
-		public string UpdateNoteDereference(List<Guid> branchVisitedNodeIds)
+		public void WriteNoteOfNode(Guid nodeId, NoteData data)
+		{
+
+		}
+		public NoteData ReadNoteOfNode(Guid nodeId)
+		{
+			return NodeRepo.FetchNode(nodeId).ReadNote();
+		}
+		public void ExpireNoteDereferenceOfNode(Guid nodeId, Guid referenceNodeId)
+		{
+			Node node = NodeRepo.FetchNode(nodeId);
+			node.ExpireNoteDereference(referenceNodeId);
+		}
+		public void UpdateNoteDereferenceOfNode(Guid nodeId)
+		{
+			GetNoteDereference(new List<Guid> { nodeId });
+		}
+		protected string GetNoteDereference(List<Guid> branchVisitedNodeIds)
 		{
 			string dereference = string.Empty;
 
@@ -45,33 +64,51 @@ namespace NoteTaking.Domain
 			List<NoteSegment> segments = node.ReadNote().Segments;
 			foreach (var seg in segments)
 			{
-				Guid referenceNodeId = (Guid)seg.ReferenceNodeId; 
-				if (referenceNodeId != null && seg.Text == null)
+				if (seg.Text == null)
 				{
-					if (branchVisitedNodeIds.Contains((Guid)referenceNodeId)) 
+					Guid referenceNodeId = (Guid)seg.ReferenceNodeId;
+					if (referenceNodeId != null && seg.Text == null)
 					{
-						throw new Exception("[Recursive Reference!]");
-					}
-					else
-					{
-						List<Guid> nextBranchVisitedNodeIds = new List<Guid>(branchVisitedNodeIds);
-						nextBranchVisitedNodeIds.Add(referenceNodeId);
-						seg.Text = UpdateNoteDereference(nextBranchVisitedNodeIds);
+						if (branchVisitedNodeIds.Contains((Guid)referenceNodeId))
+						{
+							throw new Exception("[Recursive Reference!]");
+						}
+						else
+						{
+							List<Guid> nextBranchVisitedNodeIds = new List<Guid>(branchVisitedNodeIds);
+							nextBranchVisitedNodeIds.Add(referenceNodeId);
+							seg.Text = GetNoteDereference(nextBranchVisitedNodeIds);
+						}
 					}
 				}
 				dereference += seg.Text;
 			}
-			node.WriteNoteSegments(segments);
+			node.WriteNote(new NoteData() { Segments = segments });
 			return dereference;
 		}
-		public void ExpireNoteDereference(Guid nodeId, Guid referenceNodeId)
+		public bool DoesReferencenRecurseInNode(Guid nodeId, Guid referenceNodeId)
 		{
-			Node node = NodeRepo.FetchNode(nodeId);
-			node.ExpireNoteDereference(referenceNodeId);			
+
 		}
 		#endregion
 
 		#region Link
+		public void WriteLinkOfNode(Guid nodeId, Guid linkId, LinkData linkData)
+		{
+
+		}
+		public LinkData ReadLinkOfNode(Guid nodeId, Guid linkId)
+		{
+			return NodeRepo.FetchNode(nodeId).ReadLink(linkId);
+		}
+		public void AddLinkToNode(Guid nodeId, Guid linkId, LinkData linkData)
+		{
+
+		}
+		public void RemoveLinkToNode(Guid nodeId, Guid linkId)
+		{
+
+		}
 		#endregion
 
 	}
