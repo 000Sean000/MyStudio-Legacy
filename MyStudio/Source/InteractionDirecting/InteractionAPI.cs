@@ -1,34 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using BasicService;
-
-
-using InteractionManaging.Application;
+using InteractionDirecting.Application;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace InteractionManaging
+#region Dependency
+//using BasicService.API;
+
+#endregion
+
+namespace InteractionDirecting.API
 {
 	// Open Host Service
-	public class OHS 
+	public interface IHosts
+	{
+		#region Event Bus
+		public void EBusSubscribe<TEvent>(Action<TEvent> handler);
+		public void EBusUnsubscribe<TEvent>(Action<TEvent> handler);
+		public void EBusPublish<TEvent>(TEvent eventToPublish);
+		#endregion
+		#region CQRS
+
+		#endregion
+		#region Undo-Redo-Director
+		public void NoteExecute(ICommandWithUndo command);
+		public void NoteUndo();
+		public void NoteRedo();
+		#endregion
+	}
+	public class Host:IHosts
 	{
 		protected EventBus EBus {  get; set; }
 		protected CommandQueryBus CQBus {  get; set; }
 		protected UndoRedoDirector Director {  get; set; }
 
-		public OHS()
+		public Host(IServiceProvider serviceProvider)
 		{
-			BasicService.OHS.Services.AddSingleton<EventBus>();
-			BasicService.OHS.Services.AddSingleton<CommandQueryBus>();
-			BasicService.OHS.Services.AddSingleton<UndoRedoDirector>();
 
-			EBus = (EventBus)BasicService.OHS.ServiceProvider.GetServices<EventBus>();
-			CQBus = (CommandQueryBus)BasicService.OHS.ServiceProvider.GetServices<CommandQueryBus>(); ;
-			Director = (UndoRedoDirector)BasicService.OHS.ServiceProvider.GetServices<UndoRedoDirector>(); ;
-
+			EBus = (EventBus)serviceProvider.GetServices<EventBus>();
+			CQBus = (CommandQueryBus)serviceProvider.GetServices<CommandQueryBus>(); ;
+			Director = (UndoRedoDirector)serviceProvider.GetServices<UndoRedoDirector>(); ;
+			
 
 			
 		}
@@ -63,8 +79,7 @@ namespace InteractionManaging
 			Director.Redo();
 		}
 		#endregion
-		#region
-		#endregion
+		
 
 
 	}
@@ -83,11 +98,7 @@ namespace InteractionManaging
 		TResult Handle(TQuery query);
 	}
 	#endregion
-	#region Action Director
-	public interface ICommandWithUndo // Undo-able Action
-	{
-		void Execute();
-		void Undo();
-	}
+	#region Undo/Redo Director
+	
 	#endregion
 }

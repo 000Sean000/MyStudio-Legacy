@@ -20,9 +20,9 @@ namespace NoteTaking.Domain
 		#region Aggregate Members
 		public NoteData? NoteData { get; protected set; }
 		public Dictionary<Guid, LinkData>? OutLinkData { get; set; }
-		public List<Guid>? InLinkIds { get; set; }
+		public Dictionary<Guid, Guid>? InLinkNodeIdPairs { get; set; } // dictionary of (linkId, nodeId) pairs
 		public Dictionary<Guid, ReferenceData>? OutReferenceData { get; set; }
-		public List<Guid>? InReferenceIds { get; set; }
+		public Dictionary<Guid, Guid>? InReferenceNodeIdPairs { get; set; } // dictionary of (referenceId, NodeId) pairs
 		#endregion
 
 		
@@ -59,9 +59,9 @@ namespace NoteTaking.Domain
 
 			NoteData = nodeData.NoteData;
 			OutLinkData = nodeData.OutLinkData;
-			InLinkIds = nodeData.InLinkIds;
+			InLinkNodeIdPairs = nodeData.InLinkNodeIdPairs;
 			OutReferenceData = nodeData.OutReferenceData;
-			InReferenceIds = nodeData.InReferenceIds;
+			InReferenceNodeIdPairs = nodeData.InReferenceNodeIdPairs;
 		}
 		public NodeData Read()
 		{
@@ -87,13 +87,13 @@ namespace NoteTaking.Domain
 					nodeData.OutLinkData[kvp.Key] = kvp.Value.DeepCopy();
 				}
 			}
-			if (InLinkIds == null)
+			if (InLinkNodeIdPairs == null)
 			{
-				nodeData.InLinkIds = null;
+				nodeData.InLinkNodeIdPairs = null;
 			}
 			else
 			{
-				nodeData.InLinkIds = new List<Guid>(InLinkIds);
+				nodeData.InLinkNodeIdPairs = new Dictionary<Guid, Guid>(InLinkNodeIdPairs);
 			}
 			if (OutReferenceData == null)
 			{
@@ -107,13 +107,13 @@ namespace NoteTaking.Domain
 					nodeData.OutReferenceData[kvp.Key] = kvp.Value.DeepCopy();
 				}
 			}
-			if (InReferenceIds == null)
+			if (InReferenceNodeIdPairs == null)
 			{
-				nodeData.InReferenceIds = null;
+				nodeData.InReferenceNodeIdPairs = null;
 			}
 			else
 			{
-				nodeData.InReferenceIds = new List<Guid>(InReferenceIds);
+				nodeData.InReferenceNodeIdPairs = new Dictionary<Guid, Guid>(InReferenceNodeIdPairs);
 			}
 			return nodeData;
 		}
@@ -127,7 +127,7 @@ namespace NoteTaking.Domain
 		#region Note
 		public void WriteNote(NoteData data);
 		public NoteData ReadNote();
-		public void ExpireNoteDereference(Guid referenceNodeId); // convenient method, not necessary solution
+		public void ExpireNoteDereference(Guid referenceId); 
 		#endregion
 
 		#region Link
@@ -152,10 +152,10 @@ namespace NoteTaking.Domain
 		public void DeleteNode(Guid nodeId);
 		#endregion
 		#region Note 
-		public void WriteNoteOfNode(Guid nodeId, NoteData data);
+		public void WriteNoteOfNode(Guid nodeId, NoteData noteData, Dictionary<Guid, ReferenceData>? newReferenceData);
 		public NoteData ReadNoteOfNode(Guid nodeId);
 		public void ExpireNoteDereferenceOfNode(Guid nodeId, Guid referenceNodeId);
-		public void UpdateNoteDereferenceOfNode(Guid nodeId);
+		public string GetNoteDereferenceOfNode(Guid nodeId);
 		public bool DoesReferencenRecurseInNode(Guid nodeId, Guid referenceNodeId);
 		#endregion
 
@@ -163,7 +163,7 @@ namespace NoteTaking.Domain
 		public void WriteLinkOfNode(Guid nodeId, Guid linkId, LinkData linkData);
 		public LinkData ReadLinkOfNode(Guid nodeId, Guid linkId);
 		public void AddLinkToNode(Guid nodeId, Guid linkId, LinkData linkData);
-		public void RemoveLinkToNode(Guid nodeId, Guid linkId);
+		public void RemoveLinkFromNode(Guid nodeId, Guid linkId);
 		#endregion
 
 		#region Reference
@@ -207,7 +207,7 @@ namespace NoteTaking.Domain
 			InstantiateAggregateMembers();
 
 		}
-		protected void InstantiateAggregateMembers()
+		public void InstantiateAggregateMembers()
 		{
 			if (Note == null)
 			{
@@ -238,9 +238,9 @@ namespace NoteTaking.Domain
 		}
 
 		#region Note 
-		public void ExpireNoteDereference(Guid referenceNodeId)
+		public void ExpireNoteDereference(Guid referenceId)
 		{
-			Note.ExpireDereference(referenceNodeId);
+			Note.ExpireDereference(referenceId);
 		}
 
 		public void WriteNote(NoteData data)

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using InteractionManaging;
+using InteractionDirecting;
 
-namespace InteractionManaging.Application
+namespace InteractionDirecting.Application
 {
 	public class CommandQueryBus
 	{

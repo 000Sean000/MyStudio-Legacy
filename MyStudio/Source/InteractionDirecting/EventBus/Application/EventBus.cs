@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InteractionManaging.Application
+namespace InteractionDirecting.Application
 {
 	public class EventBus
 	{

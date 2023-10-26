@@ -1,11 +1,17 @@
 ﻿using System.Collections.Generic;
-namespace InteractionManaging.Application
+namespace InteractionDirecting.Application
 {
 
 
 	/// <summary>
 	/// Record commands in Stacks for Redo & Undo
 	/// </summary>
+	
+	public interface ICommandWithUndo // Undo-able Action
+	{
+		void Execute();
+		void Undo();
+	}
 	public class UndoRedoDirector
 	{
 		protected Stack<ICommandWithUndo> _undoStack = new Stack<ICommandWithUndo>();

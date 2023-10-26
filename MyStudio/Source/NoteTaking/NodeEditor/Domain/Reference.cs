@@ -7,18 +7,18 @@ using static System.Resources.ResXFileRef;
 
 namespace NoteTaking.Domain
 {
-	public delegate string RefConverter(string text, object? arg = null);
-	public enum EReferenceType
+	public delegate string Dereferencer(string text, object? arg = null);
+	public enum EDereferencerType
 	{
 		Direct
 	}
 	public static class RefConfig
 	{
-		public static Dictionary<EReferenceType, RefConverter> Converters { get;}
+		public static Dictionary<EDereferencerType, Dereferencer> Dereferencer { get;}
 		static RefConfig()
 		{
-			Converters = new Dictionary<EReferenceType, RefConverter>();
-			Converters[EReferenceType.Direct] = DirectConvert;
+			Dereferencer = new Dictionary<EDereferencerType, Dereferencer>();
+			Dereferencer[EDereferencerType.Direct] = DirectConvert;
 		}
 		public static string DirectConvert(string text, object? arg = null)
 		{
@@ -30,7 +30,7 @@ namespace NoteTaking.Domain
 		public Guid? Id { get; set; }
 		public Guid? SourceNodeId { get; set; } // will be used by target node to check back
 		public Guid? TargetNodeId { get; set; }
-		public EReferenceType? ReferenceType { get; set; }
+		public EDereferencerType? DereferencerType { get; set; }
 
 
 		public ReferenceData() { }
@@ -59,9 +59,9 @@ namespace NoteTaking.Domain
 			{
 				TargetNodeId = referenceData.TargetNodeId;
 			}
-			if (referenceData.ReferenceType != null)
+			if (referenceData.DereferencerType != null)
 			{
-				ReferenceType = referenceData.ReferenceType;
+				DereferencerType = referenceData.DereferencerType;
 			}
 		}
 		protected void Write(ReferenceData referenceData)
@@ -69,7 +69,7 @@ namespace NoteTaking.Domain
 			///referenceData = referenceData.DeepCopy();
 
 			Id = referenceData.Id;
-			ReferenceType = referenceData.ReferenceType;
+			DereferencerType = referenceData.DereferencerType;
 
 		}
 
@@ -85,7 +85,7 @@ namespace NoteTaking.Domain
 			referenceData.Id = Id;
 			referenceData.SourceNodeId = SourceNodeId;
 			referenceData.TargetNodeId = TargetNodeId;
-			referenceData.ReferenceType = ReferenceType;
+			referenceData.DereferencerType = DereferencerType;
 			return referenceData;
 		}
 	}
@@ -93,7 +93,7 @@ namespace NoteTaking.Domain
 	public class Reference: ReferenceData
 	{
 
-		public RefConverter? Converter { get; set; }
+		public Dereferencer? Dereferencer { get; set; }
 
 		public Reference() : base()
 		{
@@ -117,9 +117,9 @@ namespace NoteTaking.Domain
 			{
 				TargetNodeId = default(Guid);
 			}
-			if (ReferenceType == null)
+			if (DereferencerType == null)
 			{
-				ReferenceType = default(EReferenceType);
+				DereferencerType = default(EDereferencerType);
 			}
 		}
 
