@@ -20,12 +20,16 @@ namespace NoteTaking.Domain
 		#region Aggregate Members
 		public NoteData? NoteData { get; protected set; }
 		public Dictionary<Guid, LinkData>? OutLinkData { get; set; }
-		public Dictionary<Guid, Guid>? InLinkNodeIdPairs { get; set; } // dictionary of (linkId, nodeId) pairs
+		public Dictionary<Guid, Guid>? InLinkNodeIdPairs { get; set; } 
+			// dictionary of (linkId, nodeId) pairs;
+			// node may be multiple linked, should not be key of dictionary
 		public Dictionary<Guid, ReferenceData>? OutReferenceData { get; set; }
-		public Dictionary<Guid, Guid>? InReferenceNodeIdPairs { get; set; } // dictionary of (referenceId, NodeId) pairs
+		public Dictionary<Guid, Guid>? InReferenceNodeIdPairs { get; set; } 
+			// dictionary of (referenceId, NodeId) pairs;
+			// node may be multiple linked, should not be key of dictionary
 		#endregion
 
-		
+
 
 		public NodeData() { }
 		public NodeData(NodeData nodeData)
@@ -118,7 +122,42 @@ namespace NoteTaking.Domain
 			return nodeData;
 		}
 	}
+	public interface INodeAggregateRoot
+	{
+		#region Note
+		public ENoteComposition NoteComposition { get; set; }
+		public ENoteImportance NoteImportance { get; set; }
+		public List<NoteSegment> NoteSegments { get; set; }
 
+		public void ExpireNoteDereference(Guid referenceId);
+		#endregion
+
+
+		#region
+		public void WriteLinkType(Guid linkId, ELinkType linkType);
+		public ELinkType ReadLinkType(Guid linkId);
+		public void WriteLinkInfo(Guid linkId, ELinkInfoIndex linkInfoIndex, string text);
+		public string ReadLinkInfo(Guid linkId, ELinkInfoIndex linkInfoIndex);
+
+		public Guid ReadLinkSourceId(Guid linkId);
+		public Guid ReadLinkTargetId(Guid linkId);
+
+		public void AddLink(Guid linkId, LinkData linkData);
+		public void RemoveLink(Guid linkId);
+		#endregion
+
+		#region Reference
+		public void WriteDereferencerType(Guid referenceId, EDereferencerType dereferencerType);
+		public EDereferencerType ReadDereferencerType(Guid referencId);
+
+		public Guid ReadReferenceSourceId(Guid referenceId);
+		public Guid ReadReferenceTargetId(Guid referenceId);
+
+		public void AddReference(Guid referenceId, ReferenceData referenceData);
+		public void RemoveReference(Guid referenceId);
+		#endregion
+
+	}
 	public interface INodeAggregate
 	{
 		#region
@@ -166,11 +205,13 @@ namespace NoteTaking.Domain
 		public void RemoveLinkFromNode(Guid nodeId, Guid linkId);
 		#endregion
 
-		#region Reference
+		#region Reference (Reference is only required in Note operation)
+		/*
 		public void WriteReferenceOfNode(Guid nodeId, Guid referenceId, ReferenceData referenceData);
 		public ReferenceData ReadReferenceOfNode(Guid nodeId, Guid referenceId);
 		public void AddReferenceToNode(Guid nodeId, Guid referenceId, ReferenceData referenceData);
 		public void RemoveReferenceToNode(Guid nodeId, Guid referenceId);
+		*/
 		#endregion
 	}
 	//implementation: public class Node:NodeAggregate, INode {}

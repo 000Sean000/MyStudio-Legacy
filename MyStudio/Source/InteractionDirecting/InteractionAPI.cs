@@ -4,19 +4,20 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using InteractionDirecting.Application;
 using Microsoft.Extensions.DependencyInjection;
 
 #region Dependency
 //using BasicService.API;
+using InteractionDirecting.Application;
 
 #endregion
 
 namespace InteractionDirecting.API
 {
-	// Open Host Service
-	public interface IHosts
+	// OHS: Open Host Service,
+	// let API interface lay in application layer,
+	// OHS implementation can be in infrastructure layer
+	public interface IAPI
 	{
 		#region Event Bus
 		public void EBusSubscribe<TEvent>(Action<TEvent> handler);
@@ -32,21 +33,39 @@ namespace InteractionDirecting.API
 		public void NoteRedo();
 		#endregion
 	}
-	public class Host:IHosts
-	{
-		protected EventBus EBus {  get; set; }
-		protected CommandQueryBus CQBus {  get; set; }
-		protected UndoRedoDirector Director {  get; set; }
+	#region CQRS
+	public interface ICommand { }
 
-		public Host(IServiceProvider serviceProvider)
+	public interface IQuery<TResult> { }
+
+	public interface ICommandHandler<TCommand> where TCommand : ICommand
+	{
+		void Handle(TCommand command);
+	}
+
+	public interface IQueryHandler<TQuery, TResult> where TQuery : IQuery<TResult>
+	{
+		TResult Handle(TQuery query);
+	}
+	#endregion
+	#region Undo/Redo Director
+
+
+	public class OHS : IAPI
+	{
+		protected EventBus EBus { get; set; }
+		protected CommandQueryBus CQBus { get; set; }
+		protected UndoRedoDirector Director { get; set; }
+
+		public OHS(IServiceProvider serviceProvider)
 		{
 
 			EBus = (EventBus)serviceProvider.GetServices<EventBus>();
 			CQBus = (CommandQueryBus)serviceProvider.GetServices<CommandQueryBus>(); ;
 			Director = (UndoRedoDirector)serviceProvider.GetServices<UndoRedoDirector>(); ;
-			
 
-			
+
+
 		}
 		#region Event Bus
 		public void EBusSubscribe<TEvent>(Action<TEvent> handler)
@@ -79,26 +98,10 @@ namespace InteractionDirecting.API
 			Director.Redo();
 		}
 		#endregion
-		
+
 
 
 	}
-	#region CQRS
-	public interface ICommand { }
 
-	public interface IQuery<TResult> { }
-
-	public interface ICommandHandler<TCommand> where TCommand : ICommand
-	{
-		void Handle(TCommand command);
-	}
-
-	public interface IQueryHandler<TQuery, TResult> where TQuery : IQuery<TResult>
-	{
-		TResult Handle(TQuery query);
-	}
-	#endregion
-	#region Undo/Redo Director
-	
 	#endregion
 }

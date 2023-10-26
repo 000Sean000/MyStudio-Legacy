@@ -5,7 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using InteractionDirecting;
+#region Dependency
 
+using InteractionDirecting.API;
+#endregion
 namespace InteractionDirecting.Application
 {
 	public class CommandQueryBus

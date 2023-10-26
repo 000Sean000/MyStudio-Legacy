@@ -24,7 +24,7 @@ namespace ServiceOrchestrating.Application
 			ServiceProvider = BasicService.API.Host.ServiceProvider;
 
 			#region Interactoin Directing
-			BasicService.API.Host.ServiceCollection.AddSingleton<InteractionDirecting.API.IHosts, InteractionDirecting.API.Host>();
+			BasicService.API.Host.ServiceCollection.AddSingleton<InteractionDirecting.API.IAPI, InteractionDirecting.API.OHS>();
 			BasicService.API.Host.ServiceCollection.AddSingleton<EventBus>();
 			BasicService.API.Host.ServiceCollection.AddSingleton<CommandQueryBus>();
 			BasicService.API.Host.ServiceCollection.AddSingleton<UndoRedoDirector>();

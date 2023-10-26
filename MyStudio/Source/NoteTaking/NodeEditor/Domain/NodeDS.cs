@@ -16,6 +16,7 @@ namespace NoteTaking.Domain
 		public Node FetchNode(Guid nodeId);
 		public void DeleteNode(Guid nodeId);
 	}
+
 	public class NodeDomainService: INodeDomainService
 	{
 		public INodeRepository NodeRepo { get; set; }
@@ -205,23 +206,25 @@ namespace NoteTaking.Domain
 		}
 		#endregion
 
-		#region Reference
-		public void WriteReferenceOfNode(Guid nodeId, Guid linkId, ReferenceData linkData)
+		#region Reference (Reference is only required in Note operation)
+		/*
+		public void WriteReferenceOfNode(Guid nodeId, Guid referenceId, ReferenceData referenceData)
 		{
 
 		}
-		public ReferenceData ReadReferenceOfNode(Guid nodeId, Guid linkId)
+		public ReferenceData ReadReferenceOfNode(Guid nodeId, Guid referenceId)
 		{
-			return NodeRepo.FetchNode(nodeId).ReadReference(linkId);
+			return NodeRepo.FetchNode(nodeId).ReadReference(referenceId);
 		}
-		public void AddReferenceToNode(Guid nodeId, Guid linkId, ReferenceData linkData)
-		{
-
-		}
-		public void RemoveReferenceToNode(Guid nodeId, Guid linkId)
+		public void AddReferenceToNode(Guid nodeId, Guid referenceId, ReferenceData referenceData)
 		{
 
 		}
+		public void RemoveReferenceToNode(Guid nodeId, Guid referenceId)
+		{
+
+		}
+		*/
 		#endregion
 
 	}

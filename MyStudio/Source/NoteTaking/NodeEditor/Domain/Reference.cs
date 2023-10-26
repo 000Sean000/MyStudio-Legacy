@@ -46,7 +46,7 @@ namespace NoteTaking.Domain
 		public void PartialWrite(ReferenceData referenceData)
 		{
 			///referenceData = referenceData.DeepCopy();
-
+			/*
 			if (referenceData.Id != null)
 			{
 				Id = referenceData.Id;
@@ -59,6 +59,7 @@ namespace NoteTaking.Domain
 			{
 				TargetNodeId = referenceData.TargetNodeId;
 			}
+			*/
 			if (referenceData.DereferencerType != null)
 			{
 				DereferencerType = referenceData.DereferencerType;
@@ -69,6 +70,8 @@ namespace NoteTaking.Domain
 			///referenceData = referenceData.DeepCopy();
 
 			Id = referenceData.Id;
+			SourceNodeId = referenceData.SourceNodeId;
+			TargetNodeId = referenceData.TargetNodeId;
 			DereferencerType = referenceData.DereferencerType;
 
 		}

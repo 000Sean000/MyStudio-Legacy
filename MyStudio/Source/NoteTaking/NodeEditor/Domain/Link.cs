@@ -35,7 +35,7 @@ namespace NoteTaking.Domain
 		public void PartialWrite(LinkData linkData)
 		{
 			///linkData = linkData.DeepCopy();
-
+			/*
 			if (linkData.Id != null )
 			{
 				Id = linkData.Id;
@@ -48,6 +48,7 @@ namespace NoteTaking.Domain
 			{
 				TargetNodeId = linkData.TargetNodeId;
 			}
+			*/
 			if (linkData.LinkType != null ) 
 			{  
 				LinkType = linkData.LinkType; 
@@ -62,6 +63,8 @@ namespace NoteTaking.Domain
 			///linkData = linkData.DeepCopy();
 			
 			Id = linkData.Id;
+			SourceNodeId = linkData.SourceNodeId;
+			TargetNodeId = linkData.TargetNodeId;
 			LinkType = linkData.LinkType;
 			LinkInfo = linkData.LinkInfo;
 
