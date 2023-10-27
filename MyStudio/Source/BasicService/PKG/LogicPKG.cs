@@ -32,7 +32,14 @@ namespace PKG
 			}
 		}
 	}
-
+	/// <summary>
+	/// to update:
+	/// Finite State Machine can has 4 types of actions:
+	/// entry action
+	/// exit action
+	/// input action
+	/// transition action
+	/// </summary>
 	public class FiniteStateMachine<S>
 	{
 		

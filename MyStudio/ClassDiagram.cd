@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BasicService.API.Host" Collapsed="true">
+    <Position X="22.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Source\BasicService\BasicServiceAPI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InteractionDirecting.API.OHS" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAACACFAAAAAEAAAAAUAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\InteractionAPI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="InteractionDirecting.Application.CommandQueryBus" Collapsed="true">
+    <Position X="18.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\CommandQueryBus\Application\CommandQueryBus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InteractionDirecting.Application.EventBus" Collapsed="true">
+    <Position X="20.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAACAAAAQAAAACAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\EventBus\Application\EventBus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InteractionDirecting.Application.UndoRedoDirector" Collapsed="true">
+    <Position X="22.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAEBAQAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\UndoRedoActions\Application\UndoRedoDirector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Application.NodeApplicationService" Collapsed="true">
+    <Position X="24" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAABAAEAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Application\NodeAS.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.LinkData" Collapsed="true">
+    <Position X="6.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQACAAAAAAAAAAAAAAAAAEAkAAAIAAAAAAAAIAEAQAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Link.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.Link" Collapsed="true">
+    <Position X="9.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Link.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.NodeData" Collapsed="true">
+    <Position X="11" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACgACAAAAAAAIAIAAAAIAgAAAIAAAAAAAAACEAQAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Node.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.Node" Collapsed="true">
+    <Position X="11" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAEEAAAAAAEDMAAAAAEAAAASASDAAAAAAAAEAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Node.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.1" />
+  </Class>
+  <Class Name="NoteTaking.Domain.NodeDomainService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAICAAAAEACAIAIAAAAACEAAQAgAAIAAEAgAAAAAI=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\NodeDS.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="NoteTaking.Domain.NoteData" Collapsed="true">
+    <Position X="6.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAoACAIAAAAAAAAAAEAQAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Note.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.NoteSegment" Collapsed="true">
+    <Position X="22.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Note.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.Note" Collapsed="true">
+    <Position X="9.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEgAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Note.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.RefConfig" Collapsed="true">
+    <Position X="18.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Reference.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.ReferenceData" Collapsed="true">
+    <Position X="6.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQACAAAAAAAAAAAAAAAAAEAgAAAIAAAAAAAAAAMAQAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Reference.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Domain.Reference" Collapsed="true">
+    <Position X="9.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Reference.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NoteTaking.Infrastructure.NodeRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAEAAAAEAAAAAAAAAAgAAAQBAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Infrastructure\NodeRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceOrchestrating.Application.ServiceRegistrar" Collapsed="true">
+    <Position X="20.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Source\ServiceOrchestrating\ServiceAssembly\Application\ServiceRegistrar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="InteractionDirecting.API.IAPI" Collapsed="true">
+    <Position X="18.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACACEAAAAAEAAAAAEAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\InteractionAPI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InteractionDirecting.API.ICommand" Collapsed="true">
+    <Position X="20.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\InteractionAPI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InteractionDirecting.API.IQuery&lt;TResult&gt;" Collapsed="true">
+    <Position X="18.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\InteractionAPI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InteractionDirecting.API.ICommandHandler&lt;TCommand&gt;" Collapsed="true">
+    <Position X="22.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\InteractionAPI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InteractionDirecting.API.IQueryHandler&lt;TQuery, TResult&gt;" Collapsed="true">
+    <Position X="20.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\InteractionAPI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="InteractionDirecting.Application.ICommandWithUndo" Collapsed="true">
+    <Position X="24" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\InteractionDirecting\UndoRedoActions\Application\UndoRedoDirector.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NoteTaking.Domain.INodeAggregateRoot" Collapsed="true">
+    <Position X="20.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAMAgAAAIAAIEAAAAAEQBgEAACSAAAACQAAACAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Node.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NoteTaking.Domain.INodeAggregate" Collapsed="true">
+    <Position X="5.5" Y="3.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAgAEEAAAAAAEBMAAAAAAAAAACASCAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Node.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NoteTaking.Domain.INodeDomainService" Collapsed="true">
+    <Position X="22.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAICAAAAEACAAAIAAAAACEAAAAgAAIAAAAgAAAAAI=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Node.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NoteTaking.Domain.INodeRepository" Collapsed="true">
+    <Position X="24" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAEAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\NodeDS.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="NoteTaking.Domain.ELinkType" Collapsed="true">
+    <Position X="22.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAEEAAAEAAAAAAAAEAAAAAAAAAAAACAAAAAgAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Link.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="NoteTaking.Domain.ELinkInfoIndex" Collapsed="true">
+    <Position X="20.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAwAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Link.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="NoteTaking.Domain.ENodeClass" Collapsed="true">
+    <Position X="24" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAEAAAAAAAAAAACAAAAAAAAAAQAAAAADAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Node.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="NoteTaking.Domain.ENoteComposition" Collapsed="true">
+    <Position X="18.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAACABAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Note.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="NoteTaking.Domain.ENoteImportance" Collapsed="true">
+    <Position X="20.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Note.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="NoteTaking.Domain.EDereferencerType" Collapsed="true">
+    <Position X="18.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Reference.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="NoteTaking.Domain.Dereferencer" Collapsed="true">
+    <Position X="18.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Source\NoteTaking\NodeEditor\Domain\Reference.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

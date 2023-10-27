@@ -160,6 +160,7 @@ namespace NoteTaking.Domain
 	}
 	public interface INodeAggregate
 	{
+
 		#region
 		#endregion
 
@@ -225,6 +226,8 @@ namespace NoteTaking.Domain
 		protected Dictionary<Guid, Reference>? OutReferences { set; get; }
 
 		#endregion
+
+
 		public Node(NodeData nodeData):base(nodeData) 
 		{
 			EnsurePropertyNotNull();
