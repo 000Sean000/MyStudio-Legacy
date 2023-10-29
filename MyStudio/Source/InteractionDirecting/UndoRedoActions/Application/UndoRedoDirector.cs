@@ -1,4 +1,9 @@
 ﻿using System.Collections.Generic;
+
+#region Dependency
+using InteractionDirecting.API;
+#endregion
+
 namespace InteractionDirecting.Application
 {
 
@@ -7,11 +12,7 @@ namespace InteractionDirecting.Application
 	/// Record commands in Stacks for Redo & Undo
 	/// </summary>
 	
-	public interface ICommandWithUndo // Undo-able Action
-	{
-		void Execute();
-		void Undo();
-	}
+	
 	public class UndoRedoDirector
 	{
 		protected Stack<ICommandWithUndo> _undoStack = new Stack<ICommandWithUndo>();

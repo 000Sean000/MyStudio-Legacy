@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Resources.ResXFileRef;
 
+#region Dependency
+using Enums;
+#endregion
+
 namespace NoteTaking.Domain
 {
 	public delegate string Dereferencer(string text, object? arg = null);
-	public enum EDereferencerType
-	{
-		Direct
-	}
+	
 	public static class RefConfig
 	{
 		public static Dictionary<EDereferencerType, Dereferencer> Dereferencer { get;}
@@ -39,11 +40,11 @@ namespace NoteTaking.Domain
 		{
 			if (referenceData != null)
 			{
-				Write(referenceData);
+				Overwrite(referenceData);
 			}
 		}
 
-		public void PartialWrite(ReferenceData referenceData)
+		public void Write(ReferenceData referenceData)
 		{
 			///referenceData = referenceData.DeepCopy();
 			/*
@@ -65,7 +66,7 @@ namespace NoteTaking.Domain
 				DereferencerType = referenceData.DereferencerType;
 			}
 		}
-		protected void Write(ReferenceData referenceData)
+		protected void Overwrite(ReferenceData referenceData)
 		{
 			///referenceData = referenceData.DeepCopy();
 

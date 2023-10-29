@@ -4,16 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#region Dependency
+using Enums;
+#endregion
+
 namespace NoteTaking.Domain
 {
-	public enum ENoteComposition
-	{
-		Mixed, OnlyText, OnlySingleRef 
-	}
-	public enum ENoteImportance
-	{
-		EssentialData, ContextualLabel
-	}
+	
 	public class NoteData
 	{
 		public ENoteComposition? Composition { get; set; }
@@ -26,11 +23,11 @@ namespace NoteTaking.Domain
 		{
 			if (noteData != null)
 			{
-				Write(noteData);
+				Overwrite(noteData);
 				Segments = noteData.Segments;
 			}
 		}
-		public void PartialWrite(NoteData noteData)
+		public void Write(NoteData noteData)
 		{
 			///noteData = noteData.DeepCopy(); 
 			if (noteData.Composition != null)
@@ -46,7 +43,7 @@ namespace NoteTaking.Domain
 				Segments = noteData.Segments;
 			}
 		}
-		protected void Write(NoteData noteData)
+		protected void Overwrite(NoteData noteData)
 		{
 			///noteData = noteData.DeepCopy();
 			Composition = noteData.Composition;

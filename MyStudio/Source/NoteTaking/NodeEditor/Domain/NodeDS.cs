@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
-
+#region Dependency
+using Enums;
+#endregion
 
 namespace NoteTaking.Domain
 {
@@ -19,7 +21,7 @@ namespace NoteTaking.Domain
 
 	public class NodeDomainService: INodeDomainService
 	{
-		public INodeRepository NodeRepo { get; set; }
+		protected INodeRepository NodeRepo { get; set; }
 
 		public NodeDomainService(INodeRepository nodeRepo)
 		{
@@ -35,16 +37,26 @@ namespace NoteTaking.Domain
 		{
 			NodeRepo.DeleteNode(nodeId);
 		}
+		public NodeData ReadNode(Guid nodeId)
+		{
+			Node node = NodeRepo.FetchNode(nodeId);
+			return node.Read();
+		}
+		public void WriteNode(Guid nodeId, NodeData nodeData)
+		{
+			Node node = NodeRepo.FetchNode(nodeId);
+			node.Write(nodeData);
+		}
 		#endregion
 
 		#region Note
-		public void WriteNoteOfNode(Guid nodeId, NoteData noteData, Dictionary<Guid, ReferenceData>? newReferenceDataPairs) 
+		public void WriteNoteOfNode(Guid nodeId, NoteData noteData, Dictionary<Guid, ReferenceData> newReferenceDataPairs) 
 		{
 			//// check whether reference recurses-> do this job in application service
 			// suppose that references do not cause reursion
 			Node node = NodeRepo.FetchNode(nodeId);
 
-			// write node's node
+			// write node's note
 			node.WriteNote(noteData);
 			
 			// update node's outgoing references

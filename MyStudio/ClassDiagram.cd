@@ -172,13 +172,6 @@
       <FileName>Source\InteractionDirecting\InteractionAPI.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="InteractionDirecting.Application.ICommandWithUndo" Collapsed="true">
-    <Position X="24" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Source\InteractionDirecting\UndoRedoActions\Application\UndoRedoDirector.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="NoteTaking.Domain.INodeAggregateRoot" Collapsed="true">
     <Position X="20.5" Y="8.75" Width="1.5" />
     <TypeIdentifier>

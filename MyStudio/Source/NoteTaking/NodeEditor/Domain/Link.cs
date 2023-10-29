@@ -4,16 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#region Dependency
+using Enums;
+#endregion
+
 namespace NoteTaking.Domain
 {
-	public enum ELinkType
-	{
-		RelateTo, RootIn, Aggregate, ComposedOf, Implement, NextIs, ReferTo
-	}
-	public enum ELinkInfoIndex
-	{
-		ArrowTail, ArrowBody, ArrowHead, UserDefLinkType
-	}
+	
 	public class LinkData
 	{
 		public Guid? Id { get; set; }
@@ -28,11 +25,11 @@ namespace NoteTaking.Domain
 		{
 			if (linkData != null)
 			{
-				Write(linkData);
+				Overwrite(linkData);
 			}
 		}
 
-		public void PartialWrite(LinkData linkData)
+		public void Write(LinkData linkData)
 		{
 			///linkData = linkData.DeepCopy();
 			/*
@@ -58,7 +55,7 @@ namespace NoteTaking.Domain
 				LinkInfo = linkData.LinkInfo;
 			}
 		}
-		protected void Write(LinkData linkData)
+		protected void Overwrite(LinkData linkData)
 		{
 			///linkData = linkData.DeepCopy();
 			
@@ -131,7 +128,7 @@ namespace NoteTaking.Domain
 			if (LinkInfo == null)
 			{
 				LinkInfo = new Dictionary<ELinkInfoIndex, string>();
-				foreach (ELinkInfoIndex index in Enum.GetValues(typeof(ELinkInfoIndex)))
+				foreach (ELinkInfoIndex index in System.Enum.GetValues(typeof(ELinkInfoIndex)))
 				{
 					LinkInfo[index] = string.Empty;
 				}

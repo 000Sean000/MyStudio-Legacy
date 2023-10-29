@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#region Dependency
+using Enums;
+#endregion
+
 namespace NoteTaking.Domain
 {
-	public enum ENodeClass
-	{
-		Basic, Group, Template, Instance, Database, Options, Selections
-	}
+	
 	public class NodeData
 	{
 		
@@ -34,10 +35,10 @@ namespace NoteTaking.Domain
 		public NodeData() { }
 		public NodeData(NodeData nodeData)
 		{
-			Write(nodeData);
+			Overwrite(nodeData);
 		}
 
-		public void PartialWrite(NodeData nodeData)
+		public void Write(NodeData nodeData)
 		{
 			///nodeData = nodeData.DeepCopy();
 			if (nodeData.Id != null)
@@ -54,7 +55,7 @@ namespace NoteTaking.Domain
 			}
 			// don't write member object here
 		}
-		protected void Write(NodeData nodeData)
+		protected void Overwrite(NodeData nodeData)
 		{
 			///nodeData = nodeData.DeepCopy();
 			Id = nodeData.Id;
@@ -290,7 +291,7 @@ namespace NoteTaking.Domain
 		public void WriteNote(NoteData data)
 		{
 			NoteData = data;
-			Note.PartialWrite(data);
+			Note.Write(data);
 		}
 		public NoteData ReadNote()
 		{
@@ -301,7 +302,7 @@ namespace NoteTaking.Domain
 		#region Link
 		public void WriteLink(Guid linkId, LinkData linkData)
 		{
-			OutLinks[linkId].PartialWrite(linkData);
+			OutLinks[linkId].Write(linkData);
 			OutLinkData[linkId] = OutLinks[linkId].Read(); // get updated Link Data by .Read() due to partial write mechanism
 		}
 		public LinkData ReadLink(Guid linkId)
@@ -325,7 +326,7 @@ namespace NoteTaking.Domain
 		#region Ref
 		public void WriteReference(Guid referenceId, ReferenceData referenceData)
 		{
-			OutReferences[referenceId].PartialWrite(referenceData);
+			OutReferences[referenceId].Write(referenceData);
 			OutReferenceData[referenceId] = OutReferences[referenceId].Read(); // get updated Reference Data by .Read() due to partial write mechanism
 		}
 		public ReferenceData ReadReference(Guid referenceId)

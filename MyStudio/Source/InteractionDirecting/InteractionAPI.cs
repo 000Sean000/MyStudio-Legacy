@@ -49,7 +49,12 @@ namespace InteractionDirecting.API
 	}
 	#endregion
 	#region Undo/Redo Director
-
+	public interface ICommandWithUndo // Undo-able Action
+	{
+		void Execute();
+		void Undo();
+	}
+	#endregion
 
 	public class OHS : IAPI
 	{
@@ -103,5 +108,4 @@ namespace InteractionDirecting.API
 
 	}
 
-	#endregion
 }
