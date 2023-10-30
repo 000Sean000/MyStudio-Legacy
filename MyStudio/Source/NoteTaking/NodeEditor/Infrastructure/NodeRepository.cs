@@ -29,6 +29,10 @@ namespace NoteTaking.Infrastructure
 		{
 
 		}
+		public void RecoverNode(NodeData nodeData)
+		{
+
+		}
 		protected Node LoadNode(Guid nodeId)
 		{
 			return new Node(new NodeData());////

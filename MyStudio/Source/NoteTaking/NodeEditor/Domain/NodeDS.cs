@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * Maintain consistency of aggregate, encapsulate it to Domain Service
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +20,10 @@ namespace NoteTaking.Domain
 		public Node CreateNode();
 		public Node FetchNode(Guid nodeId);
 		public void DeleteNode(Guid nodeId);
-		public Node RecoverNode(NodeData nodeData); // Undo DeleteNode()
+		public void RecoverNode(NodeData nodeData); // Undo DeleteNode()
 	}
 
+	// don't return Aggregate instance to outside, just return data instance
 	public class NodeDomainService: INodeDomainService
 	{
 		protected INodeRepository NodeRepo { get; set; }
@@ -29,10 +33,10 @@ namespace NoteTaking.Domain
 			NodeRepo = nodeRepo;
 		}
 		#region Node
-		public Node CreateNewNode()
+		public NodeData CreateNewNode()
 		{
 			Node node = NodeRepo.CreateNode();
-			return node;
+			return node.Read();
 		}
 		public void DeleteNode(Guid nodeId)
 		{

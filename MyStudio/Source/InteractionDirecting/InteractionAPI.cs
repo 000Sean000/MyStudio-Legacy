@@ -28,9 +28,9 @@ namespace InteractionDirecting.API
 
 		#endregion
 		#region Undo-Redo-Director
-		public void NoteExecute(ICommandWithUndo command);
-		public void NoteUndo();
-		public void NoteRedo();
+		public void Execute(ICommandWithUndo command);
+		public void Undo();
+		public void Redo();
 		#endregion
 	}
 	#region CQRS
@@ -68,7 +68,7 @@ namespace InteractionDirecting.API
 			EBus = (EventBus)serviceProvider.GetServices<EventBus>();
 			CQBus = (CommandQueryBus)serviceProvider.GetServices<CommandQueryBus>(); ;
 			Director = (UndoRedoDirector)serviceProvider.GetServices<UndoRedoDirector>(); ;
-
+			///Director = new UndoRedoDirector(); // multi-director for separate field/vault/scope
 
 
 		}
@@ -90,15 +90,15 @@ namespace InteractionDirecting.API
 
 		#endregion
 		#region Undo-Redo-Director
-		public void NoteExecute(ICommandWithUndo command)
+		public void Execute(ICommandWithUndo command)
 		{
 			Director.Execute(command);
 		}
-		public void NoteUndo()
+		public void Undo()
 		{
 			Director.Undo();
 		}
-		public void NoteRedo()
+		public void Redo()
 		{
 			Director.Redo();
 		}

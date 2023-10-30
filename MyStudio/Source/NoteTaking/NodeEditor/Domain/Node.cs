@@ -189,7 +189,7 @@ namespace NoteTaking.Domain
 	public interface INodeDomainService
 	{
 		#region Node
-		public Node CreateNewNode();
+		public NodeData CreateNewNode();
 		public void DeleteNode(Guid nodeId);
 		#endregion
 		#region Note 
@@ -323,7 +323,7 @@ namespace NoteTaking.Domain
 
 		#endregion
 
-		#region Ref
+		#region Reference
 		public void WriteReference(Guid referenceId, ReferenceData referenceData)
 		{
 			OutReferences[referenceId].Write(referenceData);
