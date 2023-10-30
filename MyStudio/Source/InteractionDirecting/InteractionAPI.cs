@@ -56,13 +56,13 @@ namespace InteractionDirecting.API
 	}
 	#endregion
 
-	public class OHS : IAPI
+	public class API : IAPI
 	{
 		protected EventBus EBus { get; set; }
 		protected CommandQueryBus CQBus { get; set; }
 		protected UndoRedoDirector Director { get; set; }
 
-		public OHS(IServiceProvider serviceProvider)
+		public API(IServiceProvider serviceProvider)
 		{
 
 			EBus = (EventBus)serviceProvider.GetServices<EventBus>();

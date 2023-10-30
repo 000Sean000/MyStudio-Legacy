@@ -195,7 +195,7 @@ namespace NoteTaking.Domain
 		#region Note 
 		public void WriteNoteOfNode(Guid nodeId, NoteData noteData, Dictionary<Guid, ReferenceData>? newReferenceData);
 		public NoteData ReadNoteOfNode(Guid nodeId);
-		public void ExpireNoteDereferenceOfNode(Guid nodeId, Guid referenceNodeId);
+		///public void ExpireNoteDereferenceOfNode(Guid nodeId, Guid referenceNodeId);
 		public string GetNoteDereferenceOfNode(Guid nodeId);
 		public bool DoesReferencenRecurseInNode(Guid nodeId, Guid referenceNodeId);
 		#endregion

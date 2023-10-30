@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using BasicService.API;
 using InteractionDirecting.API;
 using InteractionDirecting.Application;
+using NoteTaking.Infrastructure;
+using NoteTaking.Domain;
 
 #endregion
 
@@ -24,13 +26,18 @@ namespace ServiceOrchestrating.Application
 			ServiceProvider = BasicService.API.Host.ServiceProvider;
 
 			#region Interactoin Directing
-			ServiceCollection.AddSingleton<InteractionDirecting.API.IAPI, InteractionDirecting.API.OHS>();
+			ServiceCollection.AddSingleton<InteractionDirecting.API.IAPI, InteractionDirecting.API.API>();
 			ServiceCollection.AddSingleton<EventBus>();
 			ServiceCollection.AddSingleton<CommandQueryBus>();
 			ServiceCollection.AddSingleton<UndoRedoDirector>();
 			#endregion
 
-			#region
+			#region Note Taking
+			///ServiceCollection.AddSingleton<NoteTaking.API.IAPI, NoteTaking.API.API>();
+			ServiceCollection.AddSingleton<NoteTaking.Domain.INodeRepository, NoteTaking.Infrastructure.NodeRepository>();
+
+			ServiceCollection.AddSingleton<NoteTaking.Application.NodeApplicationService>();
+
 			#endregion
 
 			#region

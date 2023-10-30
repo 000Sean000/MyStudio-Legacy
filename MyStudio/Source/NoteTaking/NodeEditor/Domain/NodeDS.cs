@@ -17,6 +17,7 @@ namespace NoteTaking.Domain
 		public Node CreateNode();
 		public Node FetchNode(Guid nodeId);
 		public void DeleteNode(Guid nodeId);
+		public Node RecoverNode(NodeData nodeData); // Undo DeleteNode()
 	}
 
 	public class NodeDomainService: INodeDomainService
@@ -36,6 +37,10 @@ namespace NoteTaking.Domain
 		public void DeleteNode(Guid nodeId)
 		{
 			NodeRepo.DeleteNode(nodeId);
+		}
+		public void RecoverNode(NodeData nodeData)
+		{
+			NodeRepo.RecoverNode(nodeData);
 		}
 		public NodeData ReadNode(Guid nodeId)
 		{
@@ -100,11 +105,13 @@ namespace NoteTaking.Domain
 		{
 			return NodeRepo.FetchNode(nodeId).ReadNote();
 		}
+		/*
 		public void ExpireNoteDereferenceOfNode(Guid nodeId, Guid referenceId)
 		{
 			Node node = NodeRepo.FetchNode(nodeId);
 			node.ExpireNoteDereference(referenceId);
 		}
+		*/
 		public string GetNoteDereferenceOfNode(Guid nodeId)
 		{
 			return GetNoteDereferenceWithUpdate(new List<Guid> { nodeId });

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 #region Dependency
 using Enums;
 #endregion
+
+// variable name should be the same for mapping
 namespace DTOs
 {
 	public class NodeDTO
