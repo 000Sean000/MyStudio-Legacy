@@ -26,15 +26,14 @@ namespace NoteTaking.Application
 		protected readonly IServiceProvider _serviceProvider;
 		protected INodeRepository _nodeRepository;
 		protected NodeDomainService _nodeDS;
-		protected InteractionDirecting.API.IAPI _interactionAPI;
+		protected InteractionDirecting.API.IInteractionAPI _interactionAPI;
 		
 		public NodeApplicationService(IServiceProvider serviceProvider)
 		{
 			_serviceProvider = serviceProvider;
-			_nodeRepository = serviceProvider.GetService<INodeRepository>();
-			_nodeDS = new NodeDomainService(_nodeRepository);
+			_nodeDS = serviceProvider.GetRequiredService<NodeDomainService>();
 
-			_interactionAPI = serviceProvider.GetService<InteractionDirecting.API.IAPI>();
+			_interactionAPI = serviceProvider.GetService<InteractionDirecting.API.IInteractionAPI>();
 		}
 
 		#region Node		

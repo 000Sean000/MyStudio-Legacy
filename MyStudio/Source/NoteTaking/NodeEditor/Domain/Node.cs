@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DTOs;
 
 #region Dependency
 using Enums;
@@ -11,7 +12,7 @@ using Enums;
 namespace NoteTaking.Domain
 {
 	
-	public class NodeData
+	public class NodeData: INodeDTO<NoteData, LinkData, ReferenceData, NoteSegment>
 	{
 		
 		public Guid? Id { get; set; }
@@ -19,7 +20,7 @@ namespace NoteTaking.Domain
 		public string? ImagePath { get; set; }
 
 		#region Aggregate Members
-		public NoteData? NoteData { get; protected set; }
+		public NoteData? NoteData { get; set; }
 		public Dictionary<Guid, LinkData>? OutLinkData { get; set; }
 		public Dictionary<Guid, Guid>? InLinkNodeIdPairs { get; set; } 
 			// dictionary of (linkId, nodeId) pairs;

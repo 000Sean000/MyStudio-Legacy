@@ -7,10 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 #region Dependency
 using BasicService.API;
+using NoteTaking.API;
+using NoteTaking.Domain;
+using NoteTaking.Application;
+using NoteTaking.Infrastructure;
 using InteractionDirecting.API;
 using InteractionDirecting.Application;
-using NoteTaking.Infrastructure;
-using NoteTaking.Domain;
 
 #endregion
 
@@ -22,21 +24,21 @@ namespace ServiceOrchestrating.Application
 		IServiceProvider ServiceProvider { get; set; }
 		public ServiceRegistrar()
 		{
-			ServiceCollection = BasicService.API.Host.ServiceCollection;
-			ServiceProvider = BasicService.API.Host.ServiceProvider;
+			ServiceCollection = BasicAPI.ServiceCollection;
+			ServiceProvider = BasicAPI.ServiceProvider;
 
 			#region Interactoin Directing
-			ServiceCollection.AddSingleton<InteractionDirecting.API.IAPI, InteractionDirecting.API.API>();
+			ServiceCollection.AddSingleton<IInteractionAPI,InteractionAPI>();
 			ServiceCollection.AddSingleton<EventBus>();
 			ServiceCollection.AddSingleton<CommandQueryBus>();
 			ServiceCollection.AddSingleton<UndoRedoDirector>();
 			#endregion
 
 			#region Note Taking
-			///ServiceCollection.AddSingleton<NoteTaking.API.IAPI, NoteTaking.API.API>();
-			ServiceCollection.AddSingleton<NoteTaking.Domain.INodeRepository, NoteTaking.Infrastructure.NodeRepository>();
-
-			ServiceCollection.AddSingleton<NoteTaking.Application.NodeApplicationService>();
+			ServiceCollection.AddSingleton<INodeEditorAPI, NodeEditorAPI>();
+			ServiceCollection.AddSingleton<INodeRepository, NodeRepository>();
+			ServiceCollection.AddSingleton<NodeDomainService>();
+			ServiceCollection.AddSingleton<NodeApplicationService>();
 
 			#endregion
 

@@ -1,46 +1,65 @@
 ﻿namespace MyStudio
 {
-    partial class StartupScreen
-    {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+	partial class StartupScreen
+	{
+		/// <summary>
+		///  Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		///  Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            SuspendLayout();
-            // 
-            // Form1
-            // 
-            AutoScaleDimensions = new SizeF(12F, 26F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1507, 847);
-            Margin = new Padding(4);
-            Name = "Form1";
-            Text = "Form1";
-            ResumeLayout(false);
-        }
+		/// <summary>
+		///  Required method for Designer support - do not modify
+		///  the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StartupScreen));
+			pictureBox1 = new PictureBox();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+			SuspendLayout();
+			// 
+			// pictureBox1
+			// 
+			pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+			pictureBox1.InitialImage = (Image)resources.GetObject("pictureBox1.InitialImage");
+			pictureBox1.Location = new Point(396, 147);
+			pictureBox1.Name = "pictureBox1";
+			pictureBox1.Size = new Size(435, 240);
+			pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+			pictureBox1.TabIndex = 0;
+			pictureBox1.TabStop = false;
+			// 
+			// StartupScreen
+			// 
+			AutoScaleDimensions = new SizeF(11F, 23F);
+			AutoScaleMode = AutoScaleMode.Font;
+			ClientSize = new Size(1381, 749);
+			Controls.Add(pictureBox1);
+			Margin = new Padding(4);
+			Name = "StartupScreen";
+			Text = "Form1";
+			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+			ResumeLayout(false);
+		}
 
-        #endregion
-    }
+		#endregion
+
+		private PictureBox pictureBox1;
+	}
 }
+

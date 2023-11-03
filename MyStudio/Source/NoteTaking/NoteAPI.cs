@@ -7,14 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
+
 
 #region Dependency
 using DTOs;
+using EvntObj;
 using InteractionDirecting.API;
 using NoteTaking.Application;
-using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
-using EvntObj;
 using NoteTaking.Domain;
 
 #endregion
@@ -32,10 +33,10 @@ namespace NoteTaking.API
 			CreateMap<ReferenceData, ReferenceDTO>().ReverseMap();
 		}
 	}
-	public interface IAPI
+	public interface INodeEditorAPI
 	{
 		public Guid CreateNewNode();
-		public Guid DeleteNode(Guid nodeId);
+		public void DeleteNode(Guid nodeId);
 		public NodeDTO ReadNode(Guid nodeId);
 		public void WriteNode(Guid nodeId, NodeDTO nodeDTO);
 		public NoteDTO ReadNoteOfNode(Guid nodeId);
@@ -49,23 +50,19 @@ namespace NoteTaking.API
 
 	}
 	
-	public class API
+	public class NodeEditorAPI:INodeEditorAPI
 	{
 		protected readonly IServiceProvider _serviceProvider;
-		protected INodeRepository _nodeRepository;
 		protected NodeApplicationService _nodeAS;
-		protected NodeApplicationService NodeAS { get; set; }
-		protected InteractionDirecting.API.IAPI _interactionAPI;
+		protected InteractionDirecting.API.IInteractionAPI _interactionAPI;
 
 		public IMapper Mapper { get; set; }
 
-		public API(IServiceProvider serviceProvider)
+		public NodeEditorAPI(IServiceProvider serviceProvider)
 		{
 			_serviceProvider = serviceProvider;
-			_nodeRepository = serviceProvider.GetService<INodeRepository>();
 			_nodeAS = serviceProvider.GetService<NodeApplicationService>();
-
-			_interactionAPI = serviceProvider.GetService<InteractionDirecting.API.IAPI>();
+			_interactionAPI = serviceProvider.GetService<InteractionDirecting.API.IInteractionAPI>();
 
 			var mapperConfig = new MapperConfiguration(cfg =>
 			{
@@ -90,11 +87,6 @@ namespace NoteTaking.API
 
 			NodeDeleted nodeDeleted = new NodeDeleted() { NodeId = nodeId };
 			_interactionAPI.EBusPublish<NodeDeleted>(nodeDeleted);
-		}
-		public void RecoverNode(NodeDTO nodeDTO)
-		{
-			NodeData nodeData = Mapper.Map<NodeData>(nodeDTO);
-			_nodeAS.RecoverNode(nodeData);
 		}
 		public NodeDTO ReadNode(Guid nodeId)
 		{

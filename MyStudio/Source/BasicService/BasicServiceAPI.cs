@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BasicService.API
 {
 
-	public static class Host
+	public static class BasicAPI
 	{
 		public static IServiceCollection ServiceCollection = new ServiceCollection();
 		public static IServiceProvider ServiceProvider = ServiceCollection.BuildServiceProvider();

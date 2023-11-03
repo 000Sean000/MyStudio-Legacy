@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DTOs;
 
 #region Dependency
 using Enums;
@@ -10,8 +11,41 @@ using Enums;
 
 namespace NoteTaking.Domain
 {
-	
-	public class NoteData
+	public class NoteSegment: INoteSegmentDTO
+	{
+		public string? Text { get; set; }
+		public Guid? ReferenceId { get; set; }
+		public NoteSegment()
+		{
+
+		}
+		public NoteSegment(Guid referenceId)
+		{
+			ReferenceId = referenceId;
+		}
+		public NoteSegment(string text)
+		{
+			Text = text;
+		}
+		public NoteSegment(NoteSegment segment)
+		{
+			Text = segment.Text;
+			ReferenceId = segment.ReferenceId;
+		}
+
+		public NoteSegment DeepCopy()
+		{
+			NoteSegment segment = new NoteSegment()
+			{
+				Text = this.Text,
+				ReferenceId = this.ReferenceId
+			};
+			return segment;
+		}
+
+	}
+
+	public class NoteData: INoteDTO<NoteSegment>
 	{
 		public ENoteComposition? Composition { get; set; }
 		public ENoteImportance? Importance { get; set; }
@@ -78,39 +112,6 @@ namespace NoteTaking.Domain
 		
 	}
 
-	public class NoteSegment
-	{
-		public string? Text {  get; set; }
-		public Guid? ReferenceId {  get; set; }
-		public NoteSegment()
-		{
-
-		}
-		public NoteSegment(Guid referenceId)
-		{
-			ReferenceId = referenceId;
-		}
-		public NoteSegment(string text)
-		{
-			Text = text;
-		}
-		public NoteSegment(NoteSegment segment)
-		{
-			Text = segment.Text;
-			ReferenceId = segment.ReferenceId;
-		}
-		
-		public NoteSegment DeepCopy()
-		{
-			NoteSegment segment = new NoteSegment()
-			{
-				Text = this.Text,
-				ReferenceId = this.ReferenceId
-			};
-			return segment;
-		}
-		
-	}
 	public class Note: NoteData
 	{
 		public Note() : base()

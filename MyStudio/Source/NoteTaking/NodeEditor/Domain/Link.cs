@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DTOs;
 
 #region Dependency
 using Enums;
@@ -11,7 +12,7 @@ using Enums;
 namespace NoteTaking.Domain
 {
 	
-	public class LinkData
+	public class LinkData: ILinkDTO
 	{
 		public Guid? Id { get; set; }
 		public Guid? SourceNodeId { get; set; } // will be used by target node to check back
@@ -31,8 +32,7 @@ namespace NoteTaking.Domain
 
 		public void Write(LinkData linkData)
 		{
-			///linkData = linkData.DeepCopy();
-			/*
+			
 			if (linkData.Id != null )
 			{
 				Id = linkData.Id;
@@ -45,7 +45,7 @@ namespace NoteTaking.Domain
 			{
 				TargetNodeId = linkData.TargetNodeId;
 			}
-			*/
+			
 			if (linkData.LinkType != null ) 
 			{  
 				LinkType = linkData.LinkType; 

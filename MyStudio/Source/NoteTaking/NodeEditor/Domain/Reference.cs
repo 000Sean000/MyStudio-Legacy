@@ -7,6 +7,7 @@ using static System.Resources.ResXFileRef;
 
 #region Dependency
 using Enums;
+using DTOs;
 #endregion
 
 namespace NoteTaking.Domain
@@ -26,7 +27,7 @@ namespace NoteTaking.Domain
 			return text;
 		}
 	}
-	public class ReferenceData
+	public class ReferenceData: IReferenceDTO
 	{
 		public Guid? Id { get; set; }
 		public Guid? SourceNodeId { get; set; } // will be used by target node to check back
@@ -46,8 +47,6 @@ namespace NoteTaking.Domain
 
 		public void Write(ReferenceData referenceData)
 		{
-			///referenceData = referenceData.DeepCopy();
-			/*
 			if (referenceData.Id != null)
 			{
 				Id = referenceData.Id;
@@ -60,7 +59,7 @@ namespace NoteTaking.Domain
 			{
 				TargetNodeId = referenceData.TargetNodeId;
 			}
-			*/
+			
 			if (referenceData.DereferencerType != null)
 			{
 				DereferencerType = referenceData.DereferencerType;

@@ -17,7 +17,7 @@ namespace InteractionDirecting.API
 	// OHS: Open Host Service,
 	// let API interface lay in application layer,
 	// OHS implementation can be in infrastructure layer
-	public interface IAPI
+	public interface IInteractionAPI
 	{
 		#region Event Bus
 		public void EBusSubscribe<TEvent>(Action<TEvent> handler);
@@ -56,13 +56,13 @@ namespace InteractionDirecting.API
 	}
 	#endregion
 
-	public class API : IAPI
+	public class InteractionAPI : IInteractionAPI
 	{
 		protected EventBus EBus { get; set; }
 		protected CommandQueryBus CQBus { get; set; }
 		protected UndoRedoDirector Director { get; set; }
 
-		public API(IServiceProvider serviceProvider)
+		public InteractionAPI(IServiceProvider serviceProvider)
 		{
 
 			EBus = (EventBus)serviceProvider.GetServices<EventBus>();

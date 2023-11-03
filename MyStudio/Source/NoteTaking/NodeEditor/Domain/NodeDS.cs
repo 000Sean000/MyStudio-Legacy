@@ -26,34 +26,34 @@ namespace NoteTaking.Domain
 	// don't return Aggregate instance to outside, just return data instance
 	public class NodeDomainService: INodeDomainService
 	{
-		protected INodeRepository NodeRepo { get; set; }
+		protected INodeRepository _nodeRepo { get; set; }
 
-		public NodeDomainService(INodeRepository nodeRepo)
+		public NodeDomainService(IServiceProvider serviceProvider)
 		{
-			NodeRepo = nodeRepo;
+			_nodeRepo = serviceProvider.GetRequiredService<INodeRepository>();
 		}
 		#region Node
 		public NodeData CreateNewNode()
 		{
-			Node node = NodeRepo.CreateNode();
+			Node node = _nodeRepo.CreateNode();
 			return node.Read();
 		}
 		public void DeleteNode(Guid nodeId)
 		{
-			NodeRepo.DeleteNode(nodeId);
+			_nodeRepo.DeleteNode(nodeId);
 		}
 		public void RecoverNode(NodeData nodeData)
 		{
-			NodeRepo.RecoverNode(nodeData);
+			_nodeRepo.RecoverNode(nodeData);
 		}
 		public NodeData ReadNode(Guid nodeId)
 		{
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 			return node.Read();
 		}
 		public void WriteNode(Guid nodeId, NodeData nodeData)
 		{
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 			node.Write(nodeData);
 		}
 		#endregion
@@ -63,7 +63,7 @@ namespace NoteTaking.Domain
 		{
 			//// check whether reference recurses-> do this job in application service
 			// suppose that references do not cause reursion
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 
 			// write node's note
 			node.WriteNote(noteData);
@@ -88,26 +88,26 @@ namespace NoteTaking.Domain
 
 			foreach (var kvp in removedOutReferenceNodeIds) // remove old reference
 			{
-				Node removedNode = NodeRepo.FetchNode(kvp.Value);
+				Node removedNode = _nodeRepo.FetchNode(kvp.Value);
 				removedNode.RemoveReference(kvp.Key);
 			}
 			foreach (var kvp in newReferenceDataPairs) // add new reference
 			{
-				Node outNode = NodeRepo.FetchNode((Guid)kvp.Value.TargetNodeId);
+				Node outNode = _nodeRepo.FetchNode((Guid)kvp.Value.TargetNodeId);
 				outNode.AddReference(kvp.Key, kvp.Value);
 			}
 
 			// expire incoming reference node's dereference
 			foreach (var kvp in node.InReferenceNodeIdPairs)
 			{
-				Node inNode = NodeRepo.FetchNode(kvp.Value);
+				Node inNode = _nodeRepo.FetchNode(kvp.Value);
 				inNode.ExpireNoteDereference(kvp.Key);
 			}
 		
 		}
 		public NoteData ReadNoteOfNode(Guid nodeId)
 		{
-			return NodeRepo.FetchNode(nodeId).ReadNote();
+			return _nodeRepo.FetchNode(nodeId).ReadNote();
 		}
 		/*
 		public void ExpireNoteDereferenceOfNode(Guid nodeId, Guid referenceId)
@@ -125,7 +125,7 @@ namespace NoteTaking.Domain
 			string dereference = string.Empty;
 
 			Guid nodeId = branchVisitedNodeIds.Last();
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 			
 			List<NoteSegment> segments = node.ReadNote().Segments;
 			foreach (var seg in segments)
@@ -165,7 +165,7 @@ namespace NoteTaking.Domain
 		{
 			
 			Guid nodeId = branchVisitedNodeIds.Last();
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 
 			List<NoteSegment> segments = node.ReadNote().Segments;
 			foreach (var seg in segments)
@@ -198,31 +198,31 @@ namespace NoteTaking.Domain
 		#region Link
 		public void WriteLinkOfNode(Guid nodeId, Guid linkId, LinkData linkData)
 		{
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 			node.WriteLink(linkId, linkData);
 				
 		}
 		public LinkData ReadLinkOfNode(Guid nodeId, Guid linkId)
 		{
-			return NodeRepo.FetchNode(nodeId).ReadLink(linkId);
+			return _nodeRepo.FetchNode(nodeId).ReadLink(linkId);
 		}
 		public void AddLinkToNode(Guid nodeId, Guid linkId, LinkData linkData)
 		{
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 
 			node.AddLink(linkId, linkData);
 
 			// update target node's incoming links
-			Node targetNode = NodeRepo.FetchNode((Guid)linkData.TargetNodeId);
+			Node targetNode = _nodeRepo.FetchNode((Guid)linkData.TargetNodeId);
 			targetNode.InLinkNodeIdPairs[linkId] = nodeId;
 		}
 		public void RemoveLinkFromNode(Guid nodeId, Guid linkId)
 		{
-			Node node = NodeRepo.FetchNode(nodeId);
+			Node node = _nodeRepo.FetchNode(nodeId);
 
 			// update target node's incoming links
 			Guid targetNodeId = node.InLinkNodeIdPairs[linkId];
-			Node targetNode = NodeRepo.FetchNode(targetNodeId);
+			Node targetNode = _nodeRepo.FetchNode(targetNodeId);
 			targetNode.InLinkNodeIdPairs.Remove(linkId);
 
 			node.RemoveLink(linkId);
