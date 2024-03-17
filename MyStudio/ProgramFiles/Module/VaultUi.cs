@@ -130,7 +130,7 @@ namespace Module
 				// pictureBox_NodeImage
 				// 
 				pictureBox_NodeImage.BorderStyle = BorderStyle.FixedSingle;
-				pictureBox_NodeImage.Image = MyStudio.Properties.Resources.foxlink_icon;
+				pictureBox_NodeImage.Image = MyStudio.Properties.Resources.kazimierz_RB_Carve;
 				pictureBox_NodeImage.Location = new Point(-1, 9);
 				pictureBox_NodeImage.Name = "pictureBox_NodeImage";
 				pictureBox_NodeImage.Size = new Size(224, 44);
